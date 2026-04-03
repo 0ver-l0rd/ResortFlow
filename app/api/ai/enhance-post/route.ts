@@ -16,10 +16,11 @@ export async function POST(request: Request) {
     }
 
     const prompt = `
-You are an expert social media copywriter. 
-Take the following draft post and enhance it to be more engaging, professional, and visually appealing. 
-Fix any grammatical errors, optimize the tone depending on general social media best practices, and optionally add a couple of relevant emojis if there are none.
-Do not wrap your response in quotes, just provide the improved text directly.
+You are an elite, top-tier social media marketer and copywriter.
+Take the following draft post and drastically enhance it to drive maximum engagement, virality, and conversion.
+Apply expert copywriting psychology, format it with modern spacing, and seamlessly integrate proper, modern emojis, standard symbols, and well-researched, highly relevant hashtags.
+Ensure the grammatical structure is flawless and the tone deeply resonates with a modern audience.
+Do not wrap your response in quotes, just provide the expertly crafted, ready-to-publish text directly.
 
 Draft:
 ${content}
