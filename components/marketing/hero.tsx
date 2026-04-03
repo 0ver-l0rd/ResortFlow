@@ -1,157 +1,203 @@
 "use client";
 
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, PlayCircle, Sparkles, CheckCircle2, TrendingUp, Zap } from "lucide-react";
+import { 
+  ArrowRight, 
+  Sparkles, 
+  TrendingUp, 
+  Zap, 
+  BarChart3, 
+  Calendar, 
+  MessageSquare, 
+  Target,
+  Brain,
+  MousePointer2,
+  Cpu,
+  Link2,
+  PenSquare
+} from "lucide-react";
 import { SignUpButton } from "@clerk/nextjs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { InteractivePreview } from "./InteractivePreview";
 
 export function Hero() {
+  const [activeTab, setActiveTab] = useState("Overview");
+
+  // State-Synchronized Floating Cards (High-Fidelity Resort Logic)
+  const getFloatingContent = () => {
+    switch (activeTab) {
+      case "Overview":
+      case "Analytics":
+        return [
+          { id: 1, label: "RevPAR Velocity", value: "+24.8%", icon: TrendingUp, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "top-12 -left-8" },
+          { id: 2, label: "Direct Share", value: "84%", icon: Target, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "bottom-32 -right-10" }
+        ];
+      case "Compose":
+        return [
+          { id: 1, label: "Drafting Score", value: "98.4%", icon: PenSquare, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "top-16 -left-6" },
+          { id: 2, label: "Media Match", value: "Perfect", icon: Sparkles, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "bottom-24 -right-12" }
+        ];
+      case "Calendar":
+        return [
+          { id: 1, label: "Campaign Load", value: "Balanced", icon: Calendar, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "top-10 -left-6" },
+          { id: 2, label: "Optimized Slots", value: "14/14", icon: Sparkles, color: "text-[#635bff]", bg: "bg-[#eff6ff]", position: "bottom-36 -right-10" }
+        ];
+      case "Connections":
+        return [
+          { id: 1, label: "API Integrity", value: "100%", icon: Link2, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "top-20 -left-10" },
+          { id: 2, label: "Platform Sync", value: "Active", icon: Zap, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "bottom-20 -right-8" }
+        ];
+      case "Replies":
+        return [
+          { id: 1, label: "Sentiment Lift", value: "High", icon: MessageSquare, color: "text-[#09825d]", bg: "bg-[#ecfdf5]", position: "top-24 -left-12" },
+          { id: 2, label: "Auto-Response", value: "Active", icon: Brain, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "bottom-16 -right-6" }
+        ];
+      default:
+        return [
+          { id: 1, label: "Agent Status", value: "Active", icon: Brain, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "top-20 -left-10" },
+        ];
+    }
+  };
+
+  const floatingCards = getFloatingContent();
+
   return (
-    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-[#f6f9fc]">
-      {/* Stripe-style Mesh Gradient Background */}
-      <div className="absolute top-0 inset-x-0 h-[1000px] -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-20%] w-[70%] h-[70%] bg-[#7a73ff] rounded-full blur-[120px] opacity-[0.15] animate-pulse" />
-        <div className="absolute top-[10%] right-[-10%] w-[60%] h-[60%] bg-[#80e9ff] rounded-full blur-[120px] opacity-[0.15]" />
-        <div className="absolute bottom-[20%] left-[10%] w-[80%] h-[40%] bg-[#ffe1ff] rounded-full blur-[120px] opacity-[0.1]" />
+    <section id="hero" className="relative pt-32 pb-40 md:pt-48 md:pb-64 overflow-hidden bg-white">
+      {/* Stripe-Level Light Mesh Gradient Background */}
+      <div className="absolute inset-x-0 top-0 h-[1000px] pointer-events-none z-0">
+        <div className="absolute top-0 left-[-10%] w-[60%] h-[60%] bg-gradient-to-br from-[#635bff]/5 to-transparent blur-[120px]" />
+        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-gradient-to-bl from-[#7f78ff]/5 to-transparent blur-[120px]" />
+        <div className="absolute top-[20%] left-[30%] w-[40%] h-[40%] bg-gradient-to-tr from-blue-400/5 to-transparent blur-[150px]" />
       </div>
-      
-      <div className="container mx-auto px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col items-center text-center mb-20">
-            {/* Trust Badge */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/5 shadow-sm mb-8"
-            >
-              <div className="flex -space-x-2">
-                {[1,2,3].map((i) => (
-                  <div key={i} className="w-5 h-5 rounded-full border border-white bg-slate-200" />
-                ))}
-              </div>
-              <span className="text-[11px] font-bold text-[#3c4257] uppercase tracking-wider pl-1">
-                Trusted by 2,000+ creators
-              </span>
-            </motion.div>
 
-            {/* Main Headline */}
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[44px] md:text-[84px] font-black tracking-[-0.03em] text-[#1a1f36] leading-[0.95] mb-8"
-            >
-              The intelligence layer for <br />
-              <span className="text-[#635bff] relative">
-                social growth
-                <svg className="absolute -bottom-2 left-0 w-full h-3 text-[#635bff]/20" viewBox="0 0 100 10" preserveAspectRatio="none">
-                  <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="4" />
-                </svg>
-              </span>
-            </motion.h1>
-
-            {/* Subtext */}
-            <motion.p 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-2xl mx-auto text-lg md:text-xl text-[#3c4257] mb-10 font-medium leading-relaxed opacity-80"
-            >
-              Scale your digital footprint with AI-driven automation. Compose, schedule, and analyze your performance across every platform from one executive dashboard.
-            </motion.p>
-
-            {/* Actions */}
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
-            >
-              <SignUpButton mode="modal">
-                <Button size="lg" className="h-14 px-8 text-[15px] bg-[#635bff] hover:bg-[#4f46e5] text-white font-bold rounded-full shadow-xl shadow-[#635bff]/20 transition-all hover:scale-[1.02] active:scale-[0.98] border-none">
-                  Start scaling now
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </SignUpButton>
-              <Button variant="ghost" size="lg" className="h-14 px-8 text-[15px] font-bold text-[#3c4257] hover:text-[#1a1f36] hover:bg-white/50 rounded-full transition-all">
-                Contact sales
-              </Button>
-            </motion.div>
-          </div>
-
-          {/* Hero Visual - Premium Mockup */}
+      <div className="container mx-auto px-6 relative z-10">
+        {/* Core Hero Content: Minimalistic White Theme */}
+        <div className="max-w-4xl mx-auto text-center mb-32">
           <motion.div 
-            initial={{ opacity: 0, y: 60 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative"
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#f6f9fc] border border-[#e3e8ef] mb-10 transition-all hover:shadow-md cursor-default"
           >
-            {/* Floating UI Elements */}
-            <div className="absolute -top-12 -left-12 z-20 hidden lg:block">
-               <motion.div 
-                 animate={{ y: [0, -10, 0] }} 
-                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                 className="p-4 rounded-2xl bg-white shadow-2xl border border-black/5 flex items-center gap-4"
-               >
-                 <div className="w-10 h-10 rounded-full bg-[#efffee] flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-[#09825d]" />
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-bold text-[#8792a2] uppercase tracking-wider">Growth Rate</p>
-                    <p className="text-lg font-bold text-[#1a1f36]">+142%</p>
-                 </div>
-               </motion.div>
-            </div>
-
-            <div className="absolute -bottom-8 -right-12 z-20 hidden lg:block">
-               <motion.div 
-                 animate={{ y: [0, 10, 0] }} 
-                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                 className="p-5 rounded-2xl bg-white shadow-2xl border border-black/5 flex flex-col gap-3 min-w-[200px]"
-               >
-                 <div className="flex items-center justify-between">
-                    <div className="w-8 h-8 rounded-lg bg-[#635bff]/10 flex items-center justify-center">
-                       <Zap className="w-4 h-4 text-[#635bff]" />
-                    </div>
-                    <span className="text-[10px] font-bold text-[#09825d] bg-[#efffee] px-2 py-0.5 rounded-full">AI Active</span>
-                 </div>
-                 <p className="text-xs font-bold text-[#3c4257]">Optimization Complete</p>
-                 <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full w-[85%] bg-[#635bff]" />
-                 </div>
-               </motion.div>
-            </div>
-
-            {/* Main Interactive Preview Container */}
-            <div className="relative group perspective-1000">
-              <div className="absolute inset-x-0 -inset-y-12 bg-gradient-to-tr from-[#635bff]/20 to-[#80e9ff]/10 blur-[120px] opacity-40 transition-opacity group-hover:opacity-100" />
-              <div className="relative rounded-[2.5rem] bg-white/40 p-2 shadow-[0_40px_100px_rgba(0,0,0,0.1)] border border-white/40 overflow-hidden backdrop-blur-3xl ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-1000">
-                <InteractivePreview />
-              </div>
-            </div>
+            <Sparkles className="w-3.5 h-3.5 text-[#635bff]" />
+            <span className="text-[11px] font-black text-[#1a1f36] uppercase tracking-[0.2em]">Resort AI Marketing Agent</span>
+          </motion.div>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[48px] md:text-[76px] xl:text-[94px] font-black tracking-tight text-[#1a1f36] leading-[0.9] mb-10"
+          >
+            Your AI <span className="text-[#635bff]">Marketing</span> <br />
+            Team for Resorts
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="text-xl md:text-2xl text-[#697386] font-medium mb-14 max-w-2xl mx-auto leading-relaxed"
+          >
+            Automate campaigns, personalize guest experiences, and increase bookings — all with one autonomous agent.
+          </motion.p>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-5"
+          >
+            <SignUpButton mode="modal">
+              <Button className="h-18 px-12 text-[18px] bg-[#635bff] hover:bg-[#4f46e5] text-white font-black rounded-2xl shadow-[0_20px_50px_rgba(99,91,255,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98]">
+                Start Free
+                <ArrowRight className="ml-3 w-6 h-6" />
+              </Button>
+            </SignUpButton>
             
-            {/* Soft Shadow Base */}
-            <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[95%] h-32 bg-[#635bff]/10 blur-[140px] -z-10" />
+            <Button variant="ghost" className="h-18 px-10 text-[18px] text-[#3c4257] font-black hover:bg-[#f6f9fc] rounded-2xl border border-[#e3e8ef] bg-white transition-all">
+              See Demo
+            </Button>
           </motion.div>
         </div>
-      </div>
 
-      {/* Feature Badges Container */}
-      <div className="container mx-auto px-6 mt-32">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-           {[
-             { icon: CheckCircle2, label: "Multi-Platform Sync" },
-             { icon: Sparkles, label: "AI Content Studio" },
-             { icon: TrendingUp, label: "Growth Intelligence" },
-             { icon: Zap, label: "Auto-Pilot Engagement" }
-           ].map((item, i) => (
-             <div key={i} className="flex items-center gap-3 opacity-60">
-                <item.icon className="w-5 h-5 text-[#635bff]" />
-                <span className="text-sm font-bold text-[#1a1f36]">{item.label}</span>
-             </div>
-           ))}
+        {/* Dashboard Preview: Minimalist 3-Column Dash */}
+        <div className="max-w-[1150px] mx-auto relative perspective-2000">
+          
+          {/* Interactive Indicator (Top) */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="flex flex-col items-center mb-12 gap-3"
+          >
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#635bff]/10 border border-[#635bff]/20">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#635bff] animate-pulse glow-pulse" />
+              <span className="text-[10px] font-black text-[#635bff] uppercase tracking-[0.25em]">Interactive Product Experience</span>
+            </div>
+            <p className="text-[11px] font-bold text-[#8792a2] uppercase tracking-widest">Click tabs to explore the resort orchestration engine</p>
+          </motion.div>
+
+          {/* Floating State-Synced Intelligence Cards */}
+          <AnimatePresence mode="wait">
+            {floatingCards.map((card) => (
+              <motion.div 
+                key={`${activeTab}-${card.id}`}
+                initial={{ opacity: 0, scale: 0.8, x: card.id === 1 ? -30 : 30 }}
+                animate={{ opacity: 1, scale: 0.9, x: 0 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: "spring", damping: 20, stiffness: 100 }}
+                className={cn(
+                  "absolute z-40 pointer-events-none hidden xl:flex items-center gap-4 px-6 py-4 rounded-[1.5rem] bg-white shadow-premium border border-[#f0f3f7] transition-all hover:scale-100",
+                  card.position
+                )}
+              >
+                <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shadow-inner", card.bg)}>
+                  {React.createElement(card.icon as any, {className: cn("w-5 h-5", card.color)})}
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-[0.2em] leading-none mb-1">{card.label}</p>
+                  <p className="text-xl font-black text-[#1a1f36] tabular-nums">{card.value}</p>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
+          {/* Perspective Shadow/Glow */}
+          <div className="absolute inset-x-20 -top-20 -bottom-20 bg-[radial-gradient(circle_at_center,#635bff0a_0%,transparent_70%)] blur-[100px] pointer-events-none" />
+          <div className="absolute inset-x-40 -bottom-20 h-40 bg-gradient-to-t from-[#635bff]/5 to-transparent blur-[120px] rounded-full pointer-events-none opacity-40" />
+
+          {/* Perspective Wrapper */}
+          <motion.div 
+            initial={{ opacity: 0, y: 100, rotateX: 10 }}
+            animate={{ opacity: 1, y: 0, rotateX: 4 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            style={{ 
+              transformStyle: "preserve-3d"
+            }}
+            className="w-full relative group"
+          >
+            {/* Glossy Dash Border */}
+            <div className="absolute -inset-[1px] bg-gradient-to-b from-[#e3e8ef] via-[#f0f3f7] to-[#e3e8ef] rounded-[3.5rem] -z-10" />
+            
+            <div className="relative rounded-[3.5rem] bg-white p-2 lg:p-3 shadow-[0_45px_100px_rgba(0,0,0,0.08)] border border-[#e3e8ef] overflow-hidden transition-all duration-1000 group-hover:shadow-[0_60px_150px_rgba(31,38,135,0.12)]">
+               <div className="origin-top transition-all duration-1000 group-hover:scale-[1.002]">
+                  <InteractivePreview activeTab={activeTab} setActiveTab={setActiveTab} />
+               </div>
+            </div>
+
+            {/* Hint Overlay (Bottom) */}
+            <motion.div 
+               animate={{ y: [0, 5, 0] }}
+               transition={{ duration: 3, repeat: Infinity }}
+               className="absolute -bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-3 opacity-40 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+            >
+               <MousePointer2 className="w-3.5 h-3.5 text-[#635bff]" />
+               <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.4em]">Proprietary AI Architecture</span>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>

@@ -1,48 +1,71 @@
 "use client";
 
-import { FaInstagram, FaYoutube, FaTiktok, FaLinkedin, FaTwitter, FaPinterest, FaDiscord, FaSlack, FaFacebook } from "react-icons/fa";
+import React from "react";
+import { 
+  FaInstagram, 
+  FaFacebook, 
+  FaTiktok, 
+  FaYoutube, 
+  FaLinkedin, 
+  FaXTwitter, 
+  FaPinterest, 
+  FaSnapchat, 
+  FaThreads, 
+  FaWhatsapp 
+} from "react-icons/fa6";
 import { motion } from "framer-motion";
 
 const platforms = [
-  { name: "Instagram", icon: FaInstagram, color: "group-hover:text-pink-500" },
-  { name: "YouTube", icon: FaYoutube, color: "group-hover:text-red-500" },
-  { name: "TikTok", icon: FaTiktok, color: "group-hover:text-slate-900" },
-  { name: "LinkedIn", icon: FaLinkedin, color: "group-hover:text-blue-600" },
-  { name: "Twitter", icon: FaTwitter, color: "group-hover:text-sky-500" },
-  { name: "Pinterest", icon: FaPinterest, color: "group-hover:text-red-600" },
-  { name: "Discord", icon: FaDiscord, color: "group-hover:text-indigo-500" },
-  { name: "Slack", icon: FaSlack, color: "group-hover:text-emerald-500" },
-  { name: "Facebook", icon: FaFacebook, color: "group-hover:text-blue-700" },
+  { name: "Instagram", icon: FaInstagram, color: "#E1306C" },
+  { name: "Facebook", icon: FaFacebook, color: "#1877F2" },
+  { name: "TikTok", icon: FaTiktok, color: "#000000" },
+  { name: "YouTube", icon: FaYoutube, color: "#FF0000" },
+  { name: "LinkedIn", icon: FaLinkedin, color: "#0077B5" },
+  { name: "X", icon: FaXTwitter, color: "#000000" },
+  { name: "Pinterest", icon: FaPinterest, color: "#BD081C" },
+  { name: "Snapchat", icon: FaSnapchat, color: "#FFFC00" },
+  { name: "Threads", icon: FaThreads, color: "#000000" },
+  { name: "WhatsApp", icon: FaWhatsapp, color: "#25D366" },
 ];
 
 export function PlatformBar() {
+  // Duplicate platforms for seamless loop
+  const duplicatedPlatforms = [...platforms, ...platforms];
+
   return (
-    <section className="py-16 bg-background border-y border-slate-100 dark:border-white/5 overflow-hidden relative">
-      <div className="container mx-auto px-6 mb-12 text-center relative z-10">
-         <motion.p 
-           initial={{ opacity: 0, y: 10 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true }}
-           transition={{ duration: 0.5 }}
-           className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]"
-         >
-           Seamless integrations with 9+ platforms
-         </motion.p>
+    <div className="w-full bg-white/50 backdrop-blur-sm border-y border-black/5 py-10 overflow-hidden group">
+      <div className="container mx-auto px-6 mb-8">
+        <p className="text-center text-[10px] font-black text-[#8792a2] uppercase tracking-[0.3em]">
+          Seamless Integrations with 9+ Platforms
+        </p>
       </div>
-      
-      <div className="relative flex overflow-x-hidden group select-none">
-        <div className="py-4 animate-marquee whitespace-nowrap flex items-center gap-10 group-hover:pause">
-          {[...platforms, ...platforms].map((platform, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-4 px-8 py-5 rounded-[2rem] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/30 hover:bg-white dark:hover:bg-white/10 transition-all duration-500 cursor-pointer group/item"
+
+      <div className="relative flex overflow-hidden">
+        <motion.div 
+          className="flex items-center gap-16 md:gap-24 px-12"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ 
+            duration: 30, 
+            repeat: Infinity, 
+            ease: "linear" 
+          }}
+        >
+          {duplicatedPlatforms.map((platform, i) => (
+            <div 
+              key={i} 
+              className="flex items-center gap-3 transition-all duration-300 filter grayscale opacity-40 hover:grayscale-0 hover:opacity-100 cursor-pointer group/item"
             >
-              <platform.icon className={`w-6 h-6 text-slate-400 dark:text-slate-500 transition-colors duration-500 group-hover/item:text-slate-900 dark:group-hover/item:text-white`} />
-              <span className="text-base font-bold tracking-tight text-slate-500 dark:text-slate-500 group-hover/item:text-slate-900 dark:group-hover/item:text-white transition-colors duration-300">{platform.name}</span>
+              <platform.icon 
+                className="w-6 h-6 md:w-8 md:h-8 transition-transform group-hover/item:scale-110 active:scale-95" 
+                style={{ color: platform.color }} 
+              />
+              <span className="text-sm font-black text-[#1a1f36] tracking-tight hidden md:block">
+                {platform.name}
+              </span>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </div>
   );
 }

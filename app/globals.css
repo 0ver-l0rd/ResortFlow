@@ -172,11 +172,81 @@
 }
 
 @keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-
   100% {
     transform: translateX(-100%);
+  }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@layer utilities {
+  .stripe-white-mesh {
+    background-color: #ffffff;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(225,39%,30%,0.03) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(339,49%,30%,0.03) 0, transparent 50%);
+  }
+
+  .perspective-2000 {
+    perspective: 2000px;
+  }
+
+  .shadow-premium {
+    box-shadow: 
+      0 0 0 1px rgba(0,0,0,0.02),
+      0 1px 1px rgba(0,0,0,0.01),
+      0 2px 4px rgba(0,0,0,0.01),
+      0 4px 8px rgba(0,0,0,0.01),
+      0 8px 16px rgba(0,0,0,0.01),
+      0 16px 32px rgba(0,0,0,0.01);
+  }
+
+  .shadow-stripe {
+    box-shadow: 
+      0 0 0 1px rgba(0, 0, 0, 0.03),
+      0 2px 4px rgba(0, 0, 0, 0.02),
+      0 12px 24px rgba(0, 0, 0, 0.05);
+  }
+
+  .glow-pulse {
+    animation: glow-pulse-anim 3s ease-in-out infinite;
+  }
+
+  @keyframes glow-pulse-anim {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
+  }
+
+  .stripe-glass {
+    @apply bg-white/70 backdrop-blur-3xl border border-white/40 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
+  }
+
+  .animate-gradient-shift {
+    animation: gradient-shift 10s ease infinite;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(99, 91, 255, 0.1);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 91, 255, 0.2);
   }
 }

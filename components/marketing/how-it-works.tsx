@@ -1,111 +1,109 @@
 "use client";
 
-import { Link2, PenSquare, Share2 } from "lucide-react";
-import { motion } from "framer-motion";
+import React from "react";
+import { 
+  Database, 
+  Target, 
+  Zap, 
+  TrendingUp, 
+  Layers,
+  ChevronRight
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const steps = [
+const workflowSteps = [
   {
-    title: "Connect Accounts",
-    description: "Securely link all your social platforms in seconds using our seamless OAuth integrations.",
-    icon: Link2,
-    color: "bg-indigo-600 shadow-indigo-200",
+    title: "Sync Ecosystem",
+    desc: "Connect your Resort PMS, Social Hub, and Guest Databases to create a unified data layer.",
+    icon: Database,
+    color: "text-[#635bff]",
+    bg: "bg-[#635bff]/10",
   },
   {
-    title: "Compose & Schedule",
-    description: "Write once, add media, and let AI help you optimize for each platform. Schedule for the perfect time.",
-    icon: PenSquare,
-    color: "bg-violet-600 shadow-violet-200",
+    title: "Define Strategy",
+    desc: "Tell your Agent your objective: 'Increase weekday spa bookings' or 'Recover lost RevPAR'.",
+    icon: Target,
+    color: "text-[#09825d]",
+    bg: "bg-[#efffee]",
   },
   {
-    title: "Publish Everywhere",
-    description: "Sit back as your content goes live across all selected platforms simultaneously, automated and reliable.",
-    icon: Share2,
-    color: "bg-cyan-500 shadow-cyan-200",
+    title: "Autonomous Build",
+    desc: "Your Agent constructs, schedules, and executes the entire campaign strategy in seconds.",
+    icon: Zap,
+    color: "text-[#f5a623]",
+    bg: "bg-[#fef3c7]",
   },
+  {
+    title: "Revenue Pulse",
+    desc: "Real-time AI optimization tracking every dollar of influenced revenue and guest engagement.",
+    icon: TrendingUp,
+    color: "text-[#e1306c]",
+    bg: "bg-[#fdf0f5]",
+  }
 ];
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
-  },
-};
-
-const stepVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-  },
-};
 
 export function HowItWorks() {
   return (
-    <section className="py-32 bg-background relative overflow-hidden">
-      <div className="container mx-auto px-6 relative">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-24"
-        >
-          <h2 className="text-indigo-600 font-bold tracking-tight text-sm uppercase mb-4 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 inline-block">
-            The Workflow
+    <section id="workflow" className="py-24 md:py-32 bg-white relative overflow-hidden">
+      <div className="container mx-auto px-6">
+        <div className="max-w-4xl mx-auto text-center mb-24">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-100 border border-black/5 mb-6">
+            <Layers className="w-3.5 h-3.5 text-[#1a1f36]" />
+            <span className="text-[11px] font-black text-[#1a1f36] uppercase tracking-widest">Resort Orchestration</span>
+          </div>
+          
+          <h2 className="text-[40px] md:text-[64px] font-black text-[#1a1f36] leading-[1.05] tracking-tight mb-8">
+            The Resort AI Workflow. <br />
+            <span className="text-[#635bff] italic">Simple & Strategic.</span>
           </h2>
-          <h3 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white mb-8">
-            Simple, Fast, Effortless
-          </h3>
-          <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-            Transform your content strategy with a simplified, 3-step automated workflow.
+          <p className="text-xl text-[#3c4257] font-medium leading-relaxed opacity-80 max-w-2xl mx-auto">
+            Transform your resort growth with a simplified, 4-step autonomous strategy that captures every revenue opportunity.
           </p>
-        </motion.div>
- 
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="flex flex-col lg:flex-row gap-16 lg:gap-12 justify-center items-center lg:items-start"
-        >
-          {steps.map((step, i) => (
-            <motion.div 
-              key={i} 
-              variants={stepVariants}
-              className="flex-1 flex flex-col items-center text-center group max-w-sm"
-            >
-              <div className="relative mb-12">
-                {/* Step Number Badge */}
-                <div className="absolute -top-4 -right-4 w-12 h-12 rounded-2xl bg-white dark:bg-card border border-slate-200 dark:border-indigo-500/20 flex items-center justify-center font-black text-lg text-slate-900 dark:text-white shadow-xl group-hover:scale-110 transition-transform duration-500 z-10">
-                  0{i + 1}
+        </div>
+
+        {/* High-Fidelity Step Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto relative px-4">
+           {/* Connecting Line (Desktop) */}
+           <div className="hidden lg:block absolute top-[60px] left-[15%] right-[15%] h-[1px] bg-slate-100 -z-10" />
+
+           {workflowSteps.map((step, i) => (
+             <div 
+                key={i} 
+                className="flex flex-col items-center text-center group"
+             >
+                <div className="mb-8 relative">
+                   {/* Step Number */}
+                   <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white border border-black/5 flex items-center justify-center font-black text-[10px] text-[#1a1f36] shadow-xl group-hover:scale-110 transition-transform z-10">
+                      0{i + 1}
+                   </div>
+                   
+                   {/* Icon Hex/Circle */}
+                   <div className={cn(
+                     "w-[120px] h-[120px] rounded-[2.5rem] flex items-center justify-center transition-all duration-500 shadow-xl group-hover:shadow-2xl group-hover:-translate-y-2 relative overflow-hidden bg-white border border-black/5 group-hover:border-[#635bff]/20",
+                   )}>
+                      <div className={cn("absolute inset-[15%] rounded-3xl opacity-10 blur-xl", step.bg)} />
+                      <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center relative z-10", step.bg)}>
+                         <step.icon className={cn("w-8 h-8", step.color)} />
+                      </div>
+                   </div>
+
+                   {/* Desktop Arrow Indicator */}
+                   {i < workflowSteps.length - 1 && (
+                     <div className="hidden lg:flex absolute top-1/2 -right-6 lg:-right-8 items-center text-slate-200">
+                        <ChevronRight className="w-5 h-5 leading-none" />
+                     </div>
+                   )}
                 </div>
-                
-                {/* Icon Circle */}
-                <div className={`w-40 h-40 rounded-[2.5rem] ${step.color} flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-none group-hover:scale-105 transition-transform duration-500 relative`}>
-                    <div className="absolute inset-0 bg-white/10 rounded-[2.5rem]" />
-                    <step.icon className="w-16 h-16 text-white z-10" />
+
+                <div className="space-y-4 px-4 transition-all duration-300 group-hover:translate-y-[-4px]">
+                   <h3 className="text-xl font-black text-[#1a1f36] tracking-tight group-hover:text-[#635bff] transition-colors">{step.title}</h3>
+                   <p className="text-sm font-semibold text-[#8792a2] leading-relaxed group-hover:text-slate-600 transition-colors">
+                      {step.desc}
+                   </p>
                 </div>
- 
-                {/* Connecting arrow for desktop (only between steps) */}
-                {i < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 left-[calc(100%+2rem)] w-16 h-px bg-slate-200 dark:bg-slate-800 -translate-y-1/2">
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-800" />
-                  </div>
-                )}
-              </div>
- 
-              <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-indigo-600 transition-colors duration-300">
-                {step.title}
-              </h4>
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors duration-300">
-                {step.description}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
+             </div>
+           ))}
+        </div>
       </div>
     </section>
   );
