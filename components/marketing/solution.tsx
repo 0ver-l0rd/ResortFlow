@@ -64,7 +64,7 @@ export function Solution() {
   }, []);
 
   return (
-    <section id="solution" className="py-32 md:py-48 bg-white relative overflow-hidden">
+    <section id="solution" className="pt-12 pb-32 md:pt-20 md:pb-48 bg-white relative overflow-hidden">
       {/* Stripe-Level Background Accents */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#e3e8ef] to-transparent" />
       <div className="absolute top-[10%] left-[-5%] w-[800px] h-[800px] bg-[#635bff05] blur-[180px] -z-10 rounded-full" />

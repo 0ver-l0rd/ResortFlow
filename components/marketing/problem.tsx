@@ -37,7 +37,7 @@ const problems = [
 
 export function Problem() {
   return (
-    <section id="problem" className="py-32 md:py-48 bg-white relative overflow-hidden">
+    <section id="problem" className="pt-32 pb-12 md:pt-48 md:pb-20 bg-white relative overflow-hidden">
       {/* Stripe-Level Texture & Accents */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#e3e8ef] to-transparent" />
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.015] mix-blend-overlay pointer-events-none" />
@@ -62,7 +62,7 @@ export function Problem() {
             className="text-[42px] md:text-[60px] font-black tracking-[-0.035em] text-[#1a1f36] leading-[1.05] mb-8"
           >
             Resort marketing is <br />
-            <span className="text-[#8792a2]">broken and disconnected.</span>
+            <span className="text-[#635bff]">broken and disconnected.</span>
           </motion.h2>
           
           <motion.p 
@@ -77,7 +77,7 @@ export function Problem() {
         </div>
 
         {/* Problem Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto mb-20 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto px-4">
           {problems.map((prob, i) => (
             <motion.div
               key={i}
@@ -144,12 +144,6 @@ export function Problem() {
               </div>
             </motion.div>
           ))}
-        </div>
-
-        {/* Modern Bottom Accent */}
-        <div className="flex flex-col items-center opacity-40">
-            <div className="w-px h-20 bg-gradient-to-b from-[#e3e8ef] to-transparent" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#1a1f36] mt-4">Legacy Friction Points</span>
         </div>
       </div>
     </section>
