@@ -31,32 +31,32 @@ export function Hero() {
       case "Overview":
       case "Analytics":
         return [
-          { id: 1, label: "RevPAR Velocity", value: "+24.8%", icon: TrendingUp, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "top-12 -left-8" },
-          { id: 2, label: "Direct Share", value: "84%", icon: Target, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "bottom-32 -right-10" }
+          { id: 1, label: "RevPAR Velocity", value: "+24.8%", icon: TrendingUp, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "-top-24 right-10" },
+          { id: 2, label: "Direct Share", value: "84%", icon: Target, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-bottom-28 left-10" }
         ];
       case "Compose":
         return [
-          { id: 1, label: "Drafting Score", value: "98.4%", icon: PenSquare, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "top-16 -left-6" },
-          { id: 2, label: "Media Match", value: "Perfect", icon: Sparkles, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "bottom-24 -right-12" }
+          { id: 1, label: "Drafting Score", value: "98.4%", icon: PenSquare, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-top-32 left-12" },
+          { id: 2, label: "Media Match", value: "Perfect", icon: Sparkles, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "-bottom-24 right-12" }
         ];
       case "Calendar":
         return [
-          { id: 1, label: "Campaign Load", value: "Balanced", icon: Calendar, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "top-10 -left-6" },
-          { id: 2, label: "Optimized Slots", value: "14/14", icon: Sparkles, color: "text-[#635bff]", bg: "bg-[#eff6ff]", position: "bottom-36 -right-10" }
+          { id: 1, label: "Campaign Load", value: "Balanced", icon: Calendar, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "-top-28 right-16" },
+          { id: 2, label: "Optimized Slots", value: "14/14", icon: Sparkles, color: "text-[#635bff]", bg: "bg-[#eff6ff]", position: "-bottom-28 left-16" }
         ];
       case "Connections":
         return [
-          { id: 1, label: "API Integrity", value: "100%", icon: Link2, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "top-20 -left-10" },
-          { id: 2, label: "Platform Sync", value: "Active", icon: Zap, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "bottom-20 -right-8" }
+          { id: 1, label: "API Integrity", value: "100%", icon: Link2, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "-top-22 left-20" },
+          { id: 2, label: "Platform Sync", value: "Active", icon: Zap, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-bottom-32 right-20" }
         ];
       case "Replies":
         return [
-          { id: 1, label: "Sentiment Lift", value: "High", icon: MessageSquare, color: "text-[#09825d]", bg: "bg-[#ecfdf5]", position: "top-24 -left-12" },
-          { id: 2, label: "Auto-Response", value: "Active", icon: Brain, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "bottom-16 -right-6" }
+          { id: 1, label: "Sentiment Lift", value: "High", icon: MessageSquare, color: "text-[#09825d]", bg: "bg-[#ecfdf5]", position: "-top-32 right-20" },
+          { id: 2, label: "Auto-Response", value: "Active", icon: Brain, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-bottom-28 left-20" }
         ];
       default:
         return [
-          { id: 1, label: "Agent Status", value: "Active", icon: Brain, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "top-20 -left-10" },
+          { id: 1, label: "Agent Status", value: "Active", icon: Brain, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-top-24 left-1/2 -translate-x-1/2" },
         ];
     }
   };
@@ -89,10 +89,10 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[48px] md:text-[76px] xl:text-[94px] font-black tracking-tight text-[#1a1f36] leading-[0.9] mb-10"
+            className="text-[40px] md:text-[64px] xl:text-[82px] font-black tracking-tight text-[#1a1f36] leading-[1.05] mb-10"
           >
             Your AI <span className="text-[#635bff]">Marketing</span> <br />
-            Team for Resorts
+            <span className="text-[#635bff] italic">Team for Resorts.</span>
           </motion.h1>
           
           <motion.p 
@@ -145,8 +145,8 @@ export function Hero() {
             {floatingCards.map((card) => (
               <motion.div 
                 key={`${activeTab}-${card.id}`}
-                initial={{ opacity: 0, scale: 0.8, x: card.id === 1 ? -30 : 30 }}
-                animate={{ opacity: 1, scale: 0.9, x: 0 }}
+                initial={{ opacity: 0, scale: 0.8, y: card.id === 1 ? -30 : 30 }}
+                animate={{ opacity: 1, scale: 0.9, y: 0 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ type: "spring", damping: 20, stiffness: 100 }}
                 className={cn(
@@ -171,19 +171,19 @@ export function Hero() {
 
           {/* Perspective Wrapper */}
           <motion.div 
-            initial={{ opacity: 0, y: 100, rotateX: 10 }}
-            animate={{ opacity: 1, y: 0, rotateX: 4 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 100, rotateX: 5 }}
+            animate={{ opacity: 1, y: 0, rotateX: 2 }}
+            transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             style={{ 
               transformStyle: "preserve-3d"
             }}
             className="w-full relative group"
           >
-            {/* Glossy Dash Border */}
-            <div className="absolute -inset-[1px] bg-gradient-to-b from-[#e3e8ef] via-[#f0f3f7] to-[#e3e8ef] rounded-[3.5rem] -z-10" />
+            {/* Minimalist Dashboard Container */}
+            <div className="absolute -inset-[1px] bg-gradient-to-b from-[#e3e8ef] to-[#f0f3f7] rounded-3xl -z-10" />
             
-            <div className="relative rounded-[3.5rem] bg-white p-2 lg:p-3 shadow-[0_45px_100px_rgba(0,0,0,0.08)] border border-[#e3e8ef] overflow-hidden transition-all duration-1000 group-hover:shadow-[0_60px_150px_rgba(31,38,135,0.12)]">
-               <div className="origin-top transition-all duration-1000 group-hover:scale-[1.002]">
+            <div className="relative rounded-3xl bg-white p-1.5 lg:p-2 shadow-[0_30px_80px_rgba(0,0,0,0.04)] border border-[#e3e8ef] overflow-hidden transition-all duration-1000 group-hover:shadow-[0_45px_100px_rgba(31,38,135,0.08)]">
+               <div className="origin-top transition-all duration-1000">
                   <InteractivePreview activeTab={activeTab} setActiveTab={setActiveTab} />
                </div>
             </div>

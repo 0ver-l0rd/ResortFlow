@@ -2,667 +2,843 @@
 
 import React, { useState, useEffect } from "react";
 import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell
-} from "recharts";
-import { 
-  LayoutDashboard, 
-  PenSquare, 
-  Calendar as CalendarIcon, 
-  Link2, 
-  MessageSquare, 
   BarChart3, 
-  Zap, 
-  Bell,
-  Search,
-  Plus,
-  ArrowRight,
-  TrendingUp,
-  Target,
-  Sparkles,
-  MousePointer2,
-  Cpu,
-  Brain,
-  ChevronRight,
+  Calendar as CalendarIcon, 
+  CheckCircle2, 
+  ChevronRight, 
+  Clock, 
+  Cpu, 
+  Eye, 
+  History, 
+  Layout, 
+  Link2, 
+  MoreHorizontal, 
+  MousePointer2, 
+  Play,
+  Plus, 
+  Search, 
+  Settings, 
+  Share2, 
+  Sparkles, 
+  Target, 
+  TrendingUp, 
+  Users, 
+  Zap,
+  ArrowUpRight,
+  Shield,
+  Star,
+  MessageCircle,
+  Repeat2,
+  Heart,
+  Bookmark,
   Send,
-  ImageIcon,
-  CheckCircle2,
-  Clock,
-  MoreHorizontal,
-  Share2
+  Wand2,
+  Bot,
+  ZapIcon
 } from "lucide-react";
-import { FaInstagram, FaFacebook, FaTiktok, FaYoutube } from "react-icons/fa6";
+import { FaXTwitter, FaInstagram, FaLinkedinIn, FaFacebookF, FaYoutube } from "react-icons/fa6";
+import { SiTiktok } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-// --- Mock Data ---
-const resortStats = [
-  { name: "Mon", revpar: 185, direct: 60, ota: 40 },
-  { name: "Tue", revpar: 198, direct: 62, ota: 38 },
-  { name: "Wed", revpar: 210, direct: 68, ota: 32 },
-  { name: "Thu", revpar: 245, direct: 75, ota: 25 },
-  { name: "Fri", revpar: 310, direct: 84, ota: 16 },
-  { name: "Sat", revpar: 345, direct: 92, ota: 8 },
-  { name: "Sun", revpar: 290, direct: 88, ota: 12 },
-];
-
+// --- Nav Items ---
 const navItems = [
-  { id: "Overview", icon: LayoutDashboard, label: "Overview" },
-  { id: "Compose", icon: PenSquare, label: "Compose" },
+  { id: "Overview", icon: Layout, label: "Overview" },
+  { id: "Compose", icon: Wand2, label: "Compose" },
   { id: "Calendar", icon: CalendarIcon, label: "Calendar" },
   { id: "Connections", icon: Link2, label: "Connections" },
-  { id: "Replies", icon: MessageSquare, label: "Auto-Reply" },
+  { id: "Replies", icon: Bot, label: "Auto-Reply" },
   { id: "Analytics", icon: BarChart3, label: "Analytics" },
 ];
 
-// --- High-Fidelity Resort Sub-Views ---
+// --- 1. Overview View ---
+const OverviewView = () => (
+  <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="flex items-end justify-between px-1">
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8792a2] mb-1.5">Overview</p>
+        <h2 className="text-2xl font-bold tracking-tight text-[#1a1f36]">Good morning 👋</h2>
+        <p className="text-[11px] text-[#8792a2] mt-1 font-medium">Here's the resort's performance at a glance.</p>
+      </div>
+      <div className="flex items-center gap-2">
+         <div className="flex -space-x-1.5">
+            {[1, 2, 3].map(i => <div key={i} className="w-6 h-6 rounded-full border border-white bg-slate-200" />)}
+         </div>
+         <span className="text-[9px] font-black text-[#1a1f36] uppercase tracking-widest">+4 Team</span>
+      </div>
+    </div>
 
-const CountUp = ({ value, prefix = "", suffix = "" }: { value: string, prefix?: string, suffix?: string }) => {
-   const [count, setCount] = useState(0);
-   const target = parseFloat(value.replace(/[^0-9.]/g, ""));
-   
-   useEffect(() => {
-      let start = 0;
-      const end = target;
-      const duration = 2000;
-      const step = end / (duration / 16);
-      
-      const timer = setInterval(() => {
-         start += step;
-         if (start >= end) {
-            setCount(end);
-            clearInterval(timer);
-         } else {
-            setCount(start);
-         }
-      }, 16);
-      return () => clearInterval(timer);
-   }, [target]);
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {[
+        { label: "Total Posts", value: "248", change: "+12%", icon: Share2 },
+        { label: "Scheduled", value: "14", change: "+3", icon: CalendarIcon },
+        { label: "Published", value: "234", change: "+8%", icon: CheckCircle2 },
+        { label: "Avg. Engagement", value: "4.2%", change: "+0.5%", icon: TrendingUp }
+      ].map((stat, i) => (
+        <div key={i} className="bg-white rounded-xl border border-[#e3e8ef] p-4 shadow-sm hover:shadow-md transition-all group">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-[0.1em]">{stat.label}</p>
+            <stat.icon className="w-3.5 h-3.5 text-[#8792a2] group-hover:text-[#635bff] transition-colors" />
+          </div>
+          <p className="text-xl font-bold text-[#1a1f36] tabular-nums">{stat.value}</p>
+          <div className="flex items-center gap-1 mt-1">
+            <span className="text-[10px] font-bold text-[#09825d]">{stat.change}</span>
+            <span className="text-[9px] text-[#8792a2]">vs last mo</span>
+          </div>
+        </div>
+      ))}
+    </div>
 
-   return <span>{prefix}{count.toLocaleString(undefined, { minimumFractionDigits: value.includes(".") ? 1 : 0, maximumFractionDigits: 1 })}{suffix}</span>;
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 space-y-4">
+        <div className="bg-white rounded-xl border border-[#e3e8ef] shadow-sm overflow-hidden">
+          <div className="px-5 py-3 border-b border-[#f0f3f7] bg-[#f6f9fc] flex items-center justify-between">
+            <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-widest">Recent Activity</span>
+            <ChevronRight className="w-3 h-3 text-[#c4cdd6]" />
+          </div>
+          <div className="divide-y divide-[#f0f3f7]">
+            {[
+              { label: "Post published", detail: "Instagram & Twitter", time: "2 min ago", color: "#09825d" },
+              { label: "Auto-reply sent", detail: "LinkedIn comment", time: "15 min ago", color: "#635bff" },
+              { label: "Post scheduled", detail: "Tomorrow at 9:00 AM", time: "1 hr ago", color: "#f5a623" }
+            ].map((activity, i) => (
+              <div key={i} className="px-5 py-3 flex items-center gap-4 hover:bg-[#f8fafc] transition-colors">
+                <div className="w-2 h-2 rounded-full" style={{ background: activity.color }} />
+                <div className="flex-1">
+                  <p className="text-[11px] font-bold text-[#3c4257]">{activity.label}</p>
+                  <p className="text-[9px] text-[#8792a2]">{activity.detail}</p>
+                </div>
+                <span className="text-[9px] text-[#8792a2]">{activity.time}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="bg-[#635bff] rounded-xl p-5 text-white relative overflow-hidden shadow-lg shadow-[#635bff]/20">
+          <div className="absolute top-0 right-0 p-4 opacity-20">
+            <Zap className="w-12 h-12" />
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-widest mb-1.5 opacity-80">Upgrade to Pro</p>
+          <p className="text-sm font-bold leading-tight mb-4">Unlock Business <br />Intelligence Tools</p>
+          <button className="w-full py-2 bg-white text-[#635bff] rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-colors">Upgrade Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// --- 2. Compose View ---
+const ComposeView = ({ displayedPrompt, step }: { displayedPrompt: string, step: number }) => (
+  <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in duration-500 overflow-hidden">
+    <div className="lg:col-span-7 flex flex-col gap-4 min-h-0">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold tracking-tight text-[#1a1f36]">New Campaign</h2>
+        <button className="p-1 px-3 bg-[#635bff]/5 border border-[#635bff]/10 rounded-lg text-[9px] font-black text-[#635bff] uppercase tracking-widest flex items-center gap-1.5 whitespace-nowrap">
+           <Bot className="w-3 h-3" /> AI Assist
+        </button>
+      </div>
+
+      <div className="bg-white rounded-xl border border-[#e3e8ef] shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+         <div className="flex items-center gap-2 p-3 border-b border-[#f0f3f7] bg-[#f6f9fc] shrink-0">
+            <div className="flex -space-x-1 border-r border-[#e3e8ef] pr-3 mr-1">
+               <FaXTwitter className="w-5 h-5 p-1 rounded bg-black text-white" />
+               <FaInstagram className="w-5 h-5 p-1 rounded bg-[#E1306C] text-white" />
+            </div>
+            <div className="flex items-center gap-3 overflow-hidden">
+               <span className="text-[9px] text-[#697386] font-bold flex items-center gap-1 whitespace-nowrap"><Wand2 className="w-3 h-3" /> Enhance</span>
+               <span className="text-[9px] text-[#697386] font-bold flex items-center gap-1 whitespace-nowrap"><Sparkles className="w-3 h-3" /> Hashtags</span>
+            </div>
+         </div>
+         <div className="p-5 flex-1 relative overflow-y-auto custom-scrollbar">
+            <p className="text-sm text-[#1a1f36] leading-relaxed whitespace-pre-wrap font-medium">
+               {displayedPrompt || "Your post content will appear here as AI generates it..."}
+               {step === 0 && displayedPrompt && <span className="inline-block w-1.5 h-4 bg-[#635bff] ml-1 animate-pulse" />}
+            </p>
+         </div>
+         <div className="p-3 bg-[#f6f9fc] border-t border-[#f0f3f7] flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+               <div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
+               <span className="text-[9px] font-black text-[#1a1f36] uppercase tracking-widest">Optimized</span>
+            </div>
+            <span className="text-[9px] font-bold text-[#8792a2]">{displayedPrompt.length}/280</span>
+         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 shrink-0">
+         <div className="p-3 rounded-xl border border-[#e3e8ef] bg-white flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center shrink-0">
+               <CalendarIcon className="w-3.5 h-3.5 text-orange-600" />
+            </div>
+            <div className="min-w-0">
+               <p className="text-[8px] font-black text-[#8792a2] uppercase tracking-widest leading-none mb-0.5 whitespace-nowrap">Schedule</p>
+               <p className="text-[11px] font-bold text-[#1a1f36] truncate">Aug 12, 10:00 AM</p>
+            </div>
+         </div>
+         <div className="p-3 rounded-xl border border-[#e3e8ef] bg-white flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
+               <TrendingUp className="w-3.5 h-3.5 text-green-600" />
+            </div>
+            <div className="min-w-0">
+               <p className="text-[8px] font-black text-[#8792a2] uppercase tracking-widest leading-none mb-0.5 whitespace-nowrap">Impact</p>
+               <p className="text-[11px] font-bold text-[#09825d] whitespace-nowrap">High Forecast</p>
+            </div>
+         </div>
+      </div>
+    </div>
+
+    <div className="lg:col-span-5 flex flex-col min-h-0">
+       <div className="flex items-center justify-between mb-3 shrink-0">
+          <p className="text-[10px] font-black text-[#8792a2] uppercase tracking-widest">Live Preview</p>
+          <Settings className="w-3.5 h-3.5 text-[#c4cdd6]" />
+       </div>
+       <div className="flex-1 bg-white rounded-2xl border border-[#e3e8ef] shadow-xl overflow-y-auto p-5 font-sans custom-scrollbar">
+          <div className="flex gap-3">
+             <div className="w-10 h-10 rounded-full bg-slate-100 border border-black/5 flex items-center justify-center font-bold text-[#3c4257] shrink-0">R</div>
+             <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-1.5 leading-none">
+                   <p className="text-[14px] font-bold text-[#1a1f36] whitespace-nowrap">Resort Growth</p>
+                   <p className="text-[14px] text-[#536471] truncate">@resort_social</p>
+                </div>
+                <div className="mt-2 text-[14px] text-[#1a1f36] leading-[1.3] whitespace-pre-wrap">
+                   {displayedPrompt || "Predicting engagement patterns..."}
+                   {step === 0 && <span className="inline-block w-1.5 h-3.5 bg-[#635bff] ml-1 animate-pulse" />}
+                </div>
+                <div className="mt-4 aspect-[16/9] bg-slate-50 border border-[#e3e8ef] rounded-xl flex items-center justify-center relative overflow-hidden group/preview shrink-0">
+                   <Sparkles className="w-6 h-6 text-[#635bff] opacity-20" />
+                   <div className="absolute inset-0 bg-gradient-to-tr from-[#635bff]/5 via-transparent to-transparent" />
+                </div>
+                <div className="mt-4 flex items-center justify-between text-[#536471]">
+                   <MessageCircle className="w-4 h-4" />
+                   <Repeat2 className="w-4 h-4" />
+                   <Heart className="w-4 h-4" />
+                   <Bookmark className="w-4 h-4" />
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+  </div>
+);
+
+// --- 3. Calendar View ---
+const CalendarView = () => {
+  const days = Array.from({ length: 35 }, (_, i) => i + 1);
+  
+  // Diverse schedules for a high-fidelity look
+  const getSchedules = (day: number) => {
+    if (day === 4) return [{ icon: FaInstagram, color: "#E1306C", label: "IG" }];
+    if (day === 8) return [{ icon: SiTiktok, color: "#000000", label: "TT" }];
+    if (day === 12) return [{ icon: FaXTwitter, color: "#000000", label: "X" }];
+    if (day === 14) return [
+      { icon: FaInstagram, color: "#E1306C", label: "IG" },
+      { icon: FaFacebookF, color: "#1877F2", label: "FB" }
+    ];
+    if (day === 18) return [{ icon: FaLinkedinIn, color: "#0077B5", label: "LI" }];
+    if (day === 22) return [{ icon: SiTiktok, color: "#000000", label: "TT" }];
+    if (day === 26) return [{ icon: FaInstagram, color: "#E1306C", label: "IG" }];
+    if (day === 29) return [{ icon: FaYoutube, color: "#FF0000", label: "YT" }];
+    return [];
+  };
+
+  return (
+    <div className="h-full flex flex-col gap-6 animate-in fade-in duration-500 overflow-hidden">
+      <div className="flex items-end justify-between px-1 shrink-0">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8792a2] mb-1.5">Schedule</p>
+          <h2 className="text-2xl font-bold tracking-tight text-[#1a1f36]">Campaign Calendar</h2>
+        </div>
+        <div className="flex items-center gap-2">
+           <div className="flex bg-[#f6f9fc] border border-[#e3e8ef] rounded-lg p-1 shrink-0">
+              <button className="px-2 py-1 bg-white shadow-sm border border-[#e3e8ef] rounded-md text-[9px] font-black text-[#1a1f36] uppercase tracking-widest whitespace-nowrap">Month</button>
+           </div>
+        </div>
+      </div>
+
+      <div className="flex-1 bg-white rounded-2xl border border-[#e3e8ef] overflow-hidden shadow-sm flex flex-col min-h-0">
+        <div className="grid grid-cols-7 border-b border-[#f0f3f7] bg-[#fcfdfe] shrink-0">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
+            <div key={day} className="py-2.5 text-center border-r border-[#f0f3f7] last:border-r-0">
+              <span className="text-[8px] font-black text-[#8792a2] uppercase tracking-[0.15em]">{day}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex-1 grid grid-cols-7 overflow-y-auto custom-scrollbar">
+          {days.map((day, i) => {
+             const actualDay = (day % 31) + 1;
+             const schedules = getSchedules(day);
+             return (
+               <div key={i} className={cn(
+                  "min-h-[75px] border-r border-b border-[#f0f3f7] p-1.5 hover:bg-[#fcfdfe] transition-colors last:border-r-0 relative group",
+                  day > 31 && "bg-[#f8fafc]/50"
+               )}>
+                 <span className={cn("text-[10px] font-bold", [4, 14, 29].includes(day) ? "text-[#635bff]" : "text-[#d1d5db]")}>{actualDay}</span>
+                 {schedules.length > 0 && (
+                    <div className="mt-1 space-y-0.5">
+                       {schedules.map((s, idx) => (
+                          <div key={idx} className="flex items-center gap-1 p-0.5 rounded bg-white border border-[#e3e8ef] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+                             <s.icon className="w-2 h-2 shrink-0" style={{ color: s.color }} />
+                             <span className="text-[6.5px] font-black text-[#1a1f36] leading-none truncate tracking-tighter">{s.label}·9:00A</span>
+                          </div>
+                       ))}
+                    </div>
+                 )}
+               </div>
+             );
+          })}
+        </div>
+      </div>
+    </div>
+  );
 };
 
-const OverviewView = () => {
-   const stats = [
-      { label: "Direct Revenue", value: "312.4", prefix: "$", suffix: "k", change: "+14%", icon: TrendingUp, color: "#635bff" },
-      { label: "Guest Reach", value: "248.0", suffix: "k", change: "+12%", icon: Share2, color: "#f5a623" },
-      { label: "Booking Rate", value: "14.2", suffix: "%", change: "+4.1%", icon: Target, color: "#09825d" },
-      { label: "AI Resolution", value: "98.4", suffix: "%", change: "+2%", icon: Zap, color: "#1a1f36" },
-   ];
-   const activities = [
-      { id: 1, label: "Campaign Published", detail: "Social Hub", time: "2m", dot: "#09825d" },
-      { id: 2, label: "AI Search", detail: "Booking Gap", time: "15m", dot: "#635bff" },
-      { id: 3, label: "Reply Sent", detail: "Spa Inquiry", time: "1h", dot: "#f5a623" },
-   ];
-   const connections = [
-      { platform: "Instagram", icon: FaInstagram, color: "#E1306C", active: true },
-      { platform: "Facebook", icon: FaFacebook, color: "#1877F2", active: true },
-      { platform: "TikTok", icon: FaTiktok, color: "#000000", active: true },
-   ];
+// --- 4. Connections View ---
+const ConnectionsView = () => {
+    const [connectState, setConnectState] = useState<'idle' | 'linking' | 'connected'>('idle');
 
-   return (
-      <motion.div initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.1 } } }} className="flex-1 flex flex-col gap-5">
-         {/* Stats Grid */}
-         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {stats.map((stat) => (
-               <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} key={stat.label} className="bg-white rounded-xl border border-[#eceff3] p-4 shadow-stripe overflow-hidden relative">
-                  <div className="flex items-center justify-between mb-2">
-                     <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-widest">{stat.label}</p>
-                     <stat.icon className="w-3 h-3 text-[#8792a2]" />
-                  </div>
-                  <h4 className="text-xl font-black text-[#1a1f36] mb-1">
-                     <CountUp value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
-                  </h4>
-                  <span className="text-[9px] font-black text-[#008a00] bg-[#e6f4e6] px-1.5 py-0.5 rounded-full">{stat.change}</span>
-               </motion.div>
-            ))}
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setConnectState(prev => prev === 'connected' ? 'idle' : prev === 'idle' ? 'linking' : 'connected');
+        }, 3500);
+        return () => clearInterval(timer);
+    }, []);
+
+    const connectedOthers = [
+        { platform: "Instagram", account: "@luxuryresort_ig", icon: FaInstagram, color: "#E1306C", bg: "#fef1f5", status: "Active" },
+        { platform: "LinkedIn", account: "Resort Elite", icon: FaLinkedinIn, color: "#0077B5", bg: "#f0f7fb", status: "Active" },
+        { platform: "TikTok", account: "@resortreelz", icon: SiTiktok, color: "#000000", bg: "#f6f9fc", status: "Syncing" }
+    ];
+
+    const available = [
+        { platform: "Facebook", icon: FaFacebookF, color: "#1877F2", bg: "#f0f4fd" },
+        { platform: "YouTube", icon: FaYoutube, color: "#FF0000", bg: "#fff1f1" }
+    ];
+
+    return (
+        <div className="h-full flex flex-col gap-6 animate-in fade-in duration-500 overflow-hidden">
+            <div className="flex items-end justify-between px-1 shrink-0">
+                <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8792a2] mb-1.5">Network</p>
+                    <h2 className="text-2xl font-bold tracking-tight text-[#1a1f36]">Platform Ecosystem</h2>
+                </div>
+                <div className="h-9 px-4 bg-[#f6f9fc] border border-[#e3e8ef] rounded-full flex items-center gap-2">
+                    <Shield className="w-3.5 h-3.5 text-[#09825d]" />
+                    <span className="text-[9px] font-black text-[#1a1f36] uppercase tracking-widest">Enterprise Encrypted</span>
+                </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                <div className="space-y-8">
+                    {/* Active Connections */}
+                    <section>
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="text-[11px] font-black text-[#3c4257] uppercase tracking-widest">Active Channels</span>
+                            <div className="h-px flex-1 bg-[#f0f3f7]" />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                            {/* Dynamic X Connection Card */}
+                            <div className="bg-white rounded-xl border border-[#e3e8ef] p-5 shadow-sm group relative overflow-hidden transition-all flex items-center gap-4 min-h-[100px]">
+                                <div className={cn(
+                                    "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-700 shadow-inner",
+                                    connectState === 'idle' ? "bg-slate-100 grayscale border border-[#e3e8ef]" : "bg-black"
+                                )}>
+                                    <FaXTwitter className={cn("w-7 h-7", connectState === 'idle' ? "text-[#8792a2]" : "text-white")} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <p className="text-[14px] font-black text-[#1a1f36] tracking-tight">Twitter / X</p>
+                                        <AnimatePresence mode="wait">
+                                            <motion.div 
+                                                key={connectState}
+                                                initial={{ opacity: 0, x: 5 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                className={cn(
+                                                    "px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest",
+                                                    connectState === 'connected' ? "bg-[#e7f6f2] text-[#09825d]" : "bg-[#f6f9fc] text-[#8792a2]"
+                                                )}
+                                            >
+                                                {connectState === 'idle' ? 'Disconnected' : connectState === 'linking' ? 'Syncing' : 'Live'}
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                        <p className="text-[11px] font-bold text-[#8792a2] truncate">
+                                            {connectState === 'idle' ? 'Awaiting authorization' : connectState === 'linking' ? 'Refreshing tokens...' : '@resortgrowth'}
+                                        </p>
+                                        {connectState === 'connected' && (
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex h-1 flex-1 bg-[#e3e8ef] rounded-full overflow-hidden">
+                                                    <motion.div initial={{ width: 0 }} animate={{ width: '84%' }} className="bg-[#09825d] h-full" />
+                                                </div>
+                                                <span className="text-[8px] font-black text-[#8792a2]">84% Health</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {connectedOthers.map((conn, i) => (
+                                <div key={i} className="bg-white rounded-xl border border-[#e3e8ef] p-5 shadow-sm flex items-center gap-4 min-h-[100px]">
+                                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner" style={{ background: conn.bg }}>
+                                        <conn.icon className="w-7 h-7" style={{ color: conn.color }} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <p className="text-[14px] font-black text-[#1a1f36] tracking-tight">{conn.platform}</p>
+                                            <div className="px-2 py-0.5 rounded bg-[#e7f6f2] text-[#09825d] text-[8px] font-black uppercase tracking-widest">
+                                                {conn.status}
+                                            </div>
+                                        </div>
+                                        <p className="text-[11px] font-bold text-[#8792a2] truncate">{conn.account}</p>
+                                        <div className="mt-2.5 flex items-center gap-3">
+                                            <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" /><span className="text-[8px] font-bold text-[#8792a2]">Verified</span></div>
+                                            <div className="flex items-center gap-1"><Clock className="w-2.5 h-2.5 text-[#c4cdd6]" /><span className="text-[8px] font-bold text-[#8792a2]">12m ago</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Available Platforms */}
+                    <section className="opacity-60">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="text-[11px] font-black text-[#8792a2] uppercase tracking-widest">Available Channels</span>
+                            <div className="h-px flex-1 bg-[#f0f3f7]" />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                            {available.map((conn, i) => (
+                                <div key={i} className="bg-[#fcfdfe] rounded-xl border border-[#e3e8ef] border-dashed p-5 flex items-center gap-4 group hover:border-[#635bff] transition-colors cursor-pointer">
+                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center grayscale group-hover:grayscale-0 transition-all" style={{ background: conn.bg }}>
+                                        <conn.icon className="w-6 h-6" style={{ color: conn.color }} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-[13px] font-bold text-[#697386] tracking-tight group-hover:text-[#1a1f36]">{conn.platform}</p>
+                                        <p className="text-[10px] font-medium text-[#8792a2]">Click to authorize</p>
+                                    </div>
+                                    <Plus className="w-4 h-4 text-[#c1c9d2] group-hover:text-[#635bff]" />
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- 5. Analytics View (TikTok Focused) ---
+const AnalyticsView = () => (
+   <div className="space-y-8 animate-in fade-in duration-500 overflow-hidden h-full flex flex-col min-h-0">
+     <div className="flex items-end justify-between px-1 shrink-0">
+       <div className="flex items-center gap-3">
+         <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center text-white">
+            <SiTiktok className="w-5 h-5" />
          </div>
-
-         {/* Middle Row */}
-         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <motion.div variants={{ hidden: { opacity: 0, x: -10 }, show: { opacity: 1, x: 0 } }} className="lg:col-span-2 bg-white rounded-2xl border border-[#e3e8ef] shadow-sm flex flex-col min-h-[180px]">
-               <div className="px-5 py-3 border-b border-[#f0f3f7] flex items-center justify-between"><h5 className="text-[11px] font-black text-[#1a1f36] uppercase tracking-widest">Orchestration</h5></div>
-               <div className="divide-y divide-[#f0f3f7] flex-1">
-                  {activities.map((activity) => (
-                     <div key={activity.id} className="flex items-center gap-4 px-5 py-2.5 hover:bg-[#f6f9fc] transition-colors group cursor-pointer">
-                        <div className="w-6 h-6 rounded-lg bg-[#f6f9fc] border border-[#e3e8ef] flex items-center justify-center shrink-0"><div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: activity.dot }} /></div>
-                        <div className="flex-1 min-w-0"><p className="text-[11px] font-black text-[#1a1f36] truncate">{activity.label}</p></div>
-                        <span className="text-[9px] font-black text-[#8792a2]">{activity.time}</span>
-                     </div>
-                  ))}
-               </div>
-            </motion.div>
-            <motion.div variants={{ hidden: { opacity: 0, x: 10 }, show: { opacity: 1, x: 0 } }} className="bg-[#fcfdfe] rounded-2xl border border-[#e3e8ef] shadow-sm flex flex-col h-full">
-               <div className="px-5 py-3 border-b border-[#f0f3f7]"><h5 className="text-[11px] font-black text-[#1a1f36] uppercase tracking-widest">Status</h5></div>
-               <div className="divide-y divide-[#f0f3f7] flex-1">
-                  {connections.map((account) => (
-                     <div key={account.platform} className="flex items-center gap-3 px-5 py-2.5">
-                        <account.icon className="w-3.5 h-3.5" style={{ color: account.color }} />
-                        <span className="text-[10px] font-black text-[#1a1f36] flex-1">{account.platform}</span>
-                        <div className={cn("w-1.5 h-1.5 rounded-full", account.active ? "bg-[#09825d]" : "bg-[#8792a2]")} />
-                     </div>
-                  ))}
-               </div>
-            </motion.div>
+         <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8792a2] mb-0.5 whitespace-nowrap">TikTok Intel</p>
+            <h2 className="text-xl font-bold tracking-tight text-[#1a1f36] whitespace-nowrap">Video Performance</h2>
          </div>
+       </div>
+     </div>
 
-         {/* Enterprise Strip */}
-         <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
-            <div className="relative rounded-2xl overflow-hidden px-6 py-4 flex items-center justify-between gap-4" style={{ background: "linear-gradient(135deg, #635bff 0%, #302681 100%)" }}>
-               <div className="relative z-10 flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 shadow-2xl backdrop-blur-md"><Zap className="w-5 h-5 text-white" /></div>
-                  <div>
-                     <p className="text-sm font-black text-white mb-0.5">Unlock Enterprise</p>
-                     <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">Multi-property orchestration</p>
-                  </div>
-               </div>
-               <Button className="relative z-10 h-9 px-6 rounded-lg bg-white text-[#1a1f36] font-black text-[10px] uppercase tracking-widest hover:bg-white/90 shadow-xl transition-all active:scale-95">Upgrade</Button>
+     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
+       {[
+         { label: "Video Views", value: "842.1k", change: "+45%", icon: Play, color: "#000000" },
+         { label: "Completion", value: "68.4%", change: "+5.2%", icon: Target, color: "#000000" },
+         { label: "Shares", value: "12.4k", change: "+18%", icon: Share2, color: "#000000" },
+         { label: "Sound Attribution", value: "2.5k", change: "+24%", icon: Wand2, color: "#000000" }
+       ].map((stat, i) => (
+         <motion.div 
+            initial={{ opacity: 0, y: 10 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: i * 0.1 }}
+            key={i} 
+            className="bg-white rounded-xl border border-[#e3e8ef] p-4 shadow-sm relative overflow-hidden group"
+         >
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-3">
+                 <stat.icon className="w-4 h-4 text-[#8792a2] group-hover:scale-110 transition-all" />
+                 <span className="text-[9px] font-black text-[#09825d] bg-[#efffee] px-1.5 py-0.5 rounded uppercase">{stat.change}</span>
+              </div>
+              <p className="text-xl font-bold text-[#1a1f36] tabular-nums mb-0.5">{stat.value}</p>
+              <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-widest">{stat.label}</p>
             </div>
          </motion.div>
-      </motion.div>
-   );
-};
+       ))}
+     </div>
 
-const AnalyticsView = () => {
-   const data = [
-      { name: "Week 1", rev: 4000, bookings: 240, roi: 12 },
-      { name: "Week 2", rev: 3000, bookings: 139, roi: 15 },
-      { name: "Week 3", rev: 2000, bookings: 980, roi: 8 },
-      { name: "Week 4", rev: 2780, bookings: 390, roi: 10 },
-      { name: "Week 5", rev: 1890, bookings: 480, roi: 14 },
-      { name: "Week 6", rev: 2390, bookings: 380, roi: 13 },
-      { name: "Week 7", rev: 3490, bookings: 430, roi: 18 },
-   ];
-
-   return (
-      <motion.div initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.1 } } }} className="flex-1 flex flex-col gap-5 h-full overflow-hidden">
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1 min-h-0">
-            {/* Main Yield Chart */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="bg-white rounded-2xl border border-[#eceff3] p-5 shadow-sm flex flex-col overflow-hidden">
-               <div className="flex items-center justify-between mb-4">
-                  <div>
-                     <p className="text-[10px] font-black text-[#8792a2] uppercase tracking-[0.2em] mb-1">Weekly Yield Performance</p>
-                     <h4 className="text-xl font-black text-[#1a1f36]">RevPAR Growth</h4>
-                  </div>
-                  <div className="flex gap-2">
-                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#efffee] border border-[#09825d]/20"><div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" /><span className="text-[9px] font-black text-[#09825d]">+12.4%</span></div>
-                  </div>
-               </div>
-               <div className="flex-1 min-h-[140px] -ml-6">
-                  <ResponsiveContainer width="100%" height="100%">
-                     <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs><linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#635bff" stopOpacity={0.2}/><stop offset="95%" stopColor="#635bff" stopOpacity={0}/></linearGradient></defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f3f7" />
-                        <XAxis dataKey="name" hide />
-                        <YAxis hide />
-                        <Tooltip content={({ active, payload }) => {
-                           if (active && payload && payload.length) {
-                              const dataPoint = payload[0].payload;
-                              return <div className="bg-[#1a1f36] px-3 py-2 rounded-xl shadow-2xl border border-white/10"><p className="text-[10px] font-black text-white/50 uppercase tracking-widest mb-1">{dataPoint?.name}</p><p className="text-lg font-black text-white">${payload[0].value?.toLocaleString()}</p></div>;
-                           }
-                           return null;
-                        }} />
-                        <Area type="monotone" dataKey="rev" stroke="#635bff" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
-                     </AreaChart>
-                  </ResponsiveContainer>
-               </div>
-            </motion.div>
-
-            {/* Sub Charts */}
-            <div className="flex flex-col gap-5 overflow-hidden">
-               <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="flex-1 bg-white rounded-2xl border border-[#eceff3] p-5 shadow-sm flex flex-col min-h-[100px]">
-                  <div className="flex items-center justify-between mb-4">
-                     <p className="text-[10px] font-black text-[#8792a2] uppercase tracking-[0.2em]">Booking Distribution</p>
-                     <BarChart3 className="w-3.5 h-3.5 text-[#8792a2]" />
-                  </div>
-                  <div className="flex-1 -ml-4">
-                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data}>
-                           <Bar dataKey="bookings" radius={[4, 4, 0, 0]}>
-                              {data.map((entry, index) => <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#635bff" : "#e3e8ef"} />)}
-                           </Bar>
-                        </BarChart>
-                     </ResponsiveContainer>
-                  </div>
-               </motion.div>
-               <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="flex-1 bg-[#fcfdfe] rounded-2xl border border-[#eceff3] p-5 shadow-sm flex flex-col min-h-[100px]">
-                  <p className="text-[10px] font-black text-[#8792a2] uppercase tracking-[0.2em] mb-4">Marketing ROI Profile</p>
-                  <div className="grid grid-cols-2 gap-4">
-                     <div><p className="text-[9px] font-bold text-[#8792a2] uppercase tracking-widest mb-1">Conversion</p><h5 className="text-2xl font-black text-[#1a1f36]">18.4%</h5></div>
-                     <div><p className="text-[9px] font-bold text-[#8792a2] uppercase tracking-widest mb-1">AI Efficiency</p><h5 className="text-2xl font-black text-[#09825d]">98%</h5></div>
-                  </div>
-               </motion.div>
-            </div>
-         </div>
-      </motion.div>
-   );
-};
-
-const ComposeView = () => {
-   const [text, setText] = useState("");
-   const [status, setStatus] = useState("Drafting");
-   const fullText = "Escape to paradise this weekend! 🌴 Our Luxury Spa Suites are opening up for a special mid-week booking. Use code 'SUNSET15' for exclusive rates. #ResortLife #LuxuryTravel";
-
-   useEffect(() => {
-      let i = 0;
-      const interval = setInterval(() => {
-         setText(fullText.slice(0, i));
-         i++;
-         if (i > fullText.length) {
-            clearInterval(interval);
-            setTimeout(() => setStatus("Scheduled"), 1000);
-         }
-      }, 30);
-      return () => clearInterval(interval);
-   }, []);
-
-   return (
-      <div className="flex-1 flex gap-8 h-full">
-         <div className="flex-1 p-8 bg-[#fcfdfe] border border-[#e3e8ef] rounded-[2.5rem] flex flex-col gap-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-               <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#635bff] flex items-center justify-center text-white"><PenSquare className="w-5 h-5" /></div>
-                  <h4 className="font-black text-lg text-[#1a1f36]">Design Campaign</h4>
-               </div>
-               <div className="px-4 py-1.5 rounded-full bg-[#efffee] text-[10px] font-black text-[#09825d] uppercase tracking-widest flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#09825d] animate-pulse" />
-                  {status}
-               </div>
-            </div>
-            <div className="flex-1 bg-white border border-[#e3e8ef] rounded-xl p-4 relative overflow-hidden group">
-               <p className="text-[12px] font-medium text-[#1a1f36] leading-relaxed whitespace-pre-wrap">
-                  {text}
-                  <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} className="inline-block w-0.5 h-3.5 bg-[#635bff] ml-1 align-middle" />
-               </p>
-            </div>
-            <div className="flex items-center justify-between pt-3 border-t border-[#f0f3f7]">
-               <div className="flex items-center gap-2">
-                  {[FaInstagram, FaFacebook, FaTiktok].map((Icon, i) => (
-                     <div key={i} className="w-7 h-7 rounded-lg bg-slate-50 border border-[#e3e8ef] flex items-center justify-center text-[#8792a2]"><Icon className="w-3.5 h-3.5" /></div>
-                  ))}
-               </div>
-               <Button className={cn("h-10 px-6 rounded-lg font-black text-[10px] gap-2 transition-all active:scale-95", status === "Scheduled" ? "bg-[#09825d] hover:bg-[#09825d]" : "bg-[#1a1f36] hover:bg-black")}>
-                  {status === "Scheduled" ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Send className="w-3.5 h-3.5" />}
-                  {status === "Scheduled" ? "QUEUED" : "SCHEDULE"}
-               </Button>
-            </div>
-         </div>
-         <div className="w-72 group flex flex-col h-full">
-            <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-[0.2em] mb-3 px-2">Live Preview</p>
-            <div className="bg-white border border-[#e3e8ef] rounded-[2rem] shadow-sm overflow-hidden flex flex-col flex-1 transform transition-transform group-hover:scale-[1.01]">
-               <div className="h-36 bg-slate-100 relative overflow-hidden shrink-0">
-                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=600')] bg-cover bg-center" />
-               </div>
-               <div className="p-4 space-y-3 flex-1 overflow-hidden">
-                  <div className="flex items-center gap-2">
-                     <div className="w-5 h-5 rounded-full bg-slate-200" />
-                     <span className="text-[10px] font-black text-[#1a1f36]">luxe_resort</span>
-                  </div>
-                  <p className="text-[10px] font-medium text-[#697386] line-clamp-4 leading-relaxed">{text}</p>
-               </div>
-            </div>
-         </div>
-      </div>
-   );
-};
-
-const CalendarView = () => (
-   <div className="flex-1 p-6 bg-[#fcfdfe] border border-[#e3e8ef] rounded-[2rem] flex flex-col shadow-sm h-full overflow-hidden">
-      <div className="flex items-center justify-between mb-4 px-1">
-         <div className="flex items-center gap-3">
-            <CalendarIcon className="w-5 h-5 text-[#635bff]" />
-            <h4 className="font-black text-md text-[#1a1f36]">Schedule</h4>
-         </div>
-         <div className="flex items-center gap-1.5">
-            <Button variant="ghost" size="sm" className="h-7 text-[9px] font-black uppercase text-[#8792a2] border border-[#e3e8ef] rounded-md">Month</Button>
-            <Button variant="ghost" size="sm" className="h-7 text-[9px] font-black uppercase text-white bg-[#1a1f36] rounded-md">Week</Button>
-         </div>
-      </div>
-      <div className="flex-1 grid grid-cols-7 gap-4">
-         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-            <div key={day} className="text-center text-[10px] font-black text-[#8792a2] uppercase tracking-[0.2em] pb-2 border-b border-[#f0f3f7]">{day}</div>
-         ))}
-         {Array.from({ length: 14 }).map((_, i) => (
-            <div key={i} className="bg-white border border-[#f0f3f7] rounded-2xl p-3 flex flex-col gap-2 min-h-[90px] relative group hover:border-[#635bff]/20 transition-all hover:shadow-md cursor-pointer">
-               <span className={cn("text-[10px] font-black", i === 3 ? "text-[#635bff]" : "text-[#8792a2]")}>{12 + i}</span>
-               {i === 3 && (
-                  <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="p-2 rounded-xl bg-[#eff6ff] border border-[#635bff]/10 space-y-1">
-                     <p className="text-[8px] font-black text-[#635bff] uppercase truncate">Spa Promo</p>
-                     <div className="flex gap-1">
-                        <FaInstagram className="w-2.5 h-2.5 text-[#635bff]/60" />
-                        <FaFacebook className="w-2.5 h-2.5 text-[#635bff]/60" />
-                     </div>
-                  </motion.div>
-               )}
-               {i === 5 && (
-                  <div className="p-2 rounded-xl bg-[#efffee] border border-[#09825d]/10 space-y-1 opacity-60">
-                     <p className="text-[8px] font-black text-[#09825d] uppercase truncate">Tour Reel</p>
-                     <FaTiktok className="w-2.5 h-2.5 text-[#09825d]/60" />
-                  </div>
-               )}
-            </div>
-         ))}
-      </div>
+     <div className="flex-1 bg-white rounded-2xl border border-[#e3e8ef] p-6 shadow-sm relative overflow-hidden min-h-0 flex flex-col">
+        <div className="flex items-center justify-between mb-6 shrink-0">
+           <h3 className="text-[11px] font-black text-[#1a1f36] uppercase tracking-widest">Global Retention Velocity</h3>
+           <div className="flex gap-4">
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#635bff]" /><span className="text-[9px] font-bold text-[#3c4257]">TikTok</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-slate-200" /><span className="text-[9px] font-bold text-[#3c4257]">Benchmark</span></div>
+           </div>
+        </div>
+        
+        <div className="flex-1 relative min-h-[120px]">
+           <svg className="w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+              <motion.path
+                 initial={{ pathLength: 0 }}
+                 animate={{ pathLength: 1 }}
+                 transition={{ duration: 1.5, ease: "easeOut" }}
+                 d="M 50 180 C 150 100, 300 150, 450 50 S 650 100, 750 20"
+                 fill="none"
+                 stroke="#635bff"
+                 strokeWidth="4"
+                 strokeLinecap="round"
+              />
+              <motion.path
+                 initial={{ pathLength: 0, opacity: 0 }}
+                 animate={{ pathLength: 1, opacity: 0.3 }}
+                 transition={{ duration: 2, delay: 0.3 }}
+                 d="M 50 180 C 150 120, 300 160, 450 80 S 650 120, 750 60"
+                 fill="none"
+                 stroke="#cbd5e1"
+                 strokeWidth="2"
+                 strokeDasharray="6 6"
+              />
+           </svg>
+           
+           <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 1.5, type: 'spring' }}
+              className="absolute top-[20px] right-[5%] bg-black text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-2"
+           >
+              <TrendingUp className="w-3 h-3 text-[#09825d]" />
+              <span className="text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Viral Probability: 84%</span>
+           </motion.div>
+        </div>
+     </div>
    </div>
 );
 
-const ConnectionsView = () => (
-   <div className="flex-1 grid grid-cols-2 md:grid-cols-2 gap-4 p-1">
-      {[
-         { name: "Instagram", user: "@resort_luxe", icon: FaInstagram, color: "#E1306C" },
-         { name: "Facebook", user: "Resort Elite", icon: FaFacebook, color: "#1877F2" },
-         { name: "TikTok", user: "resort_vibe", icon: FaTiktok, color: "#000000" },
-         { name: "YouTube", user: "Resort TV", icon: FaYoutube, color: "#FF0000" }
-      ].map((p, i) => (
-         <div key={i} className="p-5 bg-white border border-[#eceff3] rounded-2xl shadow-sm group hover:scale-[1.01] transition-all flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-4">
-               <div className="w-10 h-10 rounded-lg bg-[#f6f9fc] flex items-center justify-center border border-[#e3e8ef] group-hover:border-black/10 transition-colors">
-                  <p.icon className="w-5 h-5" style={{ color: p.color }} />
-               </div>
-               <div className="px-2.5 py-0.5 rounded-full bg-[#e6f4e6] text-[8px] font-black text-[#008a00] uppercase tracking-widest flex items-center gap-1">
-                  <div className="w-1 h-1 rounded-full bg-[#008a00]" />
-                  LIVE
-               </div>
-            </div>
-            <div>
-               <h4 className="text-[13px] font-black text-[#1a1f36]">{p.name}</h4>
-               <p className="text-[11px] font-medium text-[#697386] truncate">{p.user}</p>
-            </div>
-            <div className="mt-4 flex gap-2">
-               <Button size="sm" variant="outline" className="flex-1 h-8 px-2 rounded-md font-black text-[9px] uppercase tracking-widest border-[#f0f3f7]">Sync</Button>
-            </div>
-         </div>
-      ))}
-   </div>
-);
+// --- 6. Auto-Reply View (Social Multi-Animation) ---
+const AutoReplyView = () => {
+    const [activeComment, setActiveComment] = useState(0);
+    const [replyStep, setReplyStep] = useState<'comment' | 'thinking' | 'reply'>('comment');
 
-const AutoReplyView = () => (
-   <div className="max-w-3xl mx-auto w-full flex flex-col gap-4">
-      <div className="p-5 bg-[#f6f9fc] border border-[#e3e8ef] rounded-[1.5rem] flex items-center justify-between">
-         <div className="flex items-center gap-3">
-             <div className="w-9 h-9 rounded-full bg-[#635bff] flex items-center justify-center text-white shadow-lg shadow-[#635bff]/20"><Zap className="w-4.5 h-4.5" /></div>
-             <div>
-                <p className="text-[10px] font-black text-[#1a1f36] uppercase tracking-widest leading-none mb-1">Reply Autopilot</p>
-                <p className="text-[9px] font-bold text-[#635bff] uppercase tracking-wider">AI Strategist ACTIVE</p>
-             </div>
-         </div>
-         <div className="h-1.5 w-24 bg-white rounded-full overflow-hidden shadow-inner">
-             <motion.div animate={{ width: ["0%", "100%", "0%"] }} transition={{ duration: 4, repeat: Infinity }} className="h-full bg-[#635bff]" />
-         </div>
-      </div>
-      
-      <div className="space-y-3">
-         {[
-            { user: "Sarah Sun", text: "How much per night for the pool villa?", time: "2m ago", platform: <FaInstagram className="w-3 h-3 text-pink-500" /> },
-            { user: "HotelExplorer", text: "Is there a gym?", time: "Just now", platform: <FaFacebook className="w-3 h-3 text-blue-600" /> }
-         ].map((chat, i) => (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.2 }} key={chat.user} className="flex flex-col gap-2">
-               <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-full bg-slate-100 border border-[#e3e8ef]" />
-                  <div className="flex-1">
-                     <p className="text-[10px] font-black text-[#1a1f36]">{chat.user}</p>
-                     <p className="text-[11px] font-medium text-[#697386]">{chat.text}</p>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                     {chat.platform} <span className="text-[9px] font-bold text-[#8792a2]">{chat.time}</span>
-                  </div>
-               </div>
-               <div className="ml-10 p-4 bg-white border border-[#e3e8ef] rounded-xl relative shadow-sm">
-                  <div className="absolute top-4 -left-1.5 w-2.5 h-2.5 bg-white rotate-45 border-l border-b border-[#e3e8ef]" />
-                  <div className="flex items-center gap-2 mb-1.5">
-                     <Zap className="w-2.5 h-2.5 text-[#635bff]" />
-                     <span className="text-[8px] font-black text-[#635bff] uppercase tracking-widest">Resort AI</span>
-                     <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-1 h-1 rounded-full bg-[#008a00]" />
-                  </div>
-                  <p className="text-[10px] font-black text-[#1a1f36] leading-relaxed italic">
-                     "Hi {chat.user}! Our pool villas start at $450/night. You can check availability here: [Link]. Hope to see you!"
-                  </p>
-               </div>
-            </motion.div>
-         ))}
-      </div>
-   </div>
-);
+    const socialComments = [
+        { 
+            platform: 'Twitter', 
+            icon: FaXTwitter, 
+            color: '#000000', 
+            user: '@beachlover', 
+            postContext: "Our infinity pool is now open until 10 PM. Come for the sunset, stay for the stars. ✨",
+            text: "Is the pool heated in Oct?", 
+            reply: "Yes! Both our Infinity and Garden pools stay at a cozy 82°F year-round." 
+        },
+        { 
+            platform: 'Instagram', 
+            icon: FaInstagram, 
+            color: '#E1306C', 
+            user: 'adventure_sue', 
+            postContext: "Weekend wellness: Book any massage and get a complimentary detox shot. 🍵",
+            text: "Do you have any spa openings for Saturday?", 
+            reply: "We have two slots left at 2:00 PM and 4:30 PM! Check the link in bio to book." 
+        },
+        { 
+            platform: 'Facebook', 
+            icon: FaFacebookF, 
+            color: '#1877F2', 
+            user: 'Mark Thompson', 
+            postContext: "Sharing some guest favorites from last week's seafood night! 🦞",
+            text: "The stay was amazing, can't wait to return!", 
+            reply: "Thank you Mark! We've added a returning guest credit to your account." 
+        }
+    ];
+
+    useEffect(() => {
+        const sequence = async () => {
+            setReplyStep('comment');
+            await new Promise(r => setTimeout(r, 2000));
+            setReplyStep('thinking');
+            await new Promise(r => setTimeout(r, 1200));
+            setReplyStep('reply');
+            await new Promise(r => setTimeout(r, 4000));
+            setActiveComment(prev => (prev + 1) % socialComments.length);
+        };
+        sequence();
+    }, [activeComment]);
+
+    const current = socialComments[activeComment];
+
+    return (
+        <div className="h-full flex flex-col gap-6 animate-in fade-in duration-500 overflow-hidden">
+            <div className="flex items-end justify-between px-1 shrink-0">
+                <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8792a2] mb-1.5 whitespace-nowrap">Agent Activity</p>
+                    <h2 className="text-2xl font-bold tracking-tight text-[#1a1f36]">Autonomous Monitoring</h2>
+                </div>
+                <div className="h-10 px-4 bg-white border border-[#e3e8ef] rounded-xl flex items-center gap-3 shadow-sm shrink-0">
+                   <div className="w-2 h-2 rounded-full bg-[#09825d] animate-pulse" />
+                   <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-widest whitespace-nowrap">Resolving Live</span>
+                </div>
+            </div>
+
+            <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full min-h-0">
+                <AnimatePresence mode="wait">
+                    <motion.div 
+                        key={activeComment}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="space-y-6 w-full py-4"
+                    >
+                        {/* Reference Post Context */}
+                        <div className="relative p-5 bg-[#f8fafc] border border-[#e3e8ef] rounded-2xl overflow-hidden group">
+                           <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                              <current.icon className="w-8 h-8" style={{ color: current.color }} />
+                           </div>
+                           <div className="flex items-center gap-2 mb-2">
+                              <div className="w-5 h-5 rounded-full bg-slate-200" />
+                              <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-wider">Original Post</span>
+                           </div>
+                           <p className="text-[12px] text-[#4f566b] leading-relaxed italic font-medium">
+                              "{current.postContext}"
+                           </p>
+                        </div>
+
+                        {/* Comment Thread Line */}
+                        <div className="relative pl-12 space-y-6">
+                           <div className="absolute left-[20px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#e3e8ef] via-[#e3e8ef] to-transparent" />
+
+                           {/* Guest Comment */}
+                           <motion.div 
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              className="relative"
+                           >
+                              <div className="absolute -left-[32px] top-2 w-6 h-6 rounded-full bg-white border-2 border-[#e3e8ef] flex items-center justify-center overflow-hidden z-10">
+                                 <current.icon className="w-full h-full p-1.5" style={{ color: current.color }} />
+                              </div>
+                              <div className="space-y-1">
+                                 <div className="flex items-center gap-2">
+                                    <span className="text-[11px] font-black text-[#1a1f36]">{current.user}</span>
+                                    <span className="text-[9px] font-bold text-[#8792a2]">Commented</span>
+                                 </div>
+                                 <div className="p-3.5 bg-white border border-[#e3e8ef] rounded-2xl rounded-tl-none shadow-sm inline-block max-w-[90%]">
+                                    <p className="text-[13px] font-medium text-[#1a1f36] leading-relaxed">"{current.text}"</p>
+                                 </div>
+                              </div>
+                           </motion.div>
+
+                           {/* AI Reply */}
+                           <div className="relative min-h-[60px]">
+                              <AnimatePresence mode="wait">
+                                 {replyStep === 'thinking' && (
+                                    <motion.div 
+                                       initial={{ opacity: 0, scale: 0.95 }} 
+                                       animate={{ opacity: 1, scale: 1 }} 
+                                       exit={{ opacity: 0, scale: 0.95 }}
+                                       className="flex items-center gap-3 py-2"
+                                    >
+                                       <div className="w-8 h-8 rounded-full bg-[#635bff]/10 flex items-center justify-center">
+                                          <Bot className="w-4 h-4 text-[#635bff] animate-pulse" />
+                                       </div>
+                                       <span className="text-[10px] font-black text-[#635bff] uppercase tracking-widest">AI Agent is thinking...</span>
+                                    </motion.div>
+                                 )}
+
+                                 {replyStep === 'reply' && (
+                                    <motion.div 
+                                       initial={{ opacity: 0, y: 10 }}
+                                       animate={{ opacity: 1, y: 0 }}
+                                       className="space-y-1"
+                                    >
+                                       <div className="flex items-center gap-2">
+                                          <div className="w-5 h-5 rounded-full bg-[#635bff] flex items-center justify-center text-white">
+                                             <Bot className="w-3 h-3" />
+                                          </div>
+                                          <span className="text-[10px] font-black text-[#635bff] uppercase tracking-widest">Resort Assistant</span>
+                                          <div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
+                                       </div>
+                                       <div className="p-4 bg-[#635bff] text-white border border-[#635bff]/20 rounded-2xl rounded-tl-none shadow-lg shadow-[#635bff]/20 max-w-[90%]">
+                                          <p className="text-[13px] font-bold leading-relaxed italic">
+                                             "{current.reply}"
+                                          </p>
+                                       </div>
+                                    </motion.div>
+                                 )}
+                              </AnimatePresence>
+                           </div>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+        </div>
+    );
+};
 
 // --- AI Agent Sidebar ---
-
 const AIAgentPanel = ({ activeTab }: { activeTab: string }) => {
-   const [state, setState] = useState("Scanning");
-   const [feed, setFeed] = useState<{ text: string, status: string }[]>([]);
-   const [isExecuting, setIsExecuting] = useState(false);
+   const [displayedPrompt, setDisplayedPrompt] = useState("");
+   const [visibleLogs, setVisibleLogs] = useState<{ text: string, status: string }[]>([]);
+   const [step, setStep] = useState(0);
    
-   const contextData = {
+   const contextData: any = {
       Overview: {
-         prompt: "AI, identify resort booking gaps and maximize RevPAR.",
+         prompt: "AI, analyze Resort ROI across all active platforms.",
          logs: [
-            { text: "Detected 14% gap: Weekend 22", status: "ALERT" },
-            { text: "Optimizing Direct-to-OTA distribution", status: "PROCESSING" },
-            { text: "RevPAR forecast calibrated: +12.4%", status: "CALCULATED" }
+            { text: "Fetching platforms (X, IG, FB)", status: "SYNCING" },
+            { text: "Attributing RevPAR lift", status: "PROCESSING" },
+            { text: "ROI calibrated: +14.2%", status: "READY" }
          ]
       },
       Compose: {
-         prompt: "Draft a high-engagement post for the new Spa wing.",
+         prompt: "Draft a viral Instagram Reel script for the new Infinity Pool.",
          logs: [
-            { text: "Analyzing brand voice (Sophisticated)", status: "COMPLETED" },
-            { text: "Hashtag optimization: #ResortLife", status: "APPLIED" },
-            { text: "Tone: Relaxing + Professional", status: "SYNCED" }
+            { text: "Analyzing brand voice", status: "COMPLETED" },
+            { text: "Optimizing hashtags cluster", status: "APPLIED" },
+            { text: "Formatting: X, IG, LinkedIn", status: "FORMATTED" }
          ]
       },
       Calendar: {
-         prompt: "AI, fill all mid-week scheduling gaps for the pool bar.",
+         prompt: "AI, re-balance our August content schedule.",
          logs: [
-            { text: "Scheduling peak-hour distribution", status: "ACTIVE" },
-            { text: "Gap detection: Mid-week vacancy", status: "RESOLVED" },
-            { text: "Optimizing frequency: 1.2/day", status: "LOCKED" }
+            { text: "Detecting gaps (Aug 14-22)", status: "SCANNING" },
+            { text: "Applying optimal frequency", status: "RESOLVED" },
+            { text: "Strategy locked: 42 posts", status: "LOCKED" }
          ]
       },
       Connections: {
-         prompt: "Verify health of all resort social platforms.",
+         prompt: "Perform security audit on all network tokens.",
          logs: [
-            { text: "Meta Graph API heartbeat: 14ms", status: "HEALTHY" },
-            { text: "TikTok Pixel: Verifying conversion", status: "ACTIVE" },
-            { text: "Auth token refresh cycle: 12d", status: "SECURE" }
+            { text: "Verifying OAuth2 heartbeats", status: "SECURE" },
+            { text: "TikTok Pixel integrity check", status: "ACTIVE" },
+            { text: "Token refresh: 12d remaining", status: "HEALTHY" }
          ]
       },
       Replies: {
-         prompt: "Auto-reply to all spa and dining inquiries.",
+         prompt: "AI, respond to guests about the wine tasting event.",
          logs: [
-            { text: "Sentiment analysis: 94% Positive", status: "STABLE" },
-            { text: "Auto-resolution: Spa Information", status: "DRAFTING" },
-            { text: "Priority escalation: VIP Guest", status: "HANDLED" }
+            { text: "Sentiment analysis: 98% Match", status: "DETECTED" },
+            { text: "Drafting concierge replies", status: "ACTIVE" },
+            { text: "142 guests reached", status: "HANDLED" }
          ]
       },
       Analytics: {
-         prompt: "AI, crunch ROI for the summer campaign.",
+         prompt: "AI, execute deep-dive attribution report.",
          logs: [
-            { text: "Attribution model: Multi-touch", status: "RESOLVED" },
-            { text: "RevPAR Trend: Bullish +8.2%", status: "PREDICTED" },
-            { text: "Data exported: ROI Attribution", status: "DONE" }
+            { text: "Extracting conversion data", status: "EXTRACTING" },
+            { text: "Multi-touch attribution", status: "CALCULATING" },
+            { text: "ROI exported: 4.8x Multiple", status: "DONE" }
          ]
       }
    };
 
    useEffect(() => {
-      setIsExecuting(true);
-      const data = (contextData as any)[activeTab] || contextData.Overview;
-      setTimeout(() => {
-         setFeed(data.logs);
-         setIsExecuting(false);
-         setState(["Analyzing", "Optimizing", "Resolving"][Math.floor(Math.random() * 3)]);
-      }, 1500);
+      const data = contextData[activeTab] || contextData.Overview;
+      const fullPrompt = data.prompt;
+      
+      setDisplayedPrompt("");
+      setVisibleLogs([]);
+      setStep(0);
+
+      let i = 0;
+      const typingInterval = setInterval(() => {
+         setDisplayedPrompt(fullPrompt.slice(0, i + 1));
+         i++;
+         if (i >= fullPrompt.length) {
+            clearInterval(typingInterval);
+            setTimeout(() => setStep(1), 500);
+            data.logs.forEach((log: any, index: number) => {
+               setTimeout(() => {
+                  setVisibleLogs(prev => [...prev, log]);
+                  setStep(index + 2);
+               }, (index + 1) * 800);
+            });
+         }
+      }, 30);
+      return () => clearInterval(typingInterval);
    }, [activeTab]);
 
    return (
-      <div className="w-full h-full flex flex-col gap-4 p-1 overflow-hidden">
-         {/* Neural Header (Light) */}
-         <div className="p-6 rounded-[2.5rem] bg-[#fcfdfe] border border-[#f0f3f7] relative flex flex-col items-center justify-center gap-5 min-h-[180px] shadow-sm overflow-hidden shrink-0">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#635bff05_0%,transparent_70%)]" />
-            
-            <div className="relative w-16 h-16 flex items-center justify-center">
-               <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ repeat: Infinity, duration: 4 }} className="absolute inset-0 bg-[#635bff]/5 rounded-full blur-xl" />
-               <motion.div 
-                  animate={{ y: [0, -3, 0], rotate: [0, 1, 0, -1, 0] }} 
-                  transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }} 
-                  className="w-12 h-12 rounded-[1.2rem] bg-white shadow-xl flex items-center justify-center border border-[#f0f3f7] relative z-20"
-               >
-                  <Brain className="w-6 h-6 text-[#635bff]" />
-                  <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[#09825d] rounded-full border-2 border-white animate-pulse" />
-               </motion.div>
-            </div>
-
-            <div className="text-center relative z-10">
-               <h5 className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.4em] mb-1">{state}</h5>
-               <div className="flex gap-1 justify-center">
-                   <motion.div animate={{ width: [10, 40, 10] }} transition={{ repeat: Infinity, duration: 2 }} className="h-0.5 bg-[#635bff] rounded-full" />
-               </div>
+      <div className="w-full h-full flex flex-col p-8 bg-[#f8fafc] gap-8">
+         <div className="flex items-center justify-between">
+            <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-[0.2em]">Agent Console</p>
+            <div className="flex gap-2 items-center">
+               <div className="w-1.5 h-1.5 rounded-full bg-[#09825d] animate-pulse" />
+               <span className="text-[8px] font-black text-[#1a1f36] uppercase tracking-widest">Active</span>
             </div>
          </div>
 
-         {/* Command & Intelligence Feed (Light Theme) */}
-         <div className="flex-1 flex flex-col p-6 rounded-[2.5rem] bg-white border border-[#e3e8ef] shadow-premium relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-6">
-                <div className="w-1 h-1 rounded-full bg-[#635bff] shadow-[0_0_8px_#635bff]" />
-                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#635bff]">Intelligence Stream</span>
+         <div className="bg-white p-5 rounded-2xl border border-black/5 shadow-sm space-y-4">
+            <div className="flex items-center gap-3">
+               <div className="w-8 h-8 rounded-full bg-slate-100 border border-black/5 flex items-center justify-center font-black text-[9px] text-[#3c4257]">AC</div>
+               <p className="text-[10px] font-black text-[#1a1f36] uppercase tracking-wider">Command Sent</p>
             </div>
-
-            {/* Simulated Prompt */}
-            <div className="mb-8 p-4 bg-[#f6f9fc] rounded-2xl border border-[#eceff3]">
-               <div className="flex items-center gap-2 mb-2">
-                  <Cpu className="w-3 h-3 text-[#635bff]" />
-                  <span className="text-[8px] font-black text-[#1a1f36] uppercase tracking-widest opacity-50">Resort Core Command</span>
-               </div>
-               <p className="text-[11px] font-black text-[#1a1f36] italic leading-relaxed">
-                  "{(contextData as any)[activeTab]?.prompt || contextData.Overview.prompt}"
+            <div className="p-4 rounded-xl bg-[#f8fafc] border border-black/5 min-h-[60px]">
+               <p className="text-[11px] font-bold text-[#3c4257] leading-relaxed">
+                  "{displayedPrompt}"
+                  {step === 0 && <span className="inline-block w-1 h-3.5 bg-[#635bff] ml-1 animate-pulse rounded-full" />}
                </p>
-               {isExecuting && (
-                  <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 1.5 }} className="h-0.5 bg-[#635bff] mt-3 rounded-full" />
-               )}
             </div>
+         </div>
 
-            {/* Logs */}
-            <div className="space-y-4 flex-1">
-               <AnimatePresence mode="popLayout">
-                  {!isExecuting && feed.map((log, i) => (
-                     <motion.div 
-                        key={`${activeTab}-${log.text}`} 
-                        initial={{ opacity: 0, y: 10 }} 
-                        animate={{ opacity: 1, y: 0 }} 
-                        transition={{ delay: i * 0.1 }}
-                        className="flex flex-col gap-1.5"
-                     >
-                        <div className="flex items-center justify-between">
-                           <p className="text-[10px] font-black text-[#1a1f36] leading-tight tracking-wide">{log.text}</p>
-                           <span className={cn(
-                              "text-[7px] font-black px-1.5 py-0.5 rounded-md tracking-tighter border",
-                              log.status === "ACTIVE" || log.status === "ALERT" 
-                                 ? "text-[#635bff] border-[#635bff]/20 bg-[#f6f9fc]" 
-                                 : "text-[#09825d] border-[#09825d]/20 bg-[#e6f4e6]"
-                           )}>
-                              {log.status}
-                           </span>
-                        </div>
-                        <div className="h-[1px] w-full bg-[#f0f3f7]" />
-                     </motion.div>
-                  ))}
-               </AnimatePresence>
-            </div>
-
-            {/* Status Strip */}
-            <div className="mt-4 flex items-center justify-between text-[8px] font-black text-[#8792a2] uppercase tracking-[0.2em] pt-4 border-t border-[#f0f3f7]">
-               <span>Core v2.4.0</span>
-               <div className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
-                  <span>AI Strategist High</span>
-               </div>
-            </div>
+         <div className="flex-1 space-y-2">
+            <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-[0.2em] px-2">Logs</p>
+            <AnimatePresence mode="popLayout">
+               {visibleLogs.map((log) => (
+                  <motion.div key={log.text} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="p-4 rounded-xl border border-[#635bff]/10 bg-white shadow-sm flex items-center gap-3">
+                     <Sparkles className="w-3.5 h-3.5 text-[#635bff]" />
+                     <div className="flex-1">
+                        <p className="text-[10px] font-black text-[#1a1f36] leading-none mb-1">{log.text}</p>
+                        <p className="text-[8px] font-bold text-[#8792a2] uppercase tracking-widest">{log.status}</p>
+                     </div>
+                     <CheckCircle2 className="w-3.5 h-3.5 text-[#09825d]" />
+                  </motion.div>
+               ))}
+            </AnimatePresence>
          </div>
       </div>
    );
 };
 
 // --- Main Export ---
-
 export function InteractivePreview({ activeTab: externalTab, setActiveTab: setExternalTab }: { activeTab?: string; setActiveTab?: (tab: string) => void }) {
   const [internalTab, setInternalTab] = useState("Overview");
   const activeTab = externalTab || internalTab;
   const setActiveTab = setExternalTab || setInternalTab;
 
   return (
-    <div className="w-full h-[640px] flex bg-white rounded-[3.5rem] overflow-hidden border border-[#e3e8ef] shadow-premium relative group/dash transition-all">
-      
-      {/* 1. Dashboard Nav (Left) */}
-      <div className="w-20 lg:w-60 bg-[#fcfdfe] border-r border-[#f0f3f7] flex flex-col shrink-0 transition-all">
-         <div className="p-6 pb-8 border-b border-[#f0f3f7] flex items-center justify-center lg:justify-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#1a1f36] flex items-center justify-center shadow-lg shadow-black/10">
-               <Zap className="w-4.5 h-4.5 text-white" />
-            </div>
+    <div className="w-full h-[640px] flex bg-white rounded-2xl overflow-hidden border border-[#e3e8ef] shadow-sm">
+      <div className="w-20 lg:w-60 bg-[#fcfdfe] border-r border-[#f0f3f7] flex flex-col shrink-0">
+         <div className="p-6 border-b border-[#f0f3f7] flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#1a1f36] flex items-center justify-center text-white shadow-lg"><Zap className="w-4.5 h-4.5" /></div>
             <span className="hidden lg:block font-black text-[15px] tracking-tight text-[#1a1f36]">SocialCopilot</span>
          </div>
-         <div className="flex-1 py-8 px-4 flex flex-col gap-8 overflow-hidden">
-            <div>
-               <p className="hidden lg:block px-4 mb-4 text-[9px] font-black text-[#8792a2] uppercase tracking-[0.4em] opacity-60">Resort Core</p>
-               <div className="space-y-1">
-                  {navItems.map((item) => {
-                     const isActive = activeTab === item.id;
-                     return (
-                        <button 
-                           key={item.id} 
-                           onClick={() => setActiveTab(item.id)} 
-                           className={cn(
-                              "w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all group relative", 
-                              isActive 
-                                 ? "bg-white text-[#635bff] shadow-sm border border-[#eceff3]" 
-                                 : "text-[#697386] hover:bg-[#f6f9fc] hover:text-[#1a1f36]"
-                           )}
-                        >
-                           <item.icon className={cn("w-4 h-4 shrink-0 transition-all group-hover:scale-110", isActive ? "text-[#635bff]" : "text-[#8792a2] group-hover:text-[#1a1f36]")} />
-                           <span className="hidden lg:block text-[12px] font-black tracking-tight">{item.label}</span>
-                           {isActive && <motion.div layoutId="nav-glow-2" className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-[#635bff] rounded-r-full shadow-[0_0_12px_rgba(99,91,255,0.4)]" />}
-                        </button>
-                     );
-                  })}
-               </div>
-            </div>
-         </div>
-         <div className="p-6">
-            <div className="flex items-center justify-center lg:justify-start gap-3 border border-[#f0f3f7] p-3 rounded-2xl bg-white">
-               <div className="w-7 h-7 rounded-full bg-slate-100 border border-[#e3e8ef]" />
-               <div className="hidden lg:block">
-                  <p className="text-[10px] font-black text-[#1a1f36]">Admin</p>
-                  <p className="text-[8px] font-black text-[#09825d] uppercase tracking-widest">Active Plan</p>
-               </div>
-            </div>
+         <div className="flex-1 py-8 px-4 space-y-1">
+            {navItems.map((item) => {
+               const isActive = activeTab === item.id;
+               return (
+                  <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all", isActive ? "bg-white text-[#635bff] shadow-sm border border-[#eceff3]" : "text-[#697386] hover:bg-[#f6f9fc]")}>
+                     <item.icon className={cn("w-4 h-4", isActive ? "text-[#635bff]" : "text-[#8792a2]")} />
+                     <span className="hidden lg:block text-[12px] font-black tracking-tight">{item.label}</span>
+                  </button>
+               );
+            })}
          </div>
       </div>
 
-      {/* 2. Main Workspace (Center) */}
       <div className="flex-1 flex flex-col overflow-hidden bg-white">
-         <header className="h-14 border-b border-[#f0f3f7] px-6 flex items-center justify-between shrink-0 bg-white/50 backdrop-blur-md sticky top-0 z-20">
-            <div className="flex items-center gap-3 bg-[#f6f9fc] px-4 py-1.5 rounded-full border border-[#e3e8ef] w-full max-w-xs">
-               <Search className="w-3.5 h-3.5 text-[#8792a2]" />
-               <input type="text" placeholder="Search..." className="bg-transparent border-none outline-none text-[11px] font-black text-[#1a1f36] placeholder-[#8792a2] w-full" />
+         <header className="h-14 border-b border-[#f0f3f7] px-6 flex items-center justify-between">
+            <div className="flex items-center gap-3 bg-[#f6f9fc] px-4 py-1.5 rounded-full border border-[#e3e8ef] w-full max-w-xs text-[#8792a2]">
+               <Search className="w-3.5 h-3.5" />
+               <span className="text-[11px] font-black text-[#8792a2] uppercase tracking-widest">Search Console</span>
             </div>
-            <div className="flex items-center gap-3">
-               <Button className="h-9 px-5 rounded-lg bg-[#635bff] hover:bg-[#4f46e5] text-white font-black text-[11px] uppercase tracking-widest gap-2 shadow-lg shadow-[#635bff]/20 transition-all active:scale-95">
-                  <Plus className="w-3.5 h-3.5" /> New
-               </Button>
-            </div>
+            <Button className="h-9 px-5 bg-[#635bff] text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[#635bff]/20"><Plus className="w-3.5 h-3.5 mr-2" /> New</Button>
          </header>
 
-         <div className="flex-1 p-6 overflow-hidden bg-[radial-gradient(#f1f5f9_1px,transparent_1px)] [background-size:40px_40px]">
+         <div className="flex-1 p-6 overflow-hidden">
             <AnimatePresence mode="wait">
-               <motion.div key={activeTab} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} className="h-full">
+               <motion.div key={activeTab} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} className="h-full">
                   {activeTab === "Overview" && <OverviewView />}
-                  {activeTab === "Compose" && <ComposeView />}
+                  {activeTab === "Compose" && <ComposeView displayedPrompt="Checking Resort voice... Draft: Escape to paradise at our Infinity Pool suites! 🌴 Book now for exclusive rates. #ResortLife #LuxeTravel" step={1} />}
                   {activeTab === "Calendar" && <CalendarView />}
                   {activeTab === "Connections" && <ConnectionsView />}
                   {activeTab === "Replies" && <AutoReplyView />}
@@ -672,11 +848,9 @@ export function InteractivePreview({ activeTab: externalTab, setActiveTab: setEx
          </div>
       </div>
 
-      {/* 3. AI Agent Sidebar (Right) */}
-      <div className="hidden xl:flex w-80 bg-[#fcfdfe] border-l border-[#f0f3f7] flex flex-col p-6 shrink-0">
+      <div className="hidden xl:flex w-80 border-l border-[#f0f3f7] bg-[#f8fafc] flex flex-col">
          <AIAgentPanel activeTab={activeTab} />
       </div>
-      
     </div>
   );
 }
