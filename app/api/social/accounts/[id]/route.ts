@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkId } = await auth();
   if (!clerkId) {
@@ -19,7 +19,7 @@ export async function DELETE(
     return new NextResponse("User not found", { status: 404 });
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await db

@@ -9,7 +9,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { platform: string } }
+  { params }: { params: Promise<{ platform: string }> }
 ) {
   const { userId: clerkId } = await auth();
   if (!clerkId) {
@@ -19,7 +19,7 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");
-  const { platform } = params;
+  const { platform } = await params;
 
   if (error) {
     return new NextResponse(`OAuth Error: ${error}`, { status: 400 });

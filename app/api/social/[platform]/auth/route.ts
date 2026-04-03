@@ -4,14 +4,14 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { platform: string } }
+  { params }: { params: Promise<{ platform: string }> }
 ) {
   const { userId: clerkId } = await auth();
   if (!clerkId) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const { platform } = params;
+  const { platform } = await params;
   
   try {
     const platformInstance = getPlatform(platform);

@@ -1,19 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Trash2, 
-  ExternalLink,
-  Loader2,
-  CheckCircle2,
-  AlertCircle
-} from "lucide-react";
+import { Loader2, AlertTriangle, RefreshCw, Unlink, Plus, CheckCheck } from "lucide-react";
 
-interface SocialAccount {
+export interface PlatformConfig {
+  id: string;
+  name: string;
+  Icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  brandColor: string;
+  bgColor: string;        // light tint for the icon wrapper
+  description: string;
+}
+
+export interface SocialAccount {
   id: string;
   platform: string;
   username: string | null;
@@ -22,20 +21,22 @@ interface SocialAccount {
 }
 
 interface SocialCardProps {
-  platform: {
-    id: string;
-    name: string;
-    icon: any;
-    color: string;
-  };
+  platform: PlatformConfig;
   account?: SocialAccount;
   onConnect: (platformId: string) => void;
   onDisconnect: (accountId: string) => void;
 }
 
+function isExpired(expiresAt: string | null): boolean {
+  if (!expiresAt) return false;
+  return new Date(expiresAt) < new Date();
+}
+
 export function SocialCard({ platform, account, onConnect, onDisconnect }: SocialCardProps) {
   const [isDisconnecting, setIsDisconnecting] = useState(false);
   const isConnected = !!account;
+  const expired = isConnected && isExpired(account?.expiresAt ?? null);
+  const { Icon } = platform;
 
   const handleDisconnect = async () => {
     if (!account) return;
@@ -48,81 +49,144 @@ export function SocialCard({ platform, account, onConnect, onDisconnect }: Socia
   };
 
   return (
-    <Card className="bg-[#0f0f1a] border-[#1e1e2e] hover:border-purple-500/50 transition-all duration-300 group overflow-hidden">
-      <div className={`h-1.5 w-full ${platform.color}`} />
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-xl bg-opacity-10 ${platform.color} bg-current`}>
-            <platform.icon className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-bold text-white">{platform.name}</h3>
-            <p className="text-xs text-slate-400">
-              {isConnected ? "Connected" : "Not connected"}
-            </p>
-          </div>
-        </div>
-        {isConnected && (
-          <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 gap-1 px-2">
-            <CheckCircle2 className="w-3 h-3" />
-            Active
-          </Badge>
-        )}
-      </CardHeader>
-      
-      <CardContent className="pb-6">
-        {isConnected ? (
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#1e1e2e]/50 border border-[#334155]/30">
-            <Avatar className="w-10 h-10 border-2 border-purple-500/20">
-              <AvatarImage src={account.avatarUrl || ""} />
-              <AvatarFallback className="bg-purple-600">
-                {account.username?.[0]?.toUpperCase() || "U"}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-semibold text-white truncate">@{account.username}</span>
-              <span className="text-[10px] text-slate-500 truncate">ID: {account.id.slice(0, 8)}...</span>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-4 text-center">
-            <div className="w-12 h-12 rounded-full bg-[#1e1e2e] flex items-center justify-center mb-2 text-slate-600">
-              <platform.icon className="w-6 h-6 opacity-20" />
-            </div>
-            <p className="text-xs text-slate-500 max-w-[180px]">
-              Connect your {platform.name} account to start scheduling posts.
-            </p>
-          </div>
-        )}
-      </CardContent>
+    <div
+      className={`
+        group relative flex flex-col bg-white rounded-xl border transition-all duration-200
+        ${expired
+          ? "border-orange-200 shadow-[0_1px_6px_rgba(234,88,12,0.08)]"
+          : isConnected
+            ? "border-[#e3e8ef] shadow-[0_1px_6px_rgba(60,66,87,0.08)]"
+            : "border-[#e3e8ef] shadow-[0_1px_3px_rgba(60,66,87,0.05)]"
+        }
+        hover:shadow-[0_4px_24px_rgba(60,66,87,0.12)] hover:border-[#c9d0ef]/80 hover:-translate-y-px
+      `}
+    >
+      {/* Connected accent bar at top */}
+      {isConnected && !expired && (
+        <div
+          className="absolute top-0 left-0 right-0 h-0.5 rounded-t-xl"
+          style={{ backgroundColor: platform.brandColor }}
+        />
+      )}
+      {expired && (
+        <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-xl bg-orange-400" />
+      )}
 
-      <CardFooter className="pt-0">
+      <div className="p-5 flex flex-col flex-1 gap-4">
+        {/* Platform Icon + Name + Status */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            {/* Icon container */}
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+              style={{ backgroundColor: platform.bgColor }}
+            >
+              <Icon className="w-5 h-5" style={{ color: platform.brandColor }} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-[#1a1f36] leading-tight">{platform.name}</p>
+              <p className="text-xs text-[#8792a2] mt-0.5 leading-tight">{platform.description}</p>
+            </div>
+          </div>
+
+          {/* Status indicator */}
+          {expired ? (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-orange-50 text-orange-600 border border-orange-200 shrink-0 mt-0.5">
+              <AlertTriangle className="w-2.5 h-2.5" />
+              Expired
+            </span>
+          ) : isConnected ? (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#efffee] text-[#09825d] border border-[#c1f5cd] shrink-0 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
+              Active
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#f6f9fc] text-[#8792a2] border border-[#e3e8ef] shrink-0 mt-0.5">
+              Not connected
+            </span>
+          )}
+        </div>
+
+        {/* Separator */}
+        <div className="h-px bg-[#f0f3f7]" />
+
+        {/* Account info or empty state */}
         {isConnected ? (
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="w-full text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 gap-2 rounded-xl font-bold"
-            onClick={handleDisconnect}
-            disabled={isDisconnecting}
-          >
-            {isDisconnecting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Trash2 className="w-4 h-4" />
-            )}
-            Disconnect
-          </Button>
+          <div className="flex items-center gap-2.5 min-w-0">
+            {/* Avatar */}
+            <div
+              className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden"
+              style={{ backgroundColor: platform.brandColor }}
+            >
+              {account.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={account.avatarUrl} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span>{account.username?.[0]?.toUpperCase() ?? "?"}</span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-[#1a1f36] truncate">
+                @{account.username ?? "Unknown"}
+              </p>
+              {expired ? (
+                <p className="text-[10px] text-orange-500 font-medium">Re-authorize to restore</p>
+              ) : account.expiresAt ? (
+                <p className="text-[10px] text-[#8792a2]">
+                  Expires {new Date(account.expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </p>
+              ) : (
+                <p className="text-[10px] text-[#09825d] font-medium flex items-center gap-1">
+                  <CheckCheck className="w-2.5 h-2.5" />
+                  Token active
+                </p>
+              )}
+            </div>
+          </div>
         ) : (
-          <Button 
-            size="sm" 
-            className="w-full bg-white text-black hover:bg-slate-200 gap-2 rounded-xl font-bold"
-            onClick={() => onConnect(platform.id)}
-          >
-            <ExternalLink className="w-4 h-4" />
-            Connect {platform.name}
-          </Button>
+          <p className="text-xs text-[#8792a2] leading-relaxed">
+            Connect your {platform.name} account to schedule posts and track engagement.
+          </p>
         )}
-      </CardFooter>
-    </Card>
+
+        {/* Actions */}
+        <div className="mt-auto flex flex-col gap-1.5">
+          {expired && (
+            <button
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-white transition-all active:scale-[0.98]"
+              style={{ backgroundColor: platform.brandColor }}
+              onClick={() => onConnect(platform.id)}
+            >
+              <RefreshCw className="w-3 h-3" />
+              Reconnect
+            </button>
+          )}
+
+          {!isConnected && (
+            <button
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#3c4257] bg-white border border-[#e3e8ef] hover:bg-[#f6f9fc] hover:border-[#c9d0ef] transition-all active:scale-[0.98] shadow-[0_1px_2px_rgba(60,66,87,0.08)]"
+              onClick={() => onConnect(platform.id)}
+            >
+              <Plus className="w-3.5 h-3.5" style={{ color: platform.brandColor }} />
+              Connect {platform.name}
+            </button>
+          )}
+
+          {isConnected && (
+            <button
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#8792a2] hover:text-[#e63757] hover:bg-[#fff5f5] transition-all active:scale-[0.98] disabled:opacity-50"
+              onClick={handleDisconnect}
+              disabled={isDisconnecting}
+            >
+              {isDisconnecting
+                ? <Loader2 className="w-3 h-3 animate-spin" />
+                : <Unlink className="w-3 h-3" />
+              }
+              Disconnect
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
