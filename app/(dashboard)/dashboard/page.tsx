@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { TrendingUp, Users, Calendar, CheckCircle2, ChevronRight, Share2, MessageSquare } from "lucide-react";
+import { TrendingUp, Users, Calendar, CheckCircle2, ChevronRight, Share2, MessageSquare, Plus } from "lucide-react";
 
 const stats = [
   { label: "Total Posts", value: "248", change: "↑ 12%", icon: Share2, color: "text-purple-400" },
