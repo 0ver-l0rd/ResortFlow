@@ -436,77 +436,152 @@ const AutoReplyView = () => (
 // --- AI Agent Sidebar ---
 
 const AIAgentPanel = ({ activeTab }: { activeTab: string }) => {
-   const [state, setState] = useState("Thinking");
-   const [feed, setFeed] = useState<string[]>([]);
+   const [state, setState] = useState("Scanning");
+   const [feed, setFeed] = useState<{ text: string, status: string }[]>([]);
+   const [isExecuting, setIsExecuting] = useState(false);
    
+   const contextData = {
+      Overview: {
+         prompt: "AI, identify resort booking gaps and maximize RevPAR.",
+         logs: [
+            { text: "Detected 14% gap: Weekend 22", status: "ALERT" },
+            { text: "Optimizing Direct-to-OTA distribution", status: "PROCESSING" },
+            { text: "RevPAR forecast calibrated: +12.4%", status: "CALCULATED" }
+         ]
+      },
+      Compose: {
+         prompt: "Draft a high-engagement post for the new Spa wing.",
+         logs: [
+            { text: "Analyzing brand voice (Sophisticated)", status: "COMPLETED" },
+            { text: "Hashtag optimization: #ResortLife", status: "APPLIED" },
+            { text: "Tone: Relaxing + Professional", status: "SYNCED" }
+         ]
+      },
+      Calendar: {
+         prompt: "AI, fill all mid-week scheduling gaps for the pool bar.",
+         logs: [
+            { text: "Scheduling peak-hour distribution", status: "ACTIVE" },
+            { text: "Gap detection: Mid-week vacancy", status: "RESOLVED" },
+            { text: "Optimizing frequency: 1.2/day", status: "LOCKED" }
+         ]
+      },
+      Connections: {
+         prompt: "Verify health of all resort social platforms.",
+         logs: [
+            { text: "Meta Graph API heartbeat: 14ms", status: "HEALTHY" },
+            { text: "TikTok Pixel: Verifying conversion", status: "ACTIVE" },
+            { text: "Auth token refresh cycle: 12d", status: "SECURE" }
+         ]
+      },
+      Replies: {
+         prompt: "Auto-reply to all spa and dining inquiries.",
+         logs: [
+            { text: "Sentiment analysis: 94% Positive", status: "STABLE" },
+            { text: "Auto-resolution: Spa Information", status: "DRAFTING" },
+            { text: "Priority escalation: VIP Guest", status: "HANDLED" }
+         ]
+      },
+      Analytics: {
+         prompt: "AI, crunch ROI for the summer campaign.",
+         logs: [
+            { text: "Attribution model: Multi-touch", status: "RESOLVED" },
+            { text: "RevPAR Trend: Bullish +8.2%", status: "PREDICTED" },
+            { text: "Data exported: ROI Attribution", status: "DONE" }
+         ]
+      }
+   };
+
    useEffect(() => {
-      const logs = {
-         Overview: ["Analyzing RevPAR...", "Optimizing direct share", "Trend: High Demand"],
-         Compose: ["Drafting post copy", "Selecting media", "A/B Testing Captions"],
-         Calendar: ["Scheduling slots", "Balancing platforms", "Gap analysis resolved"],
-         Connections: ["Checking Meta API", "TikTok Syncing", "Auth token refreshed"],
-         Replies: ["Monitoring feeds", "Sentiment Analysis", "Auto-Drafting replies"],
-         Analytics: ["Crunching ROI", "Exporting metrics", "RevPAR Forecast +12%"]
-      };
-      
-      let i = 0;
-      const interval = setInterval(() => {
-         const currentLogs = (logs as any)[activeTab] || logs.Overview;
-         setFeed([currentLogs[i % currentLogs.length], ...currentLogs.filter((_: string, idx: number) => idx !== i % currentLogs.length)]);
-         setState(["Thinking", "Executing", "Optimizing"][i % 3]);
-         i++;
-      }, 3000);
-      return () => clearInterval(interval);
+      setIsExecuting(true);
+      const data = (contextData as any)[activeTab] || contextData.Overview;
+      setTimeout(() => {
+         setFeed(data.logs);
+         setIsExecuting(false);
+         setState(["Analyzing", "Optimizing", "Resolving"][Math.floor(Math.random() * 3)]);
+      }, 1500);
    }, [activeTab]);
 
    return (
-      <div className="w-full flex flex-col gap-5 p-1 h-full">
-         <div className="p-8 rounded-[2.5rem] bg-[#fcfdfe] border border-[#f0f3f7] relative flex flex-col items-center justify-center gap-6 min-h-[220px] shadow-sm overflow-hidden">
+      <div className="w-full h-full flex flex-col gap-4 p-1 overflow-hidden">
+         {/* Neural Header (Light) */}
+         <div className="p-6 rounded-[2.5rem] bg-[#fcfdfe] border border-[#f0f3f7] relative flex flex-col items-center justify-center gap-5 min-h-[180px] shadow-sm overflow-hidden shrink-0">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#635bff05_0%,transparent_70%)]" />
-            <motion.div 
-               animate={{ 
-                  y: [0, -5, 0],
-                  rotate: [0, 2, 0, -2, 0]
-               }} 
-               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }} 
-               className="w-16 h-16 rounded-[1.5rem] bg-white shadow-xl flex items-center justify-center border border-[#f0f3f7] relative z-10"
-            >
-               <Brain className="w-8 h-8 text-[#635bff]" />
-               <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#635bff] rounded-full border-2 border-white animate-pulse" />
-            </motion.div>
+            
+            <div className="relative w-16 h-16 flex items-center justify-center">
+               <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ repeat: Infinity, duration: 4 }} className="absolute inset-0 bg-[#635bff]/5 rounded-full blur-xl" />
+               <motion.div 
+                  animate={{ y: [0, -3, 0], rotate: [0, 1, 0, -1, 0] }} 
+                  transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }} 
+                  className="w-12 h-12 rounded-[1.2rem] bg-white shadow-xl flex items-center justify-center border border-[#f0f3f7] relative z-20"
+               >
+                  <Brain className="w-6 h-6 text-[#635bff]" />
+                  <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[#09825d] rounded-full border-2 border-white animate-pulse" />
+               </motion.div>
+            </div>
+
             <div className="text-center relative z-10">
-               <h5 className="text-[12px] font-black text-[#1a1f36] uppercase tracking-[0.3em] mb-1.5">{state}</h5>
+               <h5 className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.4em] mb-1">{state}</h5>
                <div className="flex gap-1 justify-center">
-                  {[0, 1, 2].map(i => <motion.div key={i} animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }} className="w-1 h-1 rounded-full bg-[#635bff]" />)}
+                   <motion.div animate={{ width: [10, 40, 10] }} transition={{ repeat: Infinity, duration: 2 }} className="h-0.5 bg-[#635bff] rounded-full" />
                </div>
             </div>
          </div>
-         <div className="flex-1 flex flex-col p-8 rounded-[2.5rem] bg-[#1a1f36] text-white shadow-xl relative overflow-hidden">
-            <Cpu className="absolute -bottom-6 -right-6 w-24 h-24 text-white/5 rotate-12" />
-            <div className="flex items-center justify-between mb-8">
-               <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#635bff]" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#635bff]">Intelligence</span>
-               </div>
-               <Clock className="w-3.5 h-3.5 text-white/20" />
+
+         {/* Command & Intelligence Feed (Light Theme) */}
+         <div className="flex-1 flex flex-col p-6 rounded-[2.5rem] bg-white border border-[#e3e8ef] shadow-premium relative overflow-hidden">
+            <div className="flex items-center gap-2 mb-6">
+                <div className="w-1 h-1 rounded-full bg-[#635bff] shadow-[0_0_8px_#635bff]" />
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#635bff]">Intelligence Stream</span>
             </div>
-            <div className="space-y-4">
-               {feed.map((log, i) => (
-                  <motion.div key={`${activeTab}-${log}-${i}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1 - i * 0.3, x: 0 }} className="flex items-start gap-4">
-                     <div className={cn("mt-2 w-1 h-1 rounded-full shrink-0", i === 0 ? "bg-[#635bff] shadow-[0_0_10px_rgba(99,91,255,0.8)]" : "bg-white/20")} />
-                     <p className={cn("text-xs font-black leading-tight tracking-wide", i === 0 ? "text-white" : "text-white/40 uppercase")}>{log}</p>
-                  </motion.div>
-               ))}
-            </div>
-            <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
-               <div className="flex justify-between items-center text-[9px] font-black text-white/30 tracking-widest uppercase">
-                  <span>RESORT CORE v2.4</span>
-                  <span className="text-[#09825d]">READY</span>
+
+            {/* Simulated Prompt */}
+            <div className="mb-8 p-4 bg-[#f6f9fc] rounded-2xl border border-[#eceff3]">
+               <div className="flex items-center gap-2 mb-2">
+                  <Cpu className="w-3 h-3 text-[#635bff]" />
+                  <span className="text-[8px] font-black text-[#1a1f36] uppercase tracking-widest opacity-50">Resort Core Command</span>
                </div>
-               <div className="grid grid-cols-4 gap-2">
-                  {[FaInstagram, FaFacebook, FaTiktok, FaYoutube].map((Icon, i) => (
-                     <div key={i} className="aspect-square rounded-xl bg-white/5 flex items-center justify-center text-white/50 border border-white/5 transition-all hover:bg-white/10 grayscale hover:grayscale-0"><Icon className="w-3.5 h-3.5" /></div>
+               <p className="text-[11px] font-black text-[#1a1f36] italic leading-relaxed">
+                  "{(contextData as any)[activeTab]?.prompt || contextData.Overview.prompt}"
+               </p>
+               {isExecuting && (
+                  <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 1.5 }} className="h-0.5 bg-[#635bff] mt-3 rounded-full" />
+               )}
+            </div>
+
+            {/* Logs */}
+            <div className="space-y-4 flex-1">
+               <AnimatePresence mode="popLayout">
+                  {!isExecuting && feed.map((log, i) => (
+                     <motion.div 
+                        key={`${activeTab}-${log.text}`} 
+                        initial={{ opacity: 0, y: 10 }} 
+                        animate={{ opacity: 1, y: 0 }} 
+                        transition={{ delay: i * 0.1 }}
+                        className="flex flex-col gap-1.5"
+                     >
+                        <div className="flex items-center justify-between">
+                           <p className="text-[10px] font-black text-[#1a1f36] leading-tight tracking-wide">{log.text}</p>
+                           <span className={cn(
+                              "text-[7px] font-black px-1.5 py-0.5 rounded-md tracking-tighter border",
+                              log.status === "ACTIVE" || log.status === "ALERT" 
+                                 ? "text-[#635bff] border-[#635bff]/20 bg-[#f6f9fc]" 
+                                 : "text-[#09825d] border-[#09825d]/20 bg-[#e6f4e6]"
+                           )}>
+                              {log.status}
+                           </span>
+                        </div>
+                        <div className="h-[1px] w-full bg-[#f0f3f7]" />
+                     </motion.div>
                   ))}
+               </AnimatePresence>
+            </div>
+
+            {/* Status Strip */}
+            <div className="mt-4 flex items-center justify-between text-[8px] font-black text-[#8792a2] uppercase tracking-[0.2em] pt-4 border-t border-[#f0f3f7]">
+               <span>Core v2.4.0</span>
+               <div className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
+                  <span>AI Strategist High</span>
                </div>
             </div>
          </div>
