@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import { QueryProvider } from "@/components/providers/query-provider";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -28,8 +29,10 @@ export default function RootLayout({
       >
         <body className="min-h-[100dvh] flex flex-col antialiased bg-background text-foreground">
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-            {children}
-            <Toaster richColors position="top-right" />
+            <QueryProvider>
+              {children}
+              <Toaster richColors position="top-right" />
+            </QueryProvider>
           </ThemeProvider>
         </body>
       </html>

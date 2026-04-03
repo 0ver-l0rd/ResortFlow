@@ -1,28 +1,53 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { posts, mediaAssets } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
-import { eq, desc } from "drizzle-orm";
+import { posts, mediaAssets, users } from "@/db/schema";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { eq, desc, and, gte, lte } from "drizzle-orm";
 // import { publishQueue } from "@/lib/queue";
 
 export async function GET(request: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const clerkUser = await currentUser();
+    if (!clerkUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = clerkUser.id;
 
-    const dbUser = await db.query.users.findFirst({
+    let dbUser = await db.query.users.findFirst({
       where: (u, { eq }) => eq(u.clerkId, userId),
     });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    
+    // Auto-sync user if they don't exist yet but are authenticated in Clerk
+    if (!dbUser) {
+      const email = clerkUser.emailAddresses[0]?.emailAddress || "no-email@example.com";
+      const [newUser] = await db.insert(users).values({
+        clerkId: userId,
+        email: email,
+      }).returning();
+      dbUser = newUser;
+    }
+
+    if (!dbUser) {
+      return NextResponse.json({ error: "Failed to create user" }, { status: 500 });
+    }
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const platform = searchParams.get("platform");
+    const startDate = searchParams.get("start_date");
+    const endDate = searchParams.get("end_date");
+
+    const conditions = [eq(posts.userId, dbUser.id)];
+    
+    if (startDate) {
+      conditions.push(gte(posts.scheduledAt, new Date(startDate)));
+    }
+    if (endDate) {
+      conditions.push(lte(posts.scheduledAt, new Date(endDate)));
+    }
 
     let query = db
       .select()
       .from(posts)
-      .where(eq(posts.userId, dbUser.id))
+      .where(and(...conditions))
       .orderBy(desc(posts.createdAt));
 
     const rows = await query;
@@ -42,14 +67,25 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const clerkUser = await currentUser();
+    if (!clerkUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    const userId = clerkUser.id;
 
-    const dbUser = await db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.clerkId, userId),
+    let dbUser = await db.query.users.findFirst({
+      where: (u, { eq }) => eq(u.clerkId, userId),
     });
+
+    // Auto-sync user if they don't exist yet but are authenticated in Clerk
+    if (!dbUser) {
+      const email = clerkUser.emailAddresses[0]?.emailAddress || "no-email@example.com";
+      const [newUser] = await db.insert(users).values({
+        clerkId: userId,
+        email: email,
+      }).returning();
+      dbUser = newUser;
+    }
 
     if (!dbUser) {
       return NextResponse.json({ error: "User not found in database" }, { status: 404 });

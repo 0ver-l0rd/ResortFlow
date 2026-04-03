@@ -10,6 +10,7 @@ import {
   Sparkles, Hash, Smile, Upload, Calendar, Send, Clock,
   ChevronRight, ChevronLeft, Check, X, AlertTriangle,
   Eye, Bot, Wand2, Loader2, Film, FileImage, ZapIcon,
+  Heart, MessageCircle, Repeat2, Share, Bookmark, ThumbsUp, MoreHorizontal, BarChart2,
 } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaInstagram, FaLinkedinIn, FaFacebookF, FaYoutube, FaPinterestP } from "react-icons/fa";
@@ -134,36 +135,251 @@ function AIDialog({ onClose, onApply, platforms }: {
 // ── Platform Preview ──────────────────────────────────────────────────────────
 
 function PlatformPreview({ platform, content, media }: { platform: PlatformDef; content: string; media: UploadedMedia[]; }) {
-  const img = media.find(m => m.type === "image");
-  const noContent = <span className="text-[#c2c8d0]">Your post will appear here…</span>;
+  const images = media.filter(m => m.type === "image").slice(0, 4);
+  const video = media.find(m => m.type === "video");
+  const noContent = <span className="text-[#c2c8d0] italic">Your post will appear here…</span>;
 
+  // TWITTER
   if (platform.id === "twitter") return (
-    <div className="rounded-xl border border-[#e3e8ef] bg-white p-4 shadow-[0_1px_3px_rgba(60,66,87,0.05)]">
-      <div className="flex gap-3">
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#635bff] to-[#7f78ff] shrink-0 flex items-center justify-center text-white text-xs font-bold">U</div>
+    <div className="bg-white rounded-xl border border-[#e3e8ef] overflow-hidden w-full max-w-lg shadow-sm font-sans mx-auto">
+      <div className="p-4 flex gap-3">
+        <div className="w-12 h-12 rounded-full bg-slate-200 shrink-0"></div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 mb-1.5"><span className="text-sm font-bold text-[#1a1f36]">Your Account</span><FaXTwitter className="w-3 h-3 text-[#697386]" /></div>
-          <p className="text-sm text-[#1a1f36] leading-relaxed whitespace-pre-wrap">{content || noContent}</p>
-          {img && <img src={img.url} alt="" className="mt-3 rounded-xl w-full object-cover max-h-44" />}
-          <div className="flex items-center gap-5 mt-3 text-xs text-[#8792a2]"><span>💬 0</span><span>🔁 0</span><span>❤️ 0</span></div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <span className="font-bold text-[#0f1419] text-[15px]">Your Name</span>
+              <span className="text-[#536471] text-[15px]">@YourHandle</span>
+              <span className="text-[#536471] text-[15px]">·</span>
+              <span className="text-[#536471] text-[15px]">Now</span>
+            </div>
+            <MoreHorizontal className="w-5 h-5 text-[#536471]" />
+          </div>
+          <div className="text-[#0f1419] text-[15px] whitespace-pre-wrap leading-[20px] mt-1 mb-3">
+            {content || noContent}
+          </div>
+          {images.length > 0 && !video && (
+            <div className={`grid gap-0.5 rounded-2xl overflow-hidden border border-[#cfd9de] mt-3 ${images.length === 1 ? 'grid-cols-1' : images.length === 2 ? 'grid-cols-2 aspect-[8/4]' : images.length === 3 ? 'grid-cols-2 aspect-[8/4]' : 'grid-cols-2 aspect-[8/4]'}`}>
+              {images.map((img, i) => (
+                <div key={i} className={`relative bg-slate-100 ${images.length === 3 && i === 0 ? 'row-span-2' : ''}`}>
+                  <img src={img.url} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          )}
+          {video && (
+            <div className="rounded-2xl border border-[#cfd9de] overflow-hidden mt-3 aspect-video bg-black relative">
+               <Film className="w-8 h-8 text-white/50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+            </div>
+          )}
+          <div className="flex justify-between items-center mt-3 text-[#536471] w-full max-w-[425px]">
+            <span className="flex items-center gap-2 group cursor-pointer hover:text-blue-500 transition-colors"><MessageCircle className="w-[18px] h-[18px] group-hover:bg-blue-500/10 rounded-full" /></span>
+            <span className="flex items-center gap-2 group cursor-pointer hover:text-green-500 transition-colors"><Repeat2 className="w-[18px] h-[18px] group-hover:bg-green-500/10 rounded-full" /></span>
+            <span className="flex items-center gap-2 group cursor-pointer hover:text-pink-500 transition-colors"><Heart className="w-[18px] h-[18px] group-hover:bg-pink-500/10 rounded-full" /></span>
+            <span className="flex items-center gap-2 group cursor-pointer hover:text-blue-500 transition-colors"><BarChart2 className="w-[18px] h-[18px] group-hover:bg-blue-500/10 rounded-full" /></span>
+            <span className="flex items-center gap-2 group cursor-pointer hover:text-blue-500 transition-colors"><Share className="w-[18px] h-[18px] group-hover:bg-blue-500/10 rounded-full" /></span>
+          </div>
         </div>
       </div>
     </div>
   );
 
+  // INSTAGRAM
   if (platform.id === "instagram") return (
-    <div className="rounded-xl border border-[#e3e8ef] bg-white overflow-hidden shadow-[0_1px_3px_rgba(60,66,87,0.05)]">
-      <div className="flex items-center gap-2.5 px-4 py-3 border-b border-[#f0f3f7]">
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center text-white text-[10px] font-bold">U</div>
-        <span className="text-xs font-semibold text-[#1a1f36]">youraccount</span>
+    <div className="bg-white rounded-xl border border-[#e3e8ef] overflow-hidden w-full max-w-[350px] shadow-sm font-sans mx-auto pb-4">
+      <div className="flex items-center justify-between p-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 to-pink-600 p-[2px]">
+            <div className="w-full h-full bg-white rounded-full border-2 border-white overflow-hidden bg-slate-200"></div>
+          </div>
+          <span className="font-semibold text-sm text-black">your_handle</span>
+        </div>
+        <MoreHorizontal className="w-5 h-5 text-black" />
       </div>
-      {img ? <img src={img.url} alt="" className="w-full object-cover max-h-56" /> : <div className="w-full h-36 bg-[#f6f9fc] flex items-center justify-center"><FileImage className="w-7 h-7 text-[#c2c8d0]" /></div>}
-      <div className="px-4 py-3"><p className="text-sm text-[#1a1f36] whitespace-pre-wrap leading-relaxed line-clamp-3">{content || noContent}</p></div>
+      <div className="w-full aspect-square bg-[#fafafa] relative flex items-center justify-center">
+        {images.length > 0 ? (
+          <img src={images[0].url} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        ) : video ? (
+          <Film className="w-10 h-10 text-slate-300 relative z-10" />
+        ) : (
+          <FileImage className="w-10 h-10 text-slate-300 relative z-10" />
+        )}
+      </div>
+      <div className="p-3">
+        <div className="flex justify-between items-center mb-3">
+          <div className="flex gap-4">
+            <Heart className="w-[24px] h-[24px] text-black hover:text-slate-500 cursor-pointer" />
+            <MessageCircle className="w-[24px] h-[24px] text-black hover:text-slate-500 cursor-pointer" style={{ transform: "scaleX(-1)" }} />
+            <Send className="w-[24px] h-[24px] text-black hover:text-slate-500 cursor-pointer" />
+          </div>
+          <Bookmark className="w-[24px] h-[24px] text-black hover:text-slate-500 cursor-pointer" />
+        </div>
+        <div className="font-semibold text-[14px] leading-none mb-2 text-black">1,337 likes</div>
+        <div className="text-[14px] text-black">
+          <span className="font-semibold mr-1.5">your_handle</span>
+          <span className="whitespace-pre-wrap">{content || noContent}</span>
+        </div>
+      </div>
     </div>
   );
 
+  // LINKEDIN
+  if (platform.id === "linkedin") return (
+    <div className="bg-white rounded-xl border border-[#e3e8ef] overflow-hidden w-full max-w-lg shadow-sm font-sans mx-auto">
+      <div className="p-4 flex gap-3 pb-3">
+        <div className="w-12 h-12 rounded-full bg-slate-200 shrink-0"></div>
+        <div className="flex-1">
+          <div className="font-semibold text-[14px] text-black/90">Your Name</div>
+          <div className="text-[12px] text-black/60">Your Professional Title</div>
+          <div className="text-[12px] text-black/60 flex items-center gap-1">Just now • 🌐</div>
+        </div>
+        <MoreHorizontal className="w-5 h-5 text-black/60" />
+      </div>
+      <div className="px-4 pb-2 text-[14px] text-black/90 whitespace-pre-wrap">
+        {content || noContent}
+      </div>
+      {images.length > 0 && (
+        <img src={images[0].url} alt="" className="w-full max-h-[400px] object-cover" />
+      )}
+      {video && !images.length && (
+         <div className="w-full aspect-video bg-black flex items-center justify-center"><Film className="w-10 h-10 text-white/50" /></div>
+      )}
+      <div className="px-4 py-1.5 border-t border-slate-200 mt-2 flex justify-between">
+        {[
+          { label: "Like", icon: ThumbsUp },
+          { label: "Comment", icon: MessageCircle },
+          { label: "Repost", icon: Repeat2 },
+          { label: "Send", icon: Send }
+        ].map(action => (
+          <button key={action.label} className="flex items-center gap-1.5 text-[#666666] text-[14px] font-semibold hover:bg-slate-100 px-3 py-2 rounded-md transition-colors">
+            <action.icon className="w-[18px] h-[18px] -scale-x-100" /> {action.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  // FACEBOOK
+  if (platform.id === "facebook") return (
+    <div className="bg-white rounded-xl border border-[#e3e8ef] overflow-hidden w-full max-w-lg shadow-sm font-sans mx-auto pb-2">
+      <div className="p-4 pb-2 flex gap-2">
+        <div className="w-10 h-10 rounded-full bg-slate-200 shrink-0"></div>
+        <div className="flex-1">
+          <div className="font-semibold text-[15px] text-[#050505]">Your Page</div>
+          <div className="text-[13px] text-[#65676B] flex items-center gap-1">Just now • 🌍</div>
+        </div>
+        <MoreHorizontal className="w-5 h-5 text-[#65676B]" />
+      </div>
+      <div className="px-4 pb-3 text-[15px] text-[#050505] whitespace-pre-wrap">
+        {content || noContent}
+      </div>
+      {images.length > 0 && (
+        <img src={images[0].url} alt="" className="w-full max-h-[500px] object-cover border-y border-[#e3e8ef]" />
+      )}
+      {video && !images.length && (
+         <div className="w-full aspect-video bg-black flex items-center justify-center border-y border-[#e3e8ef]"><Film className="w-10 h-10 text-white/50" /></div>
+      )}
+      <div className="px-4 mt-2">
+        <div className="flex justify-between border-y border-[#CED0D4] py-1 mt-2">
+          {[
+            { label: "Like", icon: ThumbsUp },
+            { label: "Comment", icon: MessageCircle },
+            { label: "Share", icon: Share }
+          ].map(action => (
+            <button key={action.label} className="flex flex-1 justify-center items-center gap-1.5 text-[#65676B] font-semibold text-[15px] hover:bg-[#F2F2F2] py-1.5 rounded-md transition-colors">
+               <action.icon className="w-5 h-5" /> {action.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  // TIKTOK
+  if (platform.id === "tiktok") return (
+    <div className="w-[300px] aspect-[9/16] bg-black rounded-xl overflow-hidden relative mx-auto font-sans shadow-lg">
+      {video ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-zinc-900"><Film className="w-12 h-12 text-white/30" /></div>
+      ) : images.length > 0 ? (
+        <img src={images[0].url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 border border-zinc-800"><p className="text-white/50 text-sm">Video Required</p></div>
+      )}
+      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 pt-10">
+        <div className="font-semibold text-white mb-2">@your_account</div>
+        <div className="text-white text-sm line-clamp-3 mb-2">{content || noContent}</div>
+        <div className="flex items-center gap-2 text-white text-xs font-semibold">
+          <span className="bg-white/20 px-2 py-1 rounded">♫ original sound</span>
+        </div>
+      </div>
+      <div className="absolute right-3 bottom-24 flex flex-col gap-5 items-center">
+        <div className="w-10 h-10 bg-white rounded-full border-2 border-white mb-2"></div>
+        {[
+          { icon: Heart, val: "0" },
+          { icon: MessageCircle, val: "0" },
+          { icon: Bookmark, val: "0" },
+          { icon: Share, val: "0" }
+        ].map((item, idx) => (
+          <div key={idx} className="flex flex-col items-center gap-1">
+            <item.icon className="text-white w-7 h-7" fill={idx === 0 ? "white" : "none"} />
+            <span className="text-white text-[11px] font-semibold">{item.val}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // YOUTUBE
+  if (platform.id === "youtube") return (
+    <div className="bg-white rounded-xl overflow-hidden w-full max-w-lg shadow-sm font-sans mx-auto border border-[#e3e8ef]">
+      <div className="w-full aspect-video bg-black relative flex items-center justify-center">
+         {video || images.length > 0 ? (
+           <>
+              {images.length > 0 ? <img src={images[0].url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-80" /> : null}
+              <div className="w-16 h-12 bg-red-600 rounded-xl flex items-center justify-center shadow-lg relative z-10"><div className="w-0 h-0 border-t-8 border-t-transparent border-l-[16px] border-l-white border-b-8 border-b-transparent ml-1"></div></div>
+           </>
+         ) : (
+           <p className="text-white/50 text-sm">Video Required</p>
+         )}
+      </div>
+      <div className="p-4 flex gap-3">
+        <div className="w-10 h-10 rounded-full bg-slate-200 shrink-0"></div>
+        <div className="flex-1 pr-6 relative">
+          <div className="font-semibold text-[16px] text-[#0f0f0f] line-clamp-2 leading-tight mb-1">{content ? content.split('\n')[0] : <span className="italic text-slate-400">Video Title</span>}</div>
+          <div className="text-[14px] text-[#606060]">Your Channel • 0 views • Just now</div>
+          {content && content.includes('\n') && (
+            <div className="text-[12px] text-[#606060] line-clamp-1 mt-1 bg-slate-100 px-2 py-1 rounded">
+               {content.split('\n').slice(1).join(' ')}
+            </div>
+          )}
+          <MoreHorizontal className="w-5 h-5 text-[#0f0f0f] absolute top-0 right-0 rotate-90" />
+        </div>
+      </div>
+    </div>
+  );
+
+  // PINTEREST
+  if (platform.id === "pinterest") return (
+    <div className="bg-white rounded-xl border border-[#e3e8ef] overflow-hidden w-full max-w-xs shadow-sm font-sans mx-auto p-4 flex flex-col">
+       {images.length > 0 ? (
+         <img src={images[0].url} alt="" className="w-full rounded-2xl object-cover mb-4" />
+       ) : (
+         <div className="w-full aspect-[2/3] bg-slate-100 rounded-2xl flex items-center justify-center mb-4 text-slate-400">Image Required</div>
+       )}
+       <div className="flex items-center justify-between mb-2">
+         <MoreHorizontal className="w-6 h-6 text-[#111]" />
+         <button className="bg-[#E60023] text-white font-bold text-[15px] px-4 py-3 rounded-full leading-none hover:bg-red-700 transition-colors">Save</button>
+       </div>
+       {content && (
+         <div className="text-[#111] text-[20px] font-semibold leading-tight line-clamp-2 mt-2 px-1">
+           {content.split('\n')[0]}
+         </div>
+       )}
+    </div>
+  );
+
+  // FALLBACK
   return (
-    <div className="rounded-xl border border-[#e3e8ef] bg-white p-4 shadow-[0_1px_3px_rgba(60,66,87,0.05)]">
+    <div className="rounded-xl border border-[#e3e8ef] bg-white p-4 shadow-sm mx-auto w-full max-w-lg">
       <div className="flex items-center gap-2.5 mb-3">
         <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: platform.bg }}>
           <platform.Icon className="w-4 h-4" style={{ color: platform.color }} />
@@ -171,7 +387,7 @@ function PlatformPreview({ platform, content, media }: { platform: PlatformDef; 
         <span className="text-sm font-semibold text-[#1a1f36]">{platform.name}</span>
       </div>
       <p className="text-sm text-[#1a1f36] leading-relaxed whitespace-pre-wrap">{content || noContent}</p>
-      {img && <img src={img.url} alt="" className="mt-3 rounded-xl w-full object-cover max-h-44" />}
+      {images.length > 0 && <img src={images[0].url} alt="" className="mt-3 rounded-xl w-full object-cover max-h-44" />}
     </div>
   );
 }

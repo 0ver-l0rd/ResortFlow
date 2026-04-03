@@ -1,0 +1,179 @@
+"use client";
+
+import { startOfWeek, endOfWeek, eachDayOfInterval, eachHourOfInterval, format, isSameDay, startOfDay, endOfDay } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+
+const getPlatformColor = (platforms: string[]) => {
+  if (!platforms || platforms.length === 0) return "bg-gray-100 text-gray-800 border-gray-200";
+  const mainPlatform = platforms[0].toLowerCase();
+  switch (mainPlatform) {
+    case "instagram": return "bg-pink-100 text-pink-800 border-pink-200";
+    case "twitter": return "bg-blue-100 text-blue-800 border-blue-200";
+    case "linkedin": return "bg-blue-50 text-blue-900 border-blue-200";
+    case "facebook": return "bg-indigo-100 text-indigo-800 border-indigo-200";
+    default: return "bg-purple-100 text-purple-800 border-purple-200";
+  }
+};
+
+interface WeekViewProps {
+  currentDate: Date;
+  posts: any[];
+  onEventClick: (post: any) => void;
+  onDayClick: (date: Date) => void;
+}
+
+export function WeekView({ currentDate, posts, onEventClick, onDayClick }: WeekViewProps) {
+  const weekStart = startOfWeek(currentDate);
+  const weekEnd = endOfWeek(currentDate);
+  const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
+  const hours = Array.from({ length: 24 }).map((_, i) => i);
+
+  return (
+    <div className="flex flex-col h-[600px] bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+      {/* Header */}
+      <div className="flex border-b border-gray-200 bg-gray-50/50 pr-4">
+        <div className="w-16 shrink-0 border-r border-gray-200"></div>
+        <div className="grid grid-cols-7 flex-1">
+          {days.map((day) => {
+            const isToday = isSameDay(day, new Date());
+            return (
+              <div key={day.toString()} className="py-3 px-2 text-center border-r border-gray-100 last:border-r-0">
+                <div className="text-xs font-medium text-gray-500 uppercase">{format(day, "eee")}</div>
+                <div className={`mt-1 text-lg font-semibold ${isToday ? "text-indigo-600" : "text-gray-900"}`}>
+                  {format(day, "d")}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Grid */}
+      <div className="flex flex-1 overflow-y-auto relative no-scrollbar">
+        <div className="w-16 shrink-0 border-r border-gray-200 bg-white sticky left-0 z-10">
+          {hours.map((hour) => (
+            <div key={hour} className="h-20 border-b border-gray-100 relative">
+              <span className="absolute -top-3 left-2 text-xs font-medium text-gray-400">
+                {hour === 0 ? "12 AM" : hour < 12 ? `${hour} AM` : hour === 12 ? "12 PM" : `${hour - 12} PM`}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 flex-1 relative min-w-[700px]">
+          {/* Background grid lines */}
+          {hours.map((hour) => (
+            <div key={hour} className="col-span-7 h-20 border-b border-gray-100 pointer-events-none"></div>
+          ))}
+          
+          {/* Day Columns */}
+          <div className="absolute inset-0 grid grid-cols-7">
+            {days.map((day) => {
+              const dayPosts = posts.filter(post => post.scheduledAt && isSameDay(new Date(post.scheduledAt), day));
+              
+              return (
+                <div 
+                  key={day.toString()} 
+                  className="relative border-r border-gray-100 last:border-r-0 cursor-pointer hover:bg-gray-50/30"
+                  onClick={() => onDayClick(day)}
+                >
+                  {dayPosts.map((post) => {
+                    const postDate = new Date(post.scheduledAt);
+                    const topPercent = ((postDate.getHours() * 60 + postDate.getMinutes()) / (24 * 60)) * 100;
+                    
+                    return (
+                      <div
+                        key={post.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEventClick(post);
+                        }}
+                        className={`absolute left-1 right-1 p-2 rounded-md border shadow-sm cursor-pointer z-10 overflow-hidden ${getPlatformColor(post.platforms)}`}
+                        style={{ top: `${topPercent}%`, minHeight: "60px" }}
+                        title={post.content}
+                      >
+                        <div className="text-[10px] font-bold mb-1 opacity-80">{format(postDate, "h:mm a")}</div>
+                        <div className="text-xs font-medium line-clamp-2">{post.content || "Media Only"}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface DayViewProps {
+  currentDate: Date;
+  posts: any[];
+  onEventClick: (post: any) => void;
+}
+
+export function DayView({ currentDate, posts, onEventClick }: DayViewProps) {
+  const hours = Array.from({ length: 24 }).map((_, i) => i);
+  const dayPosts = posts.filter(post => post.scheduledAt && isSameDay(new Date(post.scheduledAt), currentDate));
+
+  return (
+    <div className="flex flex-col h-[600px] bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="py-4 px-6 border-b border-gray-200 bg-gray-50/50">
+        <h2 className="text-lg font-bold text-gray-900">{format(currentDate, "EEEE, MMMM do")}</h2>
+      </div>
+      
+      <div className="flex flex-1 overflow-y-auto relative no-scrollbar">
+        <div className="w-20 shrink-0 border-r border-gray-200 bg-white sticky left-0 z-10">
+          {hours.map((hour) => (
+            <div key={hour} className="h-24 border-b border-gray-100 relative">
+              <span className="absolute -top-3 left-4 text-sm font-medium text-gray-400">
+                {hour === 0 ? "12 AM" : hour < 12 ? `${hour} AM` : hour === 12 ? "12 PM" : `${hour - 12} PM`}
+              </span>
+            </div>
+          ))}
+        </div>
+        
+        <div className="flex-1 relative">
+          {/* Grid lines */}
+          {hours.map((hour) => (
+            <div key={hour} className="h-24 border-b border-gray-100"></div>
+          ))}
+          
+          {/* Post Blocks */}
+          <div className="absolute inset-0 pl-4 pr-6 pt-0">
+            {dayPosts.map((post) => {
+              const postDate = new Date(post.scheduledAt);
+              const topPercent = ((postDate.getHours() * 60 + postDate.getMinutes()) / (24 * 60)) * 100;
+              
+              return (
+                <div
+                  key={post.id}
+                  onClick={() => onEventClick(post)}
+                  className={`absolute left-4 right-6 p-4 rounded-lg border shadow-sm cursor-pointer z-10 ${getPlatformColor(post.platforms)}`}
+                  style={{ top: `${topPercent}%`, minHeight: "80px" }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge variant="outline" className="bg-white/50 border-white/20 capitalize font-medium">
+                      {post.platforms[0] || "General"}
+                    </Badge>
+                    <span className="text-xs font-semibold opacity-80">{format(postDate, "h:mm a")}</span>
+                    {(post.status === "published") && (
+                      <Badge className="ml-auto bg-green-500/20 text-green-700 hover:bg-green-500/30 font-medium">Published</Badge>
+                    )}
+                  </div>
+                  <p className="text-sm font-medium line-clamp-2">{post.content}</p>
+                </div>
+              );
+            })}
+            
+            {dayPosts.length === 0 && (
+              <div className="absolute inset-0 flex items-center justify-center p-8 text-center text-gray-400">
+                No posts scheduled for this day. Click anywhere to schedule one.
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
