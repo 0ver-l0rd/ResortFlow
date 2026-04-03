@@ -128,7 +128,7 @@ export function Hero() {
         </div>
 
         {/* Dashboard Display: Below and Perspective Center */}
-        <div className="max-w-[1100px] mx-auto relative group perspective-2000">
+        <div className="max-w-[2000px] mx-auto relative group perspective-2000">
            {/* Interactive Display Indicator (Specific Above Preview) */}
            <motion.div 
              initial={{ opacity: 0, y: 10 }}
