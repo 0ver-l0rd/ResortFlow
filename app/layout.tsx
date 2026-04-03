@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs'
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -22,8 +23,13 @@ export default function RootLayout({
       <html
         lang="en"
         className={outfit.className}
+        suppressHydrationWarning
       >
-        <body className="min-h-[100dvh] flex flex-col antialiased bg-[#0a0a0f] text-white overflow-hidden">{children}</body>
+        <body className="min-h-[100dvh] flex flex-col antialiased bg-background text-foreground overflow-hidden">
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            {children}
+          </ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
