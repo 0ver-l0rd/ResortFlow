@@ -25,8 +25,8 @@ export default function RootLayout({
         className={outfit.className}
         suppressHydrationWarning
       >
-        <body className="min-h-[100dvh] flex flex-col antialiased bg-background text-foreground overflow-hidden">
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <body className="min-h-[100dvh] flex flex-col antialiased bg-background text-foreground">
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
             {children}
           </ThemeProvider>
         </body>
