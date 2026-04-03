@@ -49,6 +49,7 @@ export const postPlatformResults = pgTable("post_platform_results", {
 export const autoReplyRules = pgTable("auto_reply_rules", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
   platform: varchar("platform", { length: 50 }).notNull(),
   triggerType: varchar("trigger_type", { length: 50 }).notNull(), // 'keyword', 'any_comment'
   keywords: jsonb("keywords").$type<string[]>().default([]),
@@ -63,7 +64,9 @@ export const autoReplyLogs = pgTable("auto_reply_logs", {
   id: uuid("id").primaryKey().defaultRandom(),
   ruleId: uuid("rule_id").notNull().references(() => autoReplyRules.id, { onDelete: "cascade" }),
   commentId: varchar("comment_id", { length: 255 }).notNull(),
+  commentText: text("comment_text").notNull().default(""),
   replyText: text("reply_text").notNull(),
+  status: varchar("status", { length: 50 }).notNull().default("success"), // 'success', 'failed'
   repliedAt: timestamp("replied_at").defaultNow().notNull(),
 });
 

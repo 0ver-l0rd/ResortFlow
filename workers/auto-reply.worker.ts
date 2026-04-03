@@ -3,12 +3,12 @@ import Redis from 'ioredis';
 import { db } from '../db';
 import { autoReplyRules, autoReplyLogs } from '../db/schema';
 import { eq } from 'drizzle-orm';
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { generateAutoReply } from '../lib/ai';
 
 const redisUrl = process.env.REDIS_URL;
 const connection = redisUrl ? new Redis(redisUrl, { maxRetriesPerRequest: null }) : new Redis({ maxRetriesPerRequest: null });
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+
 
 export const autoReplyWorker = new Worker('auto-reply', async (job: Job) => {
   const { ruleId, commentId, commentText, platform } = job.data;
@@ -30,12 +30,7 @@ export const autoReplyWorker = new Worker('auto-reply', async (job: Job) => {
     // 2. Generate reply
     if (rule.useAI) {
       console.log(`Generating AI reply for comment: "${commentText}"`);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = `${rule.aiPrompt || 'Reply to this social media comment politely and helpfully:'} \n\nComment: "${commentText}"`;
-      
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      replyText = response.text();
+      replyText = await generateAutoReply(commentText, rule.aiPrompt || "");
     } else {
       replyText = rule.replyTemplate || 'Thank you for your comment!';
     }
@@ -47,12 +42,27 @@ export const autoReplyWorker = new Worker('auto-reply', async (job: Job) => {
     await db.insert(autoReplyLogs).values({
       ruleId: rule.id,
       commentId,
+      commentText,
       replyText,
+      status: 'success'
     });
 
     return { success: true, replyText };
   } catch (error: any) {
-    console.error(`Failed to process auto-reply ${ruleId}:`, error);
+    if (job?.data?.ruleId && job?.data?.commentId) {
+      try {
+        await db.insert(autoReplyLogs).values({
+          ruleId: job.data.ruleId,
+          commentId: job.data.commentId,
+          commentText: job.data.commentText || "",
+          replyText: 'Error generating/posting reply',
+          status: 'failed'
+        });
+      } catch (logErr) {
+        console.error('Failed to write failure log:', logErr);
+      }
+    }
+    console.error(`Failed to process auto-reply ${job?.data?.ruleId}:`, error);
     throw error;
   }
 }, { connection });
