@@ -6,7 +6,8 @@ const apiKey = process.env.GEMINI_API_KEY || "";
 export const genAI = new GoogleGenerativeAI(apiKey);
 
 // Default model to use for Gemini API
-export const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+// Improved model identifier for recent SDK versions
+export const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
 export async function generateAutoReply(commentText: string, aiPrompt: string) {
   const prompt = `

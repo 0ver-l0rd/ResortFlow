@@ -4,8 +4,9 @@ import { db } from "@/db";
 import { users, autoReplyRules } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const { userId: clerkId } = await auth();
     if (!clerkId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -21,7 +22,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     // Verify rule belongs to user
     const existingRule = await db.query.autoReplyRules.findFirst({
-      where: and(eq(autoReplyRules.id, params.id), eq(autoReplyRules.userId, userRecord.id)),
+      where: and(eq(autoReplyRules.id, id), eq(autoReplyRules.userId, userRecord.id)),
     });
 
     if (!existingRule) {
@@ -36,7 +37,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         // Ensure userId isn't overwritten
         userId: userRecord.id,
       })
-      .where(eq(autoReplyRules.id, params.id))
+      .where(eq(autoReplyRules.id, id))
       .returning();
 
     return NextResponse.json(updatedRules[0]);
@@ -46,8 +47,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const { userId: clerkId } = await auth();
     if (!clerkId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -63,14 +65,14 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     // Since we check userRecord.id, it's safe to just delete with 'and' condition
     const deletedRules = await db.delete(autoReplyRules)
-      .where(and(eq(autoReplyRules.id, params.id), eq(autoReplyRules.userId, userRecord.id)))
+      .where(and(eq(autoReplyRules.id, id), eq(autoReplyRules.userId, userRecord.id)))
       .returning();
 
     if (!deletedRules.length) {
       return NextResponse.json({ error: "Rule not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, deletedId: params.id });
+    return NextResponse.json({ success: true, deletedId: id });
   } catch (error) {
     console.error("Error deleting auto-reply rule:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
