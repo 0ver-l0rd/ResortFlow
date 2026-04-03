@@ -53,20 +53,62 @@ const navItems = [
 ];
 
 // --- 1. Overview View ---
+const AnimatedNumber = ({ value }: { value: string }) => {
+   const numericValue = parseFloat(value.replace(/[^0-9.]/g, ''));
+   const suffix = value.replace(/[0-9.]/g, '');
+   const [displayValue, setDisplayValue] = useState(0);
+
+   useEffect(() => {
+      let start = 0;
+      const duration = 1000;
+      const stepTime = 20;
+      const steps = duration / stepTime;
+      const increment = numericValue / steps;
+
+      const timer = setInterval(() => {
+         start += increment;
+         if (start >= numericValue) {
+            setDisplayValue(numericValue);
+            clearInterval(timer);
+         } else {
+            setDisplayValue(start);
+         }
+      }, stepTime);
+      return () => clearInterval(timer);
+   }, [numericValue]);
+
+   return (
+      <span className="tabular-nums">
+         {displayValue.toLocaleString(undefined, { 
+            minimumFractionDigits: value.includes('.') ? 1 : 0, 
+            maximumFractionDigits: 1 
+         })}
+         {suffix}
+      </span>
+   );
+};
+
 const OverviewView = () => (
-  <div className="space-y-6 animate-in fade-in duration-500">
+  <motion.div 
+    initial="hidden"
+    animate="show"
+    variants={{
+       show: { transition: { staggerChildren: 0.05 } }
+    }}
+    className="space-y-6 overflow-y-auto h-full pr-1 custom-scrollbar"
+  >
     <div className="flex items-end justify-between px-1">
-      <div>
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8792a2] mb-1.5">Overview</p>
         <h2 className="text-2xl font-bold tracking-tight text-[#1a1f36]">Good morning 👋</h2>
         <p className="text-[11px] text-[#8792a2] mt-1 font-medium">Here's the resort's performance at a glance.</p>
-      </div>
-      <div className="flex items-center gap-2">
+      </motion.div>
+      <motion.div variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }} className="flex items-center gap-2">
          <div className="flex -space-x-1.5">
-            {[1, 2, 3].map(i => <div key={i} className="w-6 h-6 rounded-full border border-white bg-slate-200" />)}
+            {[1, 2, 3].map(i => <div key={i} className="w-6 h-6 rounded-full border border-white bg-slate-200 shadow-sm" />)}
          </div>
          <span className="text-[9px] font-black text-[#1a1f36] uppercase tracking-widest">+4 Team</span>
-      </div>
+      </motion.div>
     </div>
 
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -76,24 +118,30 @@ const OverviewView = () => (
         { label: "Published", value: "234", change: "+8%", icon: CheckCircle2 },
         { label: "Avg. Engagement", value: "4.2%", change: "+0.5%", icon: TrendingUp }
       ].map((stat, i) => (
-        <div key={i} className="bg-white rounded-xl border border-[#e3e8ef] p-4 shadow-sm hover:shadow-md transition-all group">
+        <motion.div 
+          variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+          key={i} 
+          className="bg-white rounded-xl border border-[#e3e8ef] p-4 shadow-sm hover:shadow-md transition-all group cursor-default"
+        >
           <div className="flex items-center justify-between mb-2">
             <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-[0.1em]">{stat.label}</p>
             <stat.icon className="w-3.5 h-3.5 text-[#8792a2] group-hover:text-[#635bff] transition-colors" />
           </div>
-          <p className="text-xl font-bold text-[#1a1f36] tabular-nums">{stat.value}</p>
+          <p className="text-xl font-bold text-[#1a1f36]">
+             <AnimatedNumber value={stat.value} />
+          </p>
           <div className="flex items-center gap-1 mt-1">
             <span className="text-[10px] font-bold text-[#09825d]">{stat.change}</span>
             <span className="text-[9px] text-[#8792a2]">vs last mo</span>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
 
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-4">
+      <motion.div variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }} className="lg:col-span-2 space-y-4">
         <div className="bg-white rounded-xl border border-[#e3e8ef] shadow-sm overflow-hidden">
-          <div className="px-5 py-3 border-b border-[#f0f3f7] bg-[#f6f9fc] flex items-center justify-between">
+          <div className="px-5 py-3 border-b border-[#f0f3f7] bg-[#fcfdfe] flex items-center justify-between">
             <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-widest">Recent Activity</span>
             <ChevronRight className="w-3 h-3 text-[#c4cdd6]" />
           </div>
@@ -103,125 +151,279 @@ const OverviewView = () => (
               { label: "Auto-reply sent", detail: "LinkedIn comment", time: "15 min ago", color: "#635bff" },
               { label: "Post scheduled", detail: "Tomorrow at 9:00 AM", time: "1 hr ago", color: "#f5a623" }
             ].map((activity, i) => (
-              <div key={i} className="px-5 py-3 flex items-center gap-4 hover:bg-[#f8fafc] transition-colors">
-                <div className="w-2 h-2 rounded-full" style={{ background: activity.color }} />
+              <motion.div 
+                whileHover={{ x: 4, backgroundColor: "#fcfdfe" }}
+                key={i} 
+                className="px-5 py-3 flex items-center gap-4 transition-all"
+              >
+                <div className="w-2 h-2 rounded-full relative">
+                   <div className="absolute inset-0 rounded-full animate-ping opacity-20" style={{ background: activity.color }} />
+                   <div className="relative w-full h-full rounded-full" style={{ background: activity.color }} />
+                </div>
                 <div className="flex-1">
                   <p className="text-[11px] font-bold text-[#3c4257]">{activity.label}</p>
                   <p className="text-[9px] text-[#8792a2]">{activity.detail}</p>
                 </div>
                 <span className="text-[9px] text-[#8792a2]">{activity.time}</span>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="space-y-4">
-        <div className="bg-[#635bff] rounded-xl p-5 text-white relative overflow-hidden shadow-lg shadow-[#635bff]/20">
-          <div className="absolute top-0 right-0 p-4 opacity-20">
+      <motion.div variants={{ hidden: { opacity: 0, x: 20 }, show: { opacity: 1, x: 0 } }} className="space-y-4">
+        <motion.div 
+          whileHover={{ y: -4 }}
+          className="bg-[#635bff] rounded-xl p-5 text-white relative overflow-hidden shadow-lg shadow-[#635bff]/20 cursor-pointer group"
+        >
+          <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:rotate-12 transition-transform duration-500">
             <Zap className="w-12 h-12" />
           </div>
           <p className="text-[10px] font-black uppercase tracking-widest mb-1.5 opacity-80">Upgrade to Pro</p>
           <p className="text-sm font-bold leading-tight mb-4">Unlock Business <br />Intelligence Tools</p>
-          <button className="w-full py-2 bg-white text-[#635bff] rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-colors">Upgrade Now</button>
-        </div>
-      </div>
+          <button className="w-full py-2 bg-white text-[#635bff] rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-colors shadow-sm">Upgrade Now</button>
+        </motion.div>
+      </motion.div>
     </div>
-  </div>
+  </motion.div>
 );
 
 // --- 2. Compose View ---
-const ComposeView = ({ displayedPrompt, step }: { displayedPrompt: string, step: number }) => (
-  <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in duration-500 overflow-hidden">
-    <div className="lg:col-span-7 flex flex-col gap-4 min-h-0">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold tracking-tight text-[#1a1f36]">New Campaign</h2>
-        <button className="p-1 px-3 bg-[#635bff]/5 border border-[#635bff]/10 rounded-lg text-[9px] font-black text-[#635bff] uppercase tracking-widest flex items-center gap-1.5 whitespace-nowrap">
-           <Bot className="w-3 h-3" /> AI Assist
-        </button>
-      </div>
+const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: string, step: number }) => {
+    const [processStep, setProcessStep] = useState<'conceptualizing' | 'drafting' | 'ready'>('conceptualizing');
+    const [typedText, setTypedText] = useState("");
+    const resortImage = "https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=2070&auto=format&fit=crop";
 
-      <div className="bg-white rounded-xl border border-[#e3e8ef] shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
-         <div className="flex items-center gap-2 p-3 border-b border-[#f0f3f7] bg-[#f6f9fc] shrink-0">
-            <div className="flex -space-x-1 border-r border-[#e3e8ef] pr-3 mr-1">
-               <FaXTwitter className="w-5 h-5 p-1 rounded bg-black text-white" />
-               <FaInstagram className="w-5 h-5 p-1 rounded bg-[#E1306C] text-white" />
-            </div>
-            <div className="flex items-center gap-3 overflow-hidden">
-               <span className="text-[9px] text-[#697386] font-bold flex items-center gap-1 whitespace-nowrap"><Wand2 className="w-3 h-3" /> Enhance</span>
-               <span className="text-[9px] text-[#697386] font-bold flex items-center gap-1 whitespace-nowrap"><Sparkles className="w-3 h-3" /> Hashtags</span>
-            </div>
-         </div>
-         <div className="p-5 flex-1 relative overflow-y-auto custom-scrollbar">
-            <p className="text-sm text-[#1a1f36] leading-relaxed whitespace-pre-wrap font-medium">
-               {displayedPrompt || "Your post content will appear here as AI generates it..."}
-               {step === 0 && displayedPrompt && <span className="inline-block w-1.5 h-4 bg-[#635bff] ml-1 animate-pulse" />}
-            </p>
-         </div>
-         <div className="p-3 bg-[#f6f9fc] border-t border-[#f0f3f7] flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-2">
-               <div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
-               <span className="text-[9px] font-black text-[#1a1f36] uppercase tracking-widest">Optimized</span>
-            </div>
-            <span className="text-[9px] font-bold text-[#8792a2]">{displayedPrompt.length}/280</span>
-         </div>
-      </div>
+    useEffect(() => {
+        if (step === 0) {
+            setProcessStep('conceptualizing');
+            setTypedText("");
+        } else if (step < 3) {
+            setProcessStep('drafting');
+        } else {
+            setProcessStep('ready');
+        }
+    }, [step]);
 
-      <div className="grid grid-cols-2 gap-3 shrink-0">
-         <div className="p-3 rounded-xl border border-[#e3e8ef] bg-white flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center shrink-0">
-               <CalendarIcon className="w-3.5 h-3.5 text-orange-600" />
-            </div>
-            <div className="min-w-0">
-               <p className="text-[8px] font-black text-[#8792a2] uppercase tracking-widest leading-none mb-0.5 whitespace-nowrap">Schedule</p>
-               <p className="text-[11px] font-bold text-[#1a1f36] truncate">Aug 12, 10:00 AM</p>
-            </div>
-         </div>
-         <div className="p-3 rounded-xl border border-[#e3e8ef] bg-white flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
-               <TrendingUp className="w-3.5 h-3.5 text-green-600" />
-            </div>
-            <div className="min-w-0">
-               <p className="text-[8px] font-black text-[#8792a2] uppercase tracking-widest leading-none mb-0.5 whitespace-nowrap">Impact</p>
-               <p className="text-[11px] font-bold text-[#09825d] whitespace-nowrap">High Forecast</p>
-            </div>
-         </div>
-      </div>
-    </div>
+    useEffect(() => {
+        if (targetText && processStep !== 'conceptualizing') {
+            let i = 0;
+            const interval = setInterval(() => {
+                setTypedText(targetText.slice(0, i + 1));
+                i++;
+                if (i >= targetText.length) clearInterval(interval);
+            }, 12);
+            return () => clearInterval(interval);
+        }
+    }, [targetText, processStep]);
 
-    <div className="lg:col-span-5 flex flex-col min-h-0">
-       <div className="flex items-center justify-between mb-3 shrink-0">
-          <p className="text-[10px] font-black text-[#8792a2] uppercase tracking-widest">Live Preview</p>
-          <Settings className="w-3.5 h-3.5 text-[#c4cdd6]" />
-       </div>
-       <div className="flex-1 bg-white rounded-2xl border border-[#e3e8ef] shadow-xl overflow-y-auto p-5 font-sans custom-scrollbar">
-          <div className="flex gap-3">
-             <div className="w-10 h-10 rounded-full bg-slate-100 border border-black/5 flex items-center justify-center font-bold text-[#3c4257] shrink-0">R</div>
-             <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-1.5 leading-none">
-                   <p className="text-[14px] font-bold text-[#1a1f36] whitespace-nowrap">Resort Growth</p>
-                   <p className="text-[14px] text-[#536471] truncate">@resort_social</p>
+    const metrics = [
+        { label: "Tone", val: "Luxe Concierge", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
+        { label: "ROI Pick", val: "+12.4% Lift", icon: TrendingUp, color: "text-green-600", bg: "bg-green-50" },
+        { label: "Optimal", val: "10:00 AM", icon: Clock, color: "text-orange-600", bg: "bg-orange-50" },
+        { label: "Sentiment", val: "98% Pos.", icon: Sparkles, color: "text-pink-600", bg: "bg-pink-50" },
+        { label: "Reach", val: "High Est.", icon: ZapIcon, color: "text-[#635bff]", bg: "bg-[#635bff]/5" }
+    ];
+
+    const platforms = [
+        { id: 'IG', name: 'Instagram', icon: FaInstagram, color: '#E1306C', desc: 'Sponored • Maldives' },
+        { id: 'X', name: 'Twitter', icon: FaXTwitter, color: '#000000', desc: '@resort_social' },
+        { id: 'TT', name: 'TikTok', icon: SiTiktok, color: '#000000', desc: 'Resort Growth' }
+    ];
+
+    return (
+        <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in duration-500 overflow-hidden">
+            {/* Left Column: Editor */}
+            <div className="lg:col-span-7 flex flex-col gap-4 min-h-0 h-full">
+                <div className="flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-[#635bff]/10 flex items-center justify-center shadow-sm border border-[#635bff]/5">
+                            <Wand2 className="w-4.5 h-4.5 text-[#635bff]" />
+                        </div>
+                        <h2 className="text-lg font-bold tracking-tight text-[#1a1f36]">AI Composer</h2>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <AnimatePresence mode="wait">
+                            <motion.div 
+                                key={processStep}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className={cn(
+                                    "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 border shadow-sm",
+                                    processStep === 'ready' ? "bg-[#e7f6f2] text-[#09825d] border-[#09825d]/10" : "bg-[#f6f9fc] text-[#635bff] border-[#635bff]/10"
+                                )}
+                            >
+                                {processStep === 'conceptualizing' && <><Clock className="w-3 h-3 animate-spin" /> Thinking</>}
+                                {processStep === 'drafting' && <><Sparkles className="w-3 h-3" /> Drafting</>}
+                                {processStep === 'ready' && <><CheckCircle2 className="w-3 h-3" /> Ready</>}
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
                 </div>
-                <div className="mt-2 text-[14px] text-[#1a1f36] leading-[1.3] whitespace-pre-wrap">
-                   {displayedPrompt || "Predicting engagement patterns..."}
-                   {step === 0 && <span className="inline-block w-1.5 h-3.5 bg-[#635bff] ml-1 animate-pulse" />}
+
+                <div className="bg-white rounded-2xl border border-[#e3e8ef] shadow-sm overflow-hidden flex flex-col flex-1 min-h-0 relative group">
+                    <div className="flex items-center gap-4 p-4 border-b border-[#f0f3f7] bg-[#fcfdfe] shrink-0">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#8792a2]">Context</p>
+                        <div className="flex items-center gap-5">
+                            <div className="flex items-center gap-1.5 opacity-50"><Target className="w-3.5 h-3.5" /><span className="text-[9px] font-black uppercase tracking-widest text-[#697386]">Targeted</span></div>
+                            <div className="flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5 text-green-600" /><span className="text-[9px] font-black uppercase tracking-widest text-[#1a1f36]">High ROI</span></div>
+                        </div>
+                    </div>
+                    
+                    <div className="p-7 flex-1 relative overflow-y-auto custom-scrollbar bg-slate-50/20">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-[#635bff]/10" />
+                        <p className="text-[15px] text-[#1a1f36] leading-relaxed whitespace-pre-wrap font-medium">
+                            {processStep === 'conceptualizing' ? (
+                                <span className="text-[#8792a2] italic opacity-50">AI is conceptualizing your resort narrative...</span>
+                            ) : (
+                                <>
+                                    {typedText}
+                                    {(processStep === 'drafting' || (processStep === 'ready' && typedText.length === targetText.length)) && (
+                                        <motion.span 
+                                            initial={{ opacity: 0 }} 
+                                            animate={{ opacity: [0, 1, 0] }} 
+                                            transition={{ repeat: Infinity, duration: 1 }} 
+                                            className="inline-block w-[2.5px] h-[18px] bg-[#635bff] ml-1 align-bottom shadow-[0_0_8px_#635bff]" 
+                                        />
+                                    )}
+                                </>
+                            )}
+                        </p>
+                    </div>
+
+                    <div className="p-4 bg-[#fcfdfe] border-t border-[#f0f3f7] flex items-center justify-between shrink-0">
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
+                                <div className={cn("w-2 h-2 rounded-full", processStep === 'ready' ? "bg-[#09825d]" : "bg-[#f5a623] animate-pulse")} />
+                                <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.15em]">
+                                    {processStep === 'ready' ? 'Post Ready' : 'Optimizing...'}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                           <div className="h-1.5 w-28 bg-[#e3e8ef] rounded-full overflow-hidden shadow-inner hidden sm:block">
+                              <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, (typedText.length/280)*100)}%` }} className="h-full bg-gradient-to-r from-[#635bff] to-[#a29bfe]" />
+                           </div>
+                           <span className="text-[10px] font-black text-[#8792a2] tabular-nums whitespace-nowrap">{typedText.length} / 280</span>
+                        </div>
+                    </div>
                 </div>
-                <div className="mt-4 aspect-[16/9] bg-slate-50 border border-[#e3e8ef] rounded-xl flex items-center justify-center relative overflow-hidden group/preview shrink-0">
-                   <Sparkles className="w-6 h-6 text-[#635bff] opacity-20" />
-                   <div className="absolute inset-0 bg-gradient-to-tr from-[#635bff]/5 via-transparent to-transparent" />
+
+                {/* Intelligence Metrics: Horizontal Scroll with Edge Fades */}
+                <div className="relative shrink-0 mt-auto">
+                    <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-[#f6f9fc] to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#f6f9fc] to-transparent z-10 pointer-events-none" />
+                    <div className="flex items-center gap-3 overflow-x-auto pb-4 pt-1 px-1 custom-scrollbar no-scrollbar scroll-smooth">
+                        {metrics.map((m, i) => (
+                            <div key={i} className="p-4 rounded-2xl border border-[#e3e8ef] bg-white flex items-center gap-3.5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md min-w-[170px] shrink-0 border-l-4" style={{ borderLeftColor: m.color === 'text-blue-600' ? '#3b82f6' : m.color === 'text-green-600' ? '#22c55e' : m.color === 'text-orange-600' ? '#f97316' : '#635bff' }}>
+                                <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm", m.bg)}>
+                                    <m.icon className={cn("w-4.5 h-4.5", m.color)} />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-[0.15em] mb-0.5">{m.label}</p>
+                                    <p className="text-[13px] font-bold text-[#1a1f36] truncate">{m.val}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <div className="mt-4 flex items-center justify-between text-[#536471]">
-                   <MessageCircle className="w-4 h-4" />
-                   <Repeat2 className="w-4 h-4" />
-                   <Heart className="w-4 h-4" />
-                   <Bookmark className="w-4 h-4" />
+            </div>
+
+            {/* Right Column: Platform Preview Carousel */}
+            <div className="lg:col-span-5 flex flex-col min-h-0 h-full">
+                <div className="flex items-center justify-between mb-3 shrink-0">
+                    <p className="text-[10px] font-black text-[#8792a2] uppercase tracking-[0.2em]">Multi-Platform Simulation</p>
+                    <div className="flex items-center gap-1.5 grayscale opacity-60">
+                       <span className="text-[9px] font-black text-[#1a1f36] uppercase tracking-widest">Swipe to preview</span>
+                       <ChevronRight className="w-3 h-3" />
+                    </div>
                 </div>
-             </div>
-          </div>
-       </div>
-    </div>
-  </div>
-);
+                
+                <div className="flex-1 overflow-x-auto custom-scrollbar no-scrollbar snap-x snap-mandatory flex gap-6 pb-2 min-h-0">
+                    {platforms.map((p) => (
+                        <div key={p.id} className="min-w-full h-full snap-center">
+                            <div className="h-full bg-white rounded-3xl border border-[#e3e8ef] shadow-2xl overflow-hidden flex flex-col font-sans group/preview relative">
+                                <div className="p-4 border-b border-[#f0f3f7] flex items-center justify-between shrink-0 bg-[#fcfdfe]">
+                                    <div className="flex items-center gap-2.5">
+                                        <p.icon className="w-4 h-4" style={{ color: p.color }} />
+                                        <span className="text-[11px] font-black text-[#1a1f36] uppercase tracking-[0.1em]">{p.name}</span>
+                                    </div>
+                                    <Share2 className="w-3.5 h-3.5 text-[#c4cdd6]" />
+                                </div>
+                                <div className="flex-1 overflow-y-auto custom-scrollbar p-0">
+                                    <div className="p-5 flex flex-col gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-slate-100 border border-black/5 flex items-center justify-center font-black text-[18px] text-[#1a1f36] shrink-0 shadow-inner">R</div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-[14px] font-bold text-[#1a1f36] leading-none mb-1">{p.name === 'TikTok' ? 'Resort Growth' : 'Resort Growth'}</p>
+                                                <p className="text-[11px] text-[#8792a2] font-medium">{p.desc}</p>
+                                            </div>
+                                            <MoreHorizontal className="w-4 h-4 text-[#8792a2]" />
+                                        </div>
+
+                                        <div className={cn(
+                                            "aspect-[4/5] bg-[#f8fafc] border border-[#e3e8ef] rounded-2xl overflow-hidden relative shadow-inner group/media transition-all duration-500",
+                                            p.id === 'TT' && "aspect-[3/4] sm:aspect-[9/16]"
+                                        )}>
+                                            {processStep !== 'conceptualizing' ? (
+                                                <motion.div 
+                                                    initial={{ opacity: 0 }} 
+                                                    animate={{ opacity: 1 }} 
+                                                    className="w-full h-full"
+                                                >
+                                                    <img src={resortImage} alt="Luxury Resort" className="w-full h-full object-cover transition-transform duration-1000 group-hover/media:scale-110" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                                                    {processStep === 'ready' && (
+                                                        <motion.div 
+                                                            initial={{ opacity: 0 }} 
+                                                            animate={{ opacity: 1 }} 
+                                                            className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-[1.5px]"
+                                                        >
+                                                            <div className="p-4 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-2xl">
+                                                               <Sparkles className="w-8 h-8 text-white animate-pulse" />
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </motion.div>
+                                            ) : (
+                                                <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-slate-50">
+                                                   <div className="w-10 h-10 rounded-full border-2 border-[#635bff]/20 border-t-[#635bff] animate-spin" />
+                                                   <span className="text-[9px] font-black text-[#635bff] uppercase tracking-widest">Optimizing Assets</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex items-center justify-between py-1 px-1">
+                                            <div className="flex items-center gap-5 text-[#1a1f36]">
+                                                <Heart className="w-7 h-7 cursor-pointer hover:text-[#ff3040] hover:scale-110 transition-all" />
+                                                <MessageCircle className="w-7 h-7 cursor-pointer hover:text-[#635bff] hover:scale-110 transition-all" />
+                                                <Send className="w-7 h-7 cursor-pointer hover:text-[#635bff] hover:scale-110 transition-all" />
+                                            </div>
+                                            <Bookmark className="w-7 h-7 cursor-pointer hover:text-[#635bff] hover:scale-110 transition-all" />
+                                        </div>
+
+                                        <div className="space-y-1.5 px-1 pb-6">
+                                            <p className="text-[14px] font-black text-[#1a1f36]">1,248 engagement</p>
+                                            <div className="text-[14px] leading-[1.5] text-[#1a1f36]">
+                                                <span className="font-bold mr-2">resort_social</span>
+                                                <span className="font-medium opacity-90 transition-opacity">
+                                                    {typedText || "Analyzing narrative..."}
+                                                    {(processStep === 'drafting' || (processStep === 'ready' && typedText.length === targetText.length)) && (
+                                                        <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="inline-block w-[1.5px] h-[14px] bg-[#1a1f36] ml-1 align-middle" />
+                                                    )}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
 
 // --- 3. Calendar View ---
 const CalendarView = () => {
