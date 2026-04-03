@@ -17,41 +17,28 @@ const platforms = [
 
 export function PlatformBar() {
   return (
-    <section className="py-16 bg-white border-y border-slate-100 overflow-hidden relative">
+    <section className="py-16 bg-background border-y border-slate-100 dark:border-white/5 overflow-hidden relative">
       <div className="container mx-auto px-6 mb-12 text-center relative z-10">
          <motion.p 
            initial={{ opacity: 0, y: 10 }}
            whileInView={{ opacity: 1, y: 0 }}
            viewport={{ once: true }}
            transition={{ duration: 0.5 }}
-           className="text-sm font-black text-slate-400 uppercase tracking-[0.2em]"
+           className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]"
          >
-           Seamless integrations with your favorite platforms
+           Seamless integrations with 9+ platforms
          </motion.p>
       </div>
       
       <div className="relative flex overflow-x-hidden group select-none">
-        <div className="py-2 animate-marquee whitespace-nowrap flex items-center gap-12 group-hover:pause">
+        <div className="py-4 animate-marquee whitespace-nowrap flex items-center gap-10 group-hover:pause">
           {[...platforms, ...platforms].map((platform, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 px-8 py-4 rounded-3xl bg-slate-50/50 border border-slate-100 hover:border-indigo-100 hover:bg-white hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 cursor-pointer group/item"
+              className="flex items-center gap-4 px-8 py-5 rounded-[2rem] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/30 hover:bg-white dark:hover:bg-white/10 transition-all duration-500 cursor-pointer group/item"
             >
-              <platform.icon className={`w-6 h-6 text-slate-400 transition-colors duration-500 ${platform.color}`} />
-              <span className="text-base font-bold tracking-tight text-slate-600 group-hover/item:text-slate-900 transition-colors duration-300">{platform.name}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Duplicate for seamless scrolling */}
-        <div className="absolute top-0 py-2 animate-marquee whitespace-nowrap flex items-center gap-12 group-hover:pause" style={{ left: '100%' }}>
-          {[...platforms, ...platforms].map((platform, i) => (
-            <div
-              key={i + platforms.length * 2}
-              className="flex items-center gap-4 px-8 py-4 rounded-3xl bg-slate-50/50 border border-slate-100 hover:border-indigo-100 hover:bg-white hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 cursor-pointer group/item"
-            >
-              <platform.icon className={`w-6 h-6 text-slate-400 transition-colors duration-500 ${platform.color}`} />
-              <span className="text-base font-bold tracking-tight text-slate-600 group-hover/item:text-slate-900 transition-colors duration-300">{platform.name}</span>
+              <platform.icon className={`w-6 h-6 text-slate-400 dark:text-slate-500 transition-colors duration-500 group-hover/item:text-slate-900 dark:group-hover/item:text-white`} />
+              <span className="text-base font-bold tracking-tight text-slate-500 dark:text-slate-500 group-hover/item:text-slate-900 dark:group-hover/item:text-white transition-colors duration-300">{platform.name}</span>
             </div>
           ))}
         </div>

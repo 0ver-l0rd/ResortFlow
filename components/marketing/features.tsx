@@ -65,9 +65,9 @@ const itemVariants = {
 
 export function Features() {
   return (
-    <section id="features" className="py-32 bg-slate-50/50 relative overflow-hidden">
+    <section id="features" className="py-32 bg-slate-50/30 dark:bg-background/50 relative overflow-hidden">
       {/* Decorative background element */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-50/50 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-50/50 dark:bg-indigo-500/5 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2" />
       
       <div className="container mx-auto px-6">
         <motion.div 
@@ -77,17 +77,17 @@ export function Features() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-24"
         >
-          <h2 className="text-indigo-600 font-bold tracking-tight text-sm uppercase mb-4 px-4 py-1.5 rounded-full bg-indigo-50 inline-block">
+          <h2 className="text-indigo-600 font-bold tracking-tight text-sm uppercase mb-4 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 inline-block">
             Everything You Need
           </h2>
-          <h3 className="text-4xl md:text-6xl font-black tracking-tight mb-8 text-slate-900">
+          <h3 className="text-4xl md:text-6xl font-black tracking-tight mb-8 text-slate-900 dark:text-white">
             Built for Modern Creators
           </h3>
-          <p className="text-xl text-slate-600 leading-relaxed font-medium">
+          <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
             A comprehensive suite of tools designed to help you scale your social media presence without the manual work.
           </p>
         </motion.div>
-
+ 
         <motion.div 
           variants={containerVariants}
           initial="hidden"
@@ -99,20 +99,20 @@ export function Features() {
             <motion.div
               key={i}
               variants={itemVariants}
-              className="group p-10 rounded-[2.5rem] border border-slate-200 bg-white hover:border-indigo-200 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(79,70,229,0.1)] relative overflow-hidden cursor-pointer"
+              className="group p-10 rounded-[2.5rem] border border-slate-200 dark:border-indigo-500/10 bg-white dark:bg-card hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(79,70,229,0.1)] dark:hover:shadow-indigo-500/5 relative overflow-hidden cursor-pointer"
             >
               <div className="absolute top-0 right-0 p-6 -mr-6 -mt-6 opacity-0 group-hover:opacity-5 transition-opacity duration-500">
                  <feature.icon className="w-32 h-32 rotate-12 text-indigo-600" />
               </div>
               
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-8 ${feature.color} group-hover:scale-110 transition-transform duration-500`}>
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-8 ${feature.color} dark:bg-indigo-500/10 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-500`}>
                 <feature.icon className="w-7 h-7" />
               </div>
               
-              <h4 className="text-2xl font-bold mb-4 text-slate-900 group-hover:text-indigo-600 transition-colors duration-300">
+              <h4 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors duration-300">
                 {feature.title}
               </h4>
-              <p className="text-slate-600 leading-relaxed font-medium group-hover:text-slate-700 transition-colors duration-300">
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors duration-300">
                 {feature.description}
               </p>
             </motion.div>
