@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { PostEventSheet } from "@/components/calendar/post-event-sheet";
+
 import {
   TrendingUp,
   Share2,
@@ -40,6 +43,8 @@ export default function DashboardClient({
   connectedAccounts, 
   aiInsight 
 }: any) {
+  const [selectedPost, setSelectedPost] = useState<any>(null);
+
   // Use real icons
   const getIcon = (name: string) => {
     switch (name) {
@@ -112,13 +117,21 @@ export default function DashboardClient({
               <p className="text-[15px] font-bold text-[#1a1f36]">Recent activity</p>
               <p className="text-[11px] text-[#8792a2] font-semibold mt-0.5 whitespace-nowrap">Latest automated events across connected channels</p>
             </div>
-            <Link href="/triggers" className="text-[11px] font-bold text-[#635bff] hover:text-[#4f46e5] transition-colors uppercase tracking-widest bg-[#635bff]/5 px-3 py-1.5 rounded-lg border border-[#635bff]/10">View all</Link>
+            <Link href="/calendar?view=all-posts" className="text-[11px] font-bold text-[#635bff] hover:text-[#4f46e5] transition-colors uppercase tracking-widest bg-[#635bff]/5 px-3 py-1.5 rounded-lg border border-[#635bff]/10">View all</Link>
           </div>
           <div className="divide-y divide-[#f0f3f7]">
             {activities.length > 0 ? activities.map((activity: any) => (
-              <div key={activity.id} className="flex items-center gap-5 px-6 py-4 hover:bg-[#f6f9fc]/50 transition-colors group cursor-pointer">
-                <div className="shrink-0 flex items-center justify-center w-4 h-4">
-                  <div className="w-2.5 h-2.5 rounded-full ring-4 ring-offset-0 group-hover:scale-125 transition-transform" style={{ backgroundColor: activity.dot, '--tw-ring-color': `${activity.dot}20` } as any} />
+              <div 
+                key={activity.id} 
+                onClick={() => setSelectedPost(activity.post)}
+                className="flex items-center gap-5 px-6 py-4 hover:bg-[#f6f9fc]/50 transition-colors group cursor-pointer"
+              >
+                <div className="shrink-0 flex items-center justify-center w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200">
+                  {activity.avatarUrl ? (
+                    <img src={activity.avatarUrl} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-2.5 h-2.5 rounded-full ring-4 ring-offset-0 group-hover:scale-125 transition-transform" style={{ backgroundColor: activity.dot, '--tw-ring-color': `${activity.dot}20` } as any} />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[14px] font-bold text-[#3c4257] group-hover:text-[#1a1f36] transition-colors">{activity.label}</p>
@@ -195,6 +208,16 @@ export default function DashboardClient({
           </button>
         </div>
       </motion.div>
+
+      <PostEventSheet
+        isOpen={!!selectedPost}
+        onClose={() => setSelectedPost(null)}
+        post={selectedPost}
+        onDelete={(id) => {
+          toast.info("Delete post action via calendar");
+          setSelectedPost(null);
+        }}
+      />
     </div>
   );
 }

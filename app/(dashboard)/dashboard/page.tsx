@@ -30,6 +30,10 @@ export default async function DashboardPage() {
   const scheduled = userPosts.filter(p => p.status === "scheduled");
   const published = userPosts.filter(p => p.status === "published");
 
+  const accounts = await db.query.socialAccounts.findMany({
+    where: eq(socialAccounts.userId, dbUser.id),
+  });
+
   const stats = [
     {
       label: "Total posts",
@@ -66,17 +70,17 @@ export default async function DashboardPage() {
   ];
 
   const recentPosts = userPosts.slice(0, 4).map((p, i) => {
+    const matchingAccount = accounts.find(a => p.platforms.some((pl: string) => pl.toLowerCase() === a.platform.toLowerCase()));
+    
     return {
-      id: i,
+      post: p, // full post for detail view
+      id: p.id,
       label: `Post ${p.status}`,
       detail: p.platforms.join(" & ") || "Multiple platforms",
       time: formatDistanceToNow(new Date(p.createdAt), { addSuffix: true }),
       dot: p.status === "published" ? "#09825d" : p.status === "scheduled" ? "#f5a623" : "#635bff",
+      avatarUrl: matchingAccount?.avatarUrl || null,
     };
-  });
-
-  const accounts = await db.query.socialAccounts.findMany({
-    where: eq(socialAccounts.userId, dbUser.id),
   });
 
   const platformMeta: Record<string, { icon: string, color: string, bg: string }> = {

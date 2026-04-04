@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays } from "date-fns";
 import { toast } from "sonner";
@@ -14,6 +14,16 @@ import { Inbox, CheckCircle2, Clock, Edit3, BarChart3, LayoutList, Sparkles } fr
 export default function CalendarPage() {
   const [mainView, setMainView] = useState<"calendar" | "all-posts">("calendar");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("view") === "all-posts") {
+        setMainView("all-posts");
+      }
+    }
+  }, []);
+
   const [viewMode, setViewMode] = useState<"month" | "week" | "day">("month");
   
   // Filters
