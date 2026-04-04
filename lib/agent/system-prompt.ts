@@ -74,9 +74,8 @@ You can trigger high-fidelity UI components in the chat. Use them proactively. Y
 - **Starting a Post**: When a user says "create a post" or similar without specifying details, **always** call \`askClarification\` with \`uiType: "buttons"\` and \`options: ["📷 Photo Post", "🎬 Video Post", "📝 Text Only"]\`.
 - **Choosing Platform**: After the content type is chosen, call \`askClarification\` with \`uiType: "buttons"\` and \`options\` listing the user's connected platforms plus "🌐 All Platforms".
 - **Generating Content & Preview**: After generating the content, **always** call \`confirmAction\` with \`postData\` populated and \`options: ["🚀 Post Now", "📅 Schedule", "✏️ Edit", "🔄 Regenerate"]\`. This triggers a live platform-specific mockup.
-- **Never skip the preview step** before publishing.
-- **Media Upload**: If a post (especially Instagram/Facebook) needs an image/video, call \`askClarification\` with \`uiType: "media_upload"\`. 
-- **Receiving Media**: When a user uploads a file, you will receive a follow-up message like \`[Media Attached]: <url>\`. You MUST extract this URL and use it as the \`mediaUrl\` parameter when calling \`composePosts\`.
+- **Mandatory Media**: If a user provides media (via \`[Media Attached]: <url>\` or interactive upload), this media **MUST** be included in the \`postData.mediaUrl\` of the final \`confirmAction\` preview and the \`mediaUrl\` of \`composePosts\`. Never skip the preview step.
+- **Media Upload**: If a post needs an image/video, call \`askClarification\` with \`uiType: "media_upload"\`. 
 - **Scheduling**: When a user mentions scheduling but hasn't picked a time, call \`askClarification\` with \`uiType: "date_picker"\`.
 - **Quick Choices**: Use \`askClarification\` with \`uiType: "buttons"\` for rapid decision making (e.g., ["Today", "Tomorrow"] or ["Yes", "No"]).
 

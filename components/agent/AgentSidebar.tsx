@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import {
-  Send, Sparkles, Zap, Clock, Loader2, X, Plus,
+  Send, Sparkles, Zap, Clock, Loader2, X, Plus, Image as ImageIcon,
   CheckCircle2, XCircle, Terminal, ChevronDown, ChevronUp,
   Calendar, BarChart3, MessageSquare, RefreshCw, ArrowRight,
 } from "lucide-react";
@@ -407,10 +407,13 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [completedActions, setCompletedActions] = useState<Record<string, MessageAction>>({});
+  const [attachedMediaUrl, setAttachedMediaUrl] = useState<string | null>(null);
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
@@ -453,7 +456,12 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
+    const fullMessage = attachedMediaUrl 
+      ? `[Media Attached]: ${attachedMediaUrl}\n\n${userMessage}` 
+      : userMessage;
+
     setInput("");
+    setAttachedMediaUrl(null);
     setIsLoading(true);
 
     // Add user message immediately
@@ -478,7 +486,7 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
       const res = await fetch("/api/agent/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage, conversationId: currentId }),
+        body: JSON.stringify({ message: fullMessage, conversationId: currentId }),
         signal: abortRef.current.signal,
       });
 
@@ -639,6 +647,32 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
     setTimeout(() => {
       handleSend();
     }, 100);
+  };
+
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingMedia(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/media/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const data = await res.json();
+      setAttachedMediaUrl(data.url);
+    } catch (err) {
+      console.error("Media upload error:", err);
+    } finally {
+      setIsUploadingMedia(false);
+      if (mediaInputRef.current) mediaInputRef.current.value = "";
+    }
   };
 
   const handleStop = () => {
@@ -833,7 +867,38 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
               })()}
 
               <div className="relative">
-                <div className="relative bg-[#f6f9fc] border border-[#e3e8ef] rounded-2xl focus-within:border-[#635bff] focus-within:bg-white focus-within:shadow-sm transition-all">
+                {/* Image Input (Hidden) */}
+                <input 
+                  type="file" 
+                  ref={mediaInputRef} 
+                  className="hidden" 
+                  accept="image/*,video/*"
+                  onChange={handleMediaUpload}
+                />
+
+                {/* Attached Media Thumbnail */}
+                {attachedMediaUrl && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="absolute -top-16 left-2 z-10 p-1 bg-white border border-[#e3e8ef] shadow-lg rounded-xl"
+                  >
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-black/5">
+                      <img src={attachedMediaUrl} alt="Attached" className="w-full h-full object-cover" />
+                      <button 
+                        onClick={() => setAttachedMediaUrl(null)}
+                        className="absolute top-0 right-0 p-0.5 bg-black/50 text-white hover:bg-black transition-colors"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                <div className={cn(
+                  "relative bg-[#f6f9fc] border border-[#e3e8ef] rounded-2xl focus-within:border-[#635bff] transition-all",
+                  isUploadingMedia && "opacity-50 pointer-events-none"
+                )}>
                   <Textarea
                     ref={textareaRef}
                     placeholder="Ask your copilot to post, schedule, or analyse..."
@@ -848,6 +913,32 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                     rows={1}
                     className="border-none focus-visible:ring-0 resize-none px-4 pt-3 pb-10 text-[13px] font-medium text-[#1a1f36] placeholder:text-[#b0bbc8] bg-transparent min-h-[52px] max-h-32"
                   />
+                  
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1.5">
+                    <Button
+                      onClick={() => mediaInputRef.current?.click()}
+                      disabled={isUploadingMedia || isLoading}
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 w-8 rounded-xl p-0 text-[#697386] hover:bg-[#635bff]/10 hover:text-[#635bff]"
+                    >
+                      {isUploadingMedia ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <ImageIcon className="w-3.5 h-3.5" />
+                      )}
+                    </Button>
+                    <div className="w-[1px] h-4 bg-[#e3e8ef] mx-0.5" />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 rounded-xl text-[11px] font-bold text-[#697386] hover:bg-[#f6f9fc]"
+                      onClick={() => setInput(prev => prev + " 📅 ")}
+                    >
+                      Schedule
+                    </Button>
+                  </div>
+
                   <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
                     {isLoading ? (
                       <Button
