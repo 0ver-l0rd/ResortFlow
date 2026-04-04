@@ -29,8 +29,8 @@ const lifecycle = [
     label: "MAKE",
     title: "Smart Photos",
     desc: "AI makes perfect photos for your hotel.",
-    color: "text-[#635bff]",
-    bg: "bg-[#635bff]/10",
+    color: "text-[#2d6a4f]",
+    bg: "bg-[#2d6a4f]/10",
     id: 1
   },
   {
@@ -58,7 +58,7 @@ const ProperMiniCalendar = ({ isActive }: { isActive: boolean }) => {
   
   const events = [
     { day: 1, icon: FaInstagram, color: "bg-[#E1306C]", delay: 0.2, label: "Feed Post" },
-    { day: 2, icon: Mail, color: "bg-[#635bff]", delay: 0.8, label: "VIP Invite" },
+    { day: 2, icon: Mail, color: "bg-[#2d6a4f]", delay: 0.8, label: "VIP Invite" },
     { day: 3, icon: FaWhatsapp, color: "bg-[#25D366]", delay: 1.4, label: "Guest DM" },
     { day: 5, icon: FaInstagram, color: "bg-[#E1306C]", delay: 2.0, label: "Luxury Reel" },
     { day: 6, icon: Zap, color: "bg-[#f5a623]", delay: 2.6, label: "Flash Sale" },
@@ -73,7 +73,7 @@ const ProperMiniCalendar = ({ isActive }: { isActive: boolean }) => {
             initial={{ left: "0%" }}
             animate={{ left: "100%" }}
             transition={{ duration: 4, ease: "linear" }}
-            className="absolute top-0 bottom-0 w-[2.5px] bg-gradient-to-b from-transparent via-[#635bff] to-transparent z-20 shadow-[0_0_15px_rgba(99,91,255,0.5)]"
+            className="absolute top-0 bottom-0 w-[2.5px] bg-gradient-to-b from-transparent via-[#2d6a4f] to-transparent z-20 shadow-[0_0_15px_rgba(99,91,255,0.5)]"
           />
         )}
 
@@ -133,7 +133,7 @@ const GrowthChart = () => (
         initial={{ height: 0 }}
         whileInView={{ height: `${h}%` }}
         transition={{ delay: i * 0.1, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className="flex-1 bg-gradient-to-t from-[#635bff] to-[#a29bfe] rounded-t-lg shadow-sm"
+        className="flex-1 bg-gradient-to-t from-[#2d6a4f] to-[#a29bfe] rounded-t-lg shadow-sm"
         style={{ opacity: 0.15 + (i * 0.08) }}
       />
     ))}
@@ -177,7 +177,7 @@ export function Autopilot() {
   return (
     <section id="autopilot" className="py-16 md:py-24 bg-[#fcfdfe] relative overflow-hidden" ref={ref}>
       {/* Dynamic Background */}
-      <div className="absolute top-0 right-0 w-[60%] h-[60%] bg-[#635bff]/5 blur-[150px] rounded-full -z-10" />
+      <div className="absolute top-0 right-0 w-[60%] h-[60%] bg-[#2d6a4f]/5 blur-[150px] rounded-full -z-10" />
       <div className="absolute -bottom-[20%] -left-[10%] w-[40%] h-[40%] bg-[#09825d]/5 blur-[120px] rounded-full -z-10" />
       
       <div className="container mx-auto px-6 relative z-10">
@@ -188,7 +188,7 @@ export function Autopilot() {
             viewport={{ once: true }}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f6f9fc] border border-[#e3e8ef] mb-6"
           >
-            <Zap className="w-3.5 h-3.5 text-[#635bff]" />
+            <Zap className="w-3.5 h-3.5 text-[#2d6a4f]" />
             <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.2em]">Set It and Forget It</span>
           </motion.div>
           
@@ -199,7 +199,7 @@ export function Autopilot() {
             className="text-[38px] md:text-[50px] font-black text-[#1a1f36] leading-[1.05] tracking-tight mb-6"
           >
             Marketing That Works <br />
-            <span className="text-[#635bff]">on Its Own.</span>
+            <span className="text-[#2d6a4f]">on Its Own.</span>
           </motion.h2>
           
           <motion.p 
@@ -219,7 +219,7 @@ export function Autopilot() {
            <div className="lg:col-span-5 flex flex-col gap-8">
               <div className="flex-1 p-10 rounded-[3.5rem] bg-[#f8fafc] border border-[#e3e8ef] shadow-inner flex flex-col gap-10 relative overflow-hidden group">
                  <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700">
-                    <Bot className="w-48 h-48 text-[#635bff]" />
+                    <Bot className="w-48 h-48 text-[#2d6a4f]" />
                  </div>
 
                  <div className="flex items-center justify-between relative z-10">
@@ -241,7 +241,7 @@ export function Autopilot() {
                     <div className="p-6 rounded-2xl bg-[#fcfdfe] border border-[#e3e8ef] min-h-[110px] relative">
                        <p className="text-[15px] font-bold text-[#1a1f36] leading-relaxed italic">
                           "{displayText}"
-                          {step === 0 && <span className="inline-block w-1.5 h-4 bg-[#635bff] ml-1 animate-pulse" />}
+                          {step === 0 && <span className="inline-block w-1.5 h-4 bg-[#2d6a4f] ml-1 animate-pulse" />}
                        </p>
                        <AnimatePresence>
                           {step > 0 && (
@@ -292,7 +292,7 @@ export function Autopilot() {
 
            {/* Right Evolver: The Execution Engine */}
            <div className="lg:col-span-7 relative flex items-center justify-center">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#635bff08_0%,transparent_70%)] animate-pulse" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#2d6a4f08_0%,transparent_70%)] animate-pulse" />
               
               <div className="w-full relative min-h-[560px]">
                  <AnimatePresence mode="wait">
@@ -312,20 +312,20 @@ export function Autopilot() {
                           className="bg-white p-12 lg:p-16 rounded-[4rem] border border-[#e3e8ef] shadow-2xl space-y-12 w-full"
                         >
                            <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-xl bg-[#635bff]/10 flex items-center justify-center">
-                                 <Sparkles className="w-5 h-5 text-[#635bff] animate-pulse" />
+                              <div className="w-10 h-10 rounded-xl bg-[#2d6a4f]/10 flex items-center justify-center">
+                                 <Sparkles className="w-5 h-5 text-[#2d6a4f] animate-pulse" />
                               </div>
                               <h4 className="text-3xl font-black text-[#1a1f36] tracking-[-0.03em]">Synthesizing Media...</h4>
                            </div>
                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                               {[
-                                { icon: Mail, label: "VIP CRM", text: "Crafting High-Yield Copy", color: "bg-indigo-50/50" },
+                                { icon: Mail, label: "VIP CRM", text: "Crafting High-Yield Copy", color: "bg-emerald-50/50" },
                                 { icon: FaInstagram, label: "Instagram", text: "Drafting Cinematic Reels", color: "bg-pink-50/50" },
                                 { icon: FaWhatsapp, label: "WhatsApp", text: "Concierge Sequencing", color: "bg-green-50/50" },
                                 { icon: Smartphone, label: "SMS Pulse", text: "Direct Capture Blitz", color: "bg-blue-50/50" }
                               ].map((b, i) => (
                                 <div key={i} className={cn("p-8 rounded-3xl border border-[#e3e8ef] relative group/item overflow-hidden", b.color)}>
-                                   <b.icon className="w-6 h-6 text-[#635bff] mb-4 transition-transform group-hover/item:scale-110" />
+                                   <b.icon className="w-6 h-6 text-[#2d6a4f] mb-4 transition-transform group-hover/item:scale-110" />
                                    <p className="text-[11px] font-black text-[#8792a2] uppercase tracking-[0.2em] mb-1">{b.label}</p>
                                    <p className="text-[16px] font-black text-[#1a1f36] tracking-tight">{b.text}</p>
                                    <div className="h-2 w-full bg-white border border-[#e3e8ef] mt-6 rounded-full overflow-hidden shadow-inner">
@@ -333,7 +333,7 @@ export function Autopilot() {
                                         initial={{ width: 0 }} 
                                         animate={{ width: "100%" }} 
                                         transition={{ duration: 2.5, ease: "easeInOut" }} 
-                                        className="h-full bg-gradient-to-r from-[#635bff] to-[#a29bfe]" 
+                                        className="h-full bg-gradient-to-r from-[#2d6a4f] to-[#a29bfe]" 
                                       />
                                    </div>
                                 </div>
@@ -361,8 +361,8 @@ export function Autopilot() {
                                  </div>
                               </div>
                               <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-full bg-[#f6f9fc] border border-[#e3e8ef] shadow-sm">
-                                 <MousePointer2 className="w-3.5 h-3.5 text-[#635bff]" />
-                                 <span className="text-[11px] font-black text-[#635bff] uppercase tracking-widest">Optimizing Windows</span>
+                                 <MousePointer2 className="w-3.5 h-3.5 text-[#2d6a4f]" />
+                                 <span className="text-[11px] font-black text-[#2d6a4f] uppercase tracking-widest">Optimizing Windows</span>
                               </div>
                            </div>
                            
@@ -412,12 +412,12 @@ export function Autopilot() {
                                       transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                                       className="w-32 h-32 rounded-full border-[6px] border-white shadow-2xl flex items-center justify-center"
                                     >
-                                        <div className="w-full h-full rounded-full border-[6px] border-[#635bff30] border-t-[#635bff]" />
+                                        <div className="w-full h-full rounded-full border-[6px] border-[#2d6a4f30] border-t-[#2d6a4f]" />
                                     </motion.div>
                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                                        <span className="text-3xl font-black text-[#1a1f36] tracking-tighter">28%</span>
                                     </div>
-                                    <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-[#635bff] border-4 border-white flex items-center justify-center shadow-lg">
+                                    <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-[#2d6a4f] border-4 border-white flex items-center justify-center shadow-lg">
                                        <Sparkles className="w-4 h-4 text-white" />
                                     </div>
                                  </div>
@@ -438,13 +438,13 @@ export function Autopilot() {
                         >
                            <div className="relative">
                               <div className="w-32 h-32 rounded-full bg-white flex items-center justify-center border border-[#e3e8ef] shadow-xl group cursor-pointer transition-transform hover:scale-110">
-                                  <Zap className="w-12 h-12 text-[#e3e8ef] group-hover:text-[#635bff] transition-colors" />
-                                  <div className="absolute inset-0 rounded-full bg-[#635bff]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  <Zap className="w-12 h-12 text-[#e3e8ef] group-hover:text-[#2d6a4f] transition-colors" />
+                                  <div className="absolute inset-0 rounded-full bg-[#2d6a4f]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
                               <motion.div 
                                 animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.3, 0.1] }}
                                 transition={{ duration: 3, repeat: Infinity }}
-                                className="absolute -inset-8 bg-[#635bff] rounded-full blur-3xl -z-10"
+                                className="absolute -inset-8 bg-[#2d6a4f] rounded-full blur-3xl -z-10"
                               />
                            </div>
                            <div className="text-center space-y-3">

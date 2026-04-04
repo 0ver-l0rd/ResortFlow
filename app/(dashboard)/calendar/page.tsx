@@ -227,7 +227,7 @@ export default function CalendarPage() {
         <div className="lg:col-span-3 flex flex-col h-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-y-auto no-scrollbar">
           {isLoading && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-xl">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-800"></div>
             </div>
           )}
 
@@ -263,7 +263,7 @@ export default function CalendarPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white/50 backdrop-blur-sm sticky top-0 z-10">
                   <div className="flex items-center gap-2">
-                    <LayoutList className="w-5 h-5 text-indigo-600" />
+                    <LayoutList className="w-5 h-5 text-emerald-800" />
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900">All Pipeline Posts</h2>
                       <p className="text-xs text-gray-500 mt-0.5">A comprehensive view of your content history</p>
@@ -287,13 +287,13 @@ export default function CalendarPage() {
                       <div 
                         key={post.id} 
                         onClick={() => handleEventClick(post)}
-                        className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-indigo-50/30 transition-colors duration-200 cursor-pointer"
+                        className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-emerald-50/30 transition-colors duration-200 cursor-pointer"
                       >
                         <div className="flex items-start gap-3">
                           {/* Status Icon */}
                           <div className="mt-1 flex-shrink-0">
                             {post.status === 'published' ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> :
-                             post.status === 'scheduled' ? <Clock className="w-5 h-5 text-indigo-500" /> :
+                             post.status === 'scheduled' ? <Clock className="w-5 h-5 text-emerald-700" /> :
                              <Edit3 className="w-5 h-5 text-amber-500" />}
                           </div>
                           
@@ -304,7 +304,7 @@ export default function CalendarPage() {
                             <span className="text-xs text-gray-500 flex items-center gap-1.5">
                               {post.scheduledAt ? format(new Date(post.scheduledAt), "MMM d, yyyy 'at' h:mm a") : "No Date Set"}
                               {post.isAiGenerated && (
-                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] bg-indigo-50 text-indigo-600 font-medium ml-1">
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-800 font-medium ml-1">
                                   <Sparkles className="w-2.5 h-2.5" /> AI
                                 </span>
                               )}
@@ -407,7 +407,7 @@ export default function CalendarPage() {
              /* Statistics Counters for All Posts View */
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 sticky top-6">
               <div className="flex items-center gap-2 mb-6">
-                <BarChart3 className="w-5 h-5 text-indigo-600" />
+                <BarChart3 className="w-5 h-5 text-emerald-800" />
                 <h3 className="text-sm font-semibold text-gray-900">Pipeline Statistics</h3>
               </div>
               
@@ -425,12 +425,12 @@ export default function CalendarPage() {
                   <span className="text-lg font-bold text-emerald-600">{aggregateCounts.published}</span>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-indigo-50/50 rounded-lg border border-indigo-100/50 hover:bg-indigo-50 transition-colors duration-200">
+                <div className="flex items-center justify-between p-3 bg-emerald-50/50 rounded-lg border border-indigo-100/50 hover:bg-emerald-50 transition-colors duration-200">
                   <div className="flex items-center gap-2.5">
-                    <Clock className="w-4 h-4 text-indigo-500" />
+                    <Clock className="w-4 h-4 text-emerald-700" />
                     <span className="text-sm font-medium text-gray-700">Scheduled</span>
                   </div>
-                  <span className="text-lg font-bold text-indigo-600">{aggregateCounts.scheduled}</span>
+                  <span className="text-lg font-bold text-emerald-800">{aggregateCounts.scheduled}</span>
                 </div>
 
                 <div className="flex items-center justify-between p-3 bg-amber-50/50 rounded-lg border border-amber-100/50 hover:bg-amber-50 transition-colors duration-200">

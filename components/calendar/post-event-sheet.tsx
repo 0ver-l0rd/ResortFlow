@@ -44,7 +44,7 @@ export function PostEventSheet({ post, isOpen, onClose, onDelete }: PostEventShe
     if (s.includes("instagram")) return <FaInstagram className="w-3.5 h-3.5 text-[#E1306C]" />;
     if (s.includes("linkedin")) return <FaLinkedinIn className="w-3.5 h-3.5 text-[#0A66C2]" />;
     if (s.includes("youtube")) return <FaYoutube className="w-3.5 h-3.5 text-[#FF0000]" />;
-    return <Share2 className="w-3.5 h-3.5 text-[#635bff]" />;
+    return <Share2 className="w-3.5 h-3.5 text-[#2d6a4f]" />;
   };
 
   const statusConfig = getStatusConfig(post.status);
@@ -81,7 +81,7 @@ export function PostEventSheet({ post, isOpen, onClose, onDelete }: PostEventShe
             <div className="bg-white border border-[#e3e8ef] rounded-2xl p-4 shadow-[0_1px_3px_rgba(34,42,66,0.03)] group transition-all hover:border-[#c9d0ef] hover:shadow-[0_2px_8px_rgba(34,42,66,0.06)]">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-[#f6f9fc] flex items-center justify-center border border-[#e3e8ef]/50">
-                  <CalendarIcon className="w-5 h-5 text-[#635bff]" />
+                  <CalendarIcon className="w-5 h-5 text-[#2d6a4f]" />
                 </div>
                 <div className="flex-1">
                   <div className="text-[14px] font-bold text-[#1a1f36]">
@@ -121,7 +121,7 @@ export function PostEventSheet({ post, isOpen, onClose, onDelete }: PostEventShe
               <AlignLeft className="w-4 h-4 text-[#8792a2]" /> Content
             </h3>
             <div className="bg-white border border-[#e3e8ef] rounded-2xl p-5 shadow-[0_1px_3px_rgba(34,42,66,0.03)] relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-[#635bff]/20" />
+              <div className="absolute top-0 left-0 w-1 h-full bg-[#2d6a4f]/20" />
               {post.content ? (
                 <p className="text-[14px] text-[#3c4257] leading-[1.6] whitespace-pre-wrap font-medium">
                   {post.content}
@@ -170,7 +170,7 @@ export function PostEventSheet({ post, isOpen, onClose, onDelete }: PostEventShe
           {post.status !== "published" ? (
             <button 
               onClick={handleEdit} 
-              className="w-full flex justify-center items-center gap-2 bg-[#635bff] text-white text-[13px] font-bold px-4 py-3 rounded-xl hover:bg-[#4f46e5] hover:shadow-[0_4px_12px_rgba(99,91,255,0.2)] transition-all active:scale-[0.98] shadow-[0_2px_4px_rgba(99,91,255,0.1)]"
+              className="w-full flex justify-center items-center gap-2 bg-[#2d6a4f] text-white text-[13px] font-bold px-4 py-3 rounded-xl hover:bg-[#1b4332] hover:shadow-[0_4px_12px_rgba(99,91,255,0.2)] transition-all active:scale-[0.98] shadow-[0_2px_4px_rgba(99,91,255,0.1)]"
             >
               <CalendarClock className="w-4 h-4" /> Reschedule Post
             </button>

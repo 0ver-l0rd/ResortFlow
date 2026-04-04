@@ -62,7 +62,7 @@ const DEFAULT_SEGMENTS = [
     trendUp: true,
     avgRevenue: 340,
     bestContent: "VIP offers, spa exclusives",
-    color: "#635bff",
+    color: "#2d6a4f",
     bg: "#fcfdfe",
     borderColor: "#e3e8ef",
     useCase: "VIP loyalty campaigns",
@@ -79,7 +79,7 @@ const DEFAULT_SEGMENTS = [
     trendUp: true,
     avgRevenue: 180,
     bestContent: "Urgency posts, limited offers",
-    color: "#635bff",
+    color: "#2d6a4f",
     bg: "#fcfdfe",
     borderColor: "#e3e8ef",
     useCase: "Conversion push",
@@ -96,7 +96,7 @@ const DEFAULT_SEGMENTS = [
     trendUp: false,
     avgRevenue: 90,
     bestContent: "Win-back offers, special deals",
-    color: "#635bff",
+    color: "#2d6a4f",
     bg: "#fcfdfe",
     borderColor: "#e3e8ef",
     useCase: "Win-back sequences",
@@ -113,7 +113,7 @@ const DEFAULT_SEGMENTS = [
     trendUp: true,
     avgRevenue: 0,
     bestContent: "Welcome posts, property highlights",
-    color: "#635bff",
+    color: "#2d6a4f",
     bg: "#fcfdfe",
     borderColor: "#e3e8ef",
     useCase: "Welcome sequence",
@@ -130,7 +130,7 @@ const DEFAULT_SEGMENTS = [
     trendUp: true,
     avgRevenue: 520,
     bestContent: "Behind-the-scenes, exclusive previews",
-    color: "#635bff",
+    color: "#2d6a4f",
     bg: "#fcfdfe",
     borderColor: "#e3e8ef",
     useCase: "Brand advocacy ask",
@@ -147,7 +147,7 @@ const DEFAULT_SEGMENTS = [
     trendUp: true,
     avgRevenue: 95,
     bestContent: "Flash sales, promo codes",
-    color: "#635bff",
+    color: "#2d6a4f",
     bg: "#fcfdfe",
     borderColor: "#e3e8ef",
     useCase: "Promotional campaigns",
@@ -191,7 +191,7 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
     toast.dismiss(buildToast);
     toast.success("Segment engineered successfully", {
       description: "1,240 contacts identified.",
-      icon: <Sparkles className="w-4 h-4 text-[#635bff]" />
+      icon: <Sparkles className="w-4 h-4 text-[#2d6a4f]" />
     });
   };
 
@@ -203,8 +203,8 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-[#635bff]" />
-                            <span className="text-[11px] font-black uppercase tracking-[0.25em] text-[#635bff]">Intelligence / Audience</span>
+                            <div className="w-2 h-2 rounded-full bg-[#2d6a4f]" />
+                            <span className="text-[11px] font-black uppercase tracking-[0.25em] text-[#2d6a4f]">Intelligence / Audience</span>
                         </div>
                         <h1 className="text-[44px] font-black tracking-[-0.04em] text-[#1a1f36] leading-[1.0]">
                             Segments
@@ -218,7 +218,7 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                     <div className="flex items-center gap-4 pt-6 md:pt-0">
                         <button
                             onClick={() => setIsCreatingCustom(true)}
-                            className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-[#635bff] text-white text-[13px] font-bold shadow-[0_4px_12px_rgba(99,91,255,0.25)] hover:bg-[#534bbd] transition-all active:scale-[0.98]"
+                            className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-[#2d6a4f] text-white text-[13px] font-bold shadow-[0_4px_12px_rgba(99,91,255,0.25)] hover:bg-[#534bbd] transition-all active:scale-[0.98]"
                         >
                             <Plus size={16} strokeWidth={2.5} />
                             <span>Create Custom</span>
@@ -266,18 +266,18 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`relative pb-3 text-[14px] font-bold transition-all ${activeTab === tab ? "text-[#635bff]" : "text-[#8792a2] hover:text-[#1a1f36]"}`}
+                                className={`relative pb-3 text-[14px] font-bold transition-all ${activeTab === tab ? "text-[#2d6a4f]" : "text-[#8792a2] hover:text-[#1a1f36]"}`}
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
                                 {activeTab === tab && (
-                                    <motion.div layoutId="tab-underline" className="absolute bottom-[-1px] left-0 right-0 h-[2.5px] bg-[#635bff] rounded-full" />
+                                    <motion.div layoutId="tab-underline" className="absolute bottom-[-1px] left-0 right-0 h-[2.5px] bg-[#2d6a4f] rounded-full" />
                                 )}
                             </button>
                         ))}
                     </div>
                     <div className="flex items-center gap-8">
                         <div className="relative group hidden sm:block">
-                            <Search size={14} className={`absolute left-0 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? "text-[#635bff]" : "text-[#8792a2] group-focus-within:text-[#635bff]"}`} />
+                            <Search size={14} className={`absolute left-0 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? "text-[#2d6a4f]" : "text-[#8792a2] group-focus-within:text-[#2d6a4f]"}`} />
                             <input 
                                 type="text" 
                                 value={searchQuery}
@@ -289,9 +289,9 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                         <button 
                             onClick={() => toast.info("Opening Advanced Filters...", {
                                 description: "Segment by booking frequency, average stay value, and engagement velocity.",
-                                icon: <SlidersHorizontal size={14} className="text-[#635bff]" />
+                                icon: <SlidersHorizontal size={14} className="text-[#2d6a4f]" />
                             })}
-                            className="text-[13px] font-bold text-[#1a1f36] hover:text-[#635bff] transition-colors flex items-center gap-2"
+                            className="text-[13px] font-bold text-[#1a1f36] hover:text-[#2d6a4f] transition-colors flex items-center gap-2"
                         >
                             <SlidersHorizontal size={14} strokeWidth={1.5} />
                             Filters
@@ -314,7 +314,7 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                         <motion.div
                             variants={item}
                             key={seg.id}
-                            className="bg-white border border-[#e3e8ef] rounded-[28px] p-10 shadow-sm hover:shadow-xl hover:border-[#635bff]/20 transition-all duration-300 cursor-pointer group flex flex-col relative overflow-hidden active:scale-[0.99]"
+                            className="bg-white border border-[#e3e8ef] rounded-[28px] p-10 shadow-sm hover:shadow-xl hover:border-[#2d6a4f]/20 transition-all duration-300 cursor-pointer group flex flex-col relative overflow-hidden active:scale-[0.99]"
                             onClick={() => setSelectedSegment(seg)}
                         >
                             <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -322,8 +322,8 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                             </div>
 
                             <div className="flex items-center gap-4 mb-8">
-                                <div className="w-14 h-14 rounded-2xl bg-[#f6f9fc] flex items-center justify-center border border-[#e3e8ef] group-hover:bg-[#635bff]/5 transition-all">
-                                    <seg.icon size={26} strokeWidth={1.2} className="text-[#635bff]" />
+                                <div className="w-14 h-14 rounded-2xl bg-[#f6f9fc] flex items-center justify-center border border-[#e3e8ef] group-hover:bg-[#2d6a4f]/5 transition-all">
+                                    <seg.icon size={26} strokeWidth={1.2} className="text-[#2d6a4f]" />
                                 </div>
                             </div>
 
@@ -355,7 +355,7 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                             <div className="mt-auto">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); handleLaunchCampaign(seg); }}
-                                    className="w-full py-4 rounded-2xl text-[14px] font-black text-[#1a1f36] bg-[#f6f9fc] border border-[#e3e8ef] hover:bg-[#635bff] hover:text-white hover:border-[#635bff] transition-all duration-200 active:scale-[0.98]"
+                                    className="w-full py-4 rounded-2xl text-[14px] font-black text-[#1a1f36] bg-[#f6f9fc] border border-[#e3e8ef] hover:bg-[#2d6a4f] hover:text-white hover:border-[#2d6a4f] transition-all duration-200 active:scale-[0.98]"
                                 >
                                     Focus on Audience
                                 </button>
@@ -387,7 +387,7 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                         <div className="p-10 sm:p-14 h-full overflow-y-auto custom-scrollbar flex flex-col">
                             <div className="flex items-center justify-between mb-16">
                                 <div className="w-16 h-16 rounded-[22px] bg-[#fcfdfe] flex items-center justify-center border border-[#e3e8ef] shadow-sm">
-                                    <selectedSegment.icon size={32} strokeWidth={1.2} className="text-[#635bff]" />
+                                    <selectedSegment.icon size={32} strokeWidth={1.2} className="text-[#2d6a4f]" />
                                 </div>
                                 <button onClick={() => setSelectedSegment(null)} className="w-10 h-10 rounded-full hover:bg-[#f6f9fc] flex items-center justify-center transition-all">
                                     <X size={20} strokeWidth={2} className="text-[#697386]" />
@@ -423,7 +423,7 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                                 <div className="space-y-5">
                                     <p className="text-[11px] font-black uppercase tracking-widest text-[#8792a2]">Recommended Strategy</p>
                                     <div className="bg-[#fcfdfe] rounded-[28px] p-10 border border-[#f0f3f7] relative group">
-                                        <Sparkles size={18} strokeWidth={1.2} className="absolute top-8 right-8 text-[#635bff] animate-pulse" />
+                                        <Sparkles size={18} strokeWidth={1.2} className="absolute top-8 right-8 text-[#2d6a4f] animate-pulse" />
                                         <p className="text-[18px] text-[#3c4257] leading-relaxed font-semibold italic">
                                             {selectedSegment.id === "high-spenders" && "Prioritize exclusivity. personalized VIP sequence highlighting limited availability stays will maximize yield."}
                                             {selectedSegment.id === "likely-to-book" && "Scarcity models suggest a 12-hour flash sale for property highlights will convert this audience today."}
@@ -438,7 +438,7 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
 
                             <button
                                 onClick={() => { handleLaunchCampaign(selectedSegment); setSelectedSegment(null); }}
-                                className="mt-16 w-full py-5 rounded-2xl text-[16px] font-bold text-white bg-[#635bff] hover:bg-[#534bbd] shadow-[0_16px_32px_rgba(99,91,255,0.3)] transition-all active:scale-[0.98]"
+                                className="mt-16 w-full py-5 rounded-2xl text-[16px] font-bold text-white bg-[#2d6a4f] hover:bg-[#534bbd] shadow-[0_16px_32px_rgba(99,91,255,0.3)] transition-all active:scale-[0.98]"
                             >
                                 Launch Strategic Action
                             </button>

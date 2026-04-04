@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { getPlatform } from "@/lib/platforms/factory";
 import { db } from "@/db";
 import { socialAccounts } from "@/db/schema";
@@ -11,10 +11,7 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ platform: string }> }
 ) {
-  const { userId: clerkId } = await auth();
-  if (!clerkId) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
+  const clerkId = getDemoUserId();
 
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");

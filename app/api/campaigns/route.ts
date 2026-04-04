@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { campaigns, users } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const { userId } = await auth();
-    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+    const clerkId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-      where: eq(users.clerkId, userId)
+      where: eq(users.clerkId, clerkId)
     });
     if (!user) return new NextResponse("User not found", { status: 404 });
 

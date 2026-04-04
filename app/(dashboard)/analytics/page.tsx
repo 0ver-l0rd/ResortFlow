@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 const STATS_METADATA = [
-  { label: "Total Reach", icon: Eye, color: "#635bff", note: "vs last 7 days" },
+  { label: "Total Reach", icon: Eye, color: "#2d6a4f", note: "vs last 7 days" },
   { label: "Avg. Engagement", icon: BarChart3, color: "#09825d", note: "vs last 7 days" },
   { label: "Total Followers", icon: Users, color: "#f5a623", note: "new this week" },
   { label: "Growth Rate", icon: TrendingUp, color: "#e1306c", note: "vs last month" },
@@ -243,14 +243,14 @@ export default function AnalyticsPage() {
             </div>
           </div>
           <Button 
-            className="shrink-0 px-10 h-14 bg-[#635bff] hover:bg-[#4f46e5] text-white font-bold rounded-2xl shadow-[0_4px_12px_rgba(99,91,255,0.25)] hover:shadow-[0_8px_24px_rgba(99,91,255,0.3)] active:scale-95 transition-all relative z-10"
+            className="shrink-0 px-10 h-14 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-bold rounded-2xl shadow-[0_4px_12px_rgba(99,91,255,0.25)] hover:shadow-[0_8px_24px_rgba(99,91,255,0.3)] active:scale-95 transition-all relative z-10"
             onClick={() => window.location.href = '/compose'}
           >
             Create New Post
           </Button>
           
           {/* Subtle background flair */}
-          <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#635bff] opacity-[0.02] blur-[60px] rounded-full" />
+          <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#2d6a4f] opacity-[0.02] blur-[60px] rounded-full" />
         </div>
 
       </div>

@@ -51,12 +51,12 @@ export function QuickComposeModal({ isOpen, onClose, selectedDate, onSave }: Qui
           />
         </div>
         <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between w-full">
-          <Button variant="ghost" className="text-gray-500 justify-start px-2 hover:text-indigo-600 hover:bg-indigo-50" onClick={handleFullComposer}>
+          <Button variant="ghost" className="text-gray-500 justify-start px-2 hover:text-emerald-800 hover:bg-emerald-50" onClick={handleFullComposer}>
             Open full composer <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button onClick={handleSave} disabled={!content.trim()} className="bg-indigo-600 hover:bg-indigo-700">
+            <Button onClick={handleSave} disabled={!content.trim()} className="bg-emerald-800 hover:bg-indigo-700">
               <CalendarClock className="w-4 h-4 mr-2" />
               Save Draft
             </Button>

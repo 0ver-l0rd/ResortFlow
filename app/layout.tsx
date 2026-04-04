@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
-import { ClerkProvider } from '@clerk/nextjs'
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
@@ -11,7 +10,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Social Copilot",
+  title: "ResortFlow",
   description: "Manage All Your Social Media In One Place",
 };
 
@@ -21,21 +20,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html
-        lang="en"
-        className={outfit.className}
-        suppressHydrationWarning
-      >
-        <body className="min-h-[100dvh] flex flex-col antialiased bg-background text-foreground">
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-            <QueryProvider>
-              {children}
-              <Toaster richColors position="top-right" />
-            </QueryProvider>
-          </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html
+      lang="en"
+      className={outfit.className}
+      suppressHydrationWarning
+    >
+      <body className="min-h-[100dvh] flex flex-col antialiased bg-background text-foreground">
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          <QueryProvider>
+            {children}
+            <Toaster richColors position="top-right" />
+          </QueryProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

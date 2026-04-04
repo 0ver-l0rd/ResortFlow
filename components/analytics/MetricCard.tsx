@@ -19,7 +19,7 @@ export function MetricCard({
   trend,
   icon: Icon,
   note,
-  color = "#635bff",
+  color = "#2d6a4f",
 }: MetricCardProps) {
   return (
     <div className="bg-white rounded-xl border border-[#e3e8ef] px-5 py-5 flex flex-col gap-3 shadow-[0_1px_3px_rgba(60,66,87,0.05)] hover:shadow-[0_4px_20px_rgba(60,66,87,0.08)] hover:-translate-y-px transition-all duration-200 group">

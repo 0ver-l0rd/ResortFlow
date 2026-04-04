@@ -25,12 +25,12 @@ export function ThemedAIRecommendation({ data, isLoading, theme }: ThemedAIRecom
         <div className="absolute inset-0 bg-gradient-to-br from-[#f8fafc] to-white" />
         <div className="relative">
           <div className="w-16 h-16 rounded-2xl bg-white shadow-xl flex items-center justify-center border border-[#e2e8f0]">
-             <Loader2 className="w-8 h-8 text-[#635bff] animate-spin" />
+             <Loader2 className="w-8 h-8 text-[#2d6a4f] animate-spin" />
           </div>
           <motion.div 
             animate={{ scale: [1, 1.2, 1] }} 
             transition={{ repeat: Infinity, duration: 2 }}
-            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#635bff] flex items-center justify-center shadow-lg"
+            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#2d6a4f] flex items-center justify-center shadow-lg"
           >
              <Zap className="w-3 h-3 text-white fill-white" />
           </motion.div>
@@ -51,7 +51,7 @@ export function ThemedAIRecommendation({ data, isLoading, theme }: ThemedAIRecom
   return (
     <div className="relative group">
       {/* Stripe-style Shadow layer */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#635bff] to-[#4f46e5] rounded-[2rem] opacity-[0.03] blur-xl group-hover:opacity-[0.08] transition-opacity duration-700" />
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#2d6a4f] to-[#1b4332] rounded-[2rem] opacity-[0.03] blur-xl group-hover:opacity-[0.08] transition-opacity duration-700" />
       
       <div className="relative bg-white rounded-3xl border border-[#e2e8f0] shadow-[0_1px_1px_rgba(0,0,0,0.05),0_12px_60px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-700">
         
@@ -86,7 +86,7 @@ export function ThemedAIRecommendation({ data, isLoading, theme }: ThemedAIRecom
               </div>
             </div>
             
-            <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-[#635bff] text-white text-[11px] font-bold shadow-[0_4px_12px_rgba(99,91,255,0.25)] hover:shadow-[0_8px_20px_rgba(99,91,255,0.3)] hover:-translate-y-0.5 transition-all">
+            <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2d6a4f] text-white text-[11px] font-bold shadow-[0_4px_12px_rgba(99,91,255,0.25)] hover:shadow-[0_8px_20px_rgba(99,91,255,0.3)] hover:-translate-y-0.5 transition-all">
                 Action Strategy
                 <ArrowRight className="w-3 h-3" />
             </button>
@@ -98,7 +98,7 @@ export function ThemedAIRecommendation({ data, isLoading, theme }: ThemedAIRecom
             {/* Insights Section */}
             <div className="space-y-6">
                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-[#635bff]">
+                  <div className="flex items-center gap-2 text-[#2d6a4f]">
                     <TrendingUp className="w-4 h-4" />
                     <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Summary Insight</span>
                   </div>

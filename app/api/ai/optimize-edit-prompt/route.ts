@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { generateTextSafe } from "@/lib/ai";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = getDemoUserId();
 
     const { rawPrompt } = await request.json();
 

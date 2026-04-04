@@ -1,26 +1,23 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { mediaAssets, users } from "@/db/schema";
 import { imagekit } from "@/lib/imagekit/client";
 import { eq } from "drizzle-orm";
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+    const userId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.clerkId, clerkId),
+      where: (users, { eq }) => eq(users.id, userId),
     });
 
     if (!user) {
       return new NextResponse("User not found", { status: 404 });
     }
 
-    const formData = await req.formData();
+    const formData = await request.formData();
     const file = formData.get("file") as File;
 
     if (!file) {

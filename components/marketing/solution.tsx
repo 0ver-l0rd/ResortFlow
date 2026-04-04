@@ -24,8 +24,8 @@ const features = [
     desc: "We connect directly to your hotel software so you always know which rooms are free.",
     icon: Globe,
     roi: "+22% Income",
-    color: "text-[#635bff]",
-    bg: "bg-[#635bff]/10",
+    color: "text-[#2d6a4f]",
+    bg: "bg-[#2d6a4f]/10",
   },
   {
     title: "Happy Guest Tracker",
@@ -67,7 +67,7 @@ export function Solution() {
     <section id="solution" className="py-16 md:py-24 bg-white relative overflow-hidden">
       {/* Stripe-Level Background Accents */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#e3e8ef] to-transparent" />
-      <div className="absolute top-[10%] left-[-5%] w-[800px] h-[800px] bg-[#635bff05] blur-[180px] -z-10 rounded-full" />
+      <div className="absolute top-[10%] left-[-5%] w-[800px] h-[800px] bg-[#2d6a4f05] blur-[180px] -z-10 rounded-full" />
       
       <div className="container mx-auto px-6">
         <div className="max-w-7xl mx-auto">
@@ -80,7 +80,7 @@ export function Solution() {
                 viewport={{ once: true }}
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#f6f9fc] border border-[#e3e8ef] mb-8"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#635bff]" />
+                <Sparkles className="w-3.5 h-3.5 text-[#2d6a4f]" />
                 <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.2em]">Save Time & Work</span>
               </motion.div>
               <motion.h2 
@@ -90,7 +90,7 @@ export function Solution() {
                 className="text-[40px] md:text-[62px] font-black text-[#1a1f36] leading-[1.02] tracking-[-0.04em]"
               >
                 One Simple Tool for Your <br />
-                <span className="text-[#635bff]">Whole Hotel.</span>
+                <span className="text-[#2d6a4f]">Whole Hotel.</span>
               </motion.h2>
             </div>
             <div className="lg:col-span-1" /> {/* Spacer */}
@@ -118,7 +118,7 @@ export function Solution() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                      className="p-8 rounded-[2rem] border border-[#f0f3f7] bg-white hover:border-[#635bff]/20 hover:shadow-[0_45px_70px_rgba(0,0,0,0.06)] transition-all group relative overflow-hidden"
+                      className="p-8 rounded-[2rem] border border-[#f0f3f7] bg-white hover:border-[#2d6a4f]/20 hover:shadow-[0_45px_70px_rgba(0,0,0,0.06)] transition-all group relative overflow-hidden"
                    >
                       <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 shadow-sm", feat.bg)}>
                          <feat.icon className={cn("w-5.5 h-5.5", feat.color)} />
@@ -130,7 +130,7 @@ export function Solution() {
                       <p className="text-[14px] text-[#697386] font-medium leading-relaxed opacity-90">
                          {feat.desc}
                       </p>
-                      <div className="mt-8 flex items-center gap-1.5 text-[11px] font-black text-[#635bff] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-y-1 group-hover:translate-y-0">
+                      <div className="mt-8 flex items-center gap-1.5 text-[11px] font-black text-[#2d6a4f] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-y-1 group-hover:translate-y-0">
                          See How it Works <ArrowRight className="w-3.5 h-3.5" />
                       </div>
                    </motion.div>
@@ -142,7 +142,7 @@ export function Solution() {
             <div className="lg:col-span-6 order-1 lg:order-2">
                 <div className="relative group/mockup perspective-2000">
                     {/* Animated Background Aura */}
-                    <div className="absolute -inset-20 bg-[radial-gradient(circle_at_center,#635bff10_0%,transparent_70%)] blur-[100px] animate-pulse pointer-events-none" />
+                    <div className="absolute -inset-20 bg-[radial-gradient(circle_at_center,#2d6a4f10_0%,transparent_70%)] blur-[100px] animate-pulse pointer-events-none" />
                     
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.95, rotateY: 5 }}
@@ -155,8 +155,8 @@ export function Solution() {
                             {/* Dashboard UI Top Bar */}
                             <div className="px-6 py-5 border-b border-[#f0f3f7] flex items-center justify-between bg-[#fcfdfe]/50 backdrop-blur-md">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-[#635bff]/10 flex items-center justify-center">
-                                        <TrendingUp className="w-4.5 h-4.5 text-[#635bff]" />
+                                    <div className="w-8 h-8 rounded-lg bg-[#2d6a4f]/10 flex items-center justify-center">
+                                        <TrendingUp className="w-4.5 h-4.5 text-[#2d6a4f]" />
                                     </div>
                                     <span className="text-[11px] font-black text-[#1a1f36] uppercase tracking-[0.2em]">Income Manager</span>
                                 </div>
@@ -172,7 +172,7 @@ export function Solution() {
                                 <motion.div 
                                     animate={{ top: ['5%', '95%', '5%'] }}
                                     transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                                    className="absolute left-0 right-0 h-[2.5px] bg-gradient-to-r from-transparent via-[#635bff]/40 to-transparent z-10 pointer-events-none blur-[1px]"
+                                    className="absolute left-0 right-0 h-[2.5px] bg-gradient-to-r from-transparent via-[#2d6a4f]/40 to-transparent z-10 pointer-events-none blur-[1px]"
                                 />
 
                                 {/* Floating Progress Metrics */}
@@ -207,7 +207,7 @@ export function Solution() {
                                                     className={cn(
                                                         "w-full rounded-t-xl transition-all duration-700 relative",
                                                         i === activeMetric 
-                                                            ? "bg-gradient-to-t from-[#635bff] to-[#a29bfe] shadow-[0_10px_25px_rgba(99,91,255,0.25)]" 
+                                                            ? "bg-gradient-to-t from-[#2d6a4f] to-[#a29bfe] shadow-[0_10px_25px_rgba(99,91,255,0.25)]" 
                                                             : "bg-[#f6f9fc] group-hover/bar:bg-[#f0f3f7]"
                                                     )}
                                                 >
@@ -231,8 +231,8 @@ export function Solution() {
                                 <div className="pt-10 border-t border-[#f0f3f7] flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <div className="relative">
-                                            <div className="w-6 h-6 rounded-full border-2 border-[#635bff]/10 border-t-[#635bff] animate-spin" />
-                                            <Zap className="absolute inset-0 m-auto w-3 h-3 text-[#635bff]" />
+                                            <div className="w-6 h-6 rounded-full border-2 border-[#2d6a4f]/10 border-t-[#2d6a4f] animate-spin" />
+                                            <Zap className="absolute inset-0 m-auto w-3 h-3 text-[#2d6a4f]" />
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.2em] leading-none mb-1">Smart Assistant</span>
@@ -267,7 +267,7 @@ export function Solution() {
                            transition={{ delay: 1 }}
                            className="absolute top-20 -left-16 z-30 p-5 rounded-[1.5rem] bg-white shadow-premium border border-[#f0f3f7] hidden xl:flex items-center gap-4 transition-transform hover:scale-105 cursor-pointer"
                         >
-                            <div className="w-10 h-10 rounded-xl bg-[#635bff08] flex items-center justify-center text-[#635bff] shadow-inner">
+                            <div className="w-10 h-10 rounded-xl bg-[#2d6a4f08] flex items-center justify-center text-[#2d6a4f] shadow-inner">
                                 <Search className="w-5 h-5" />
                             </div>
                             <div>

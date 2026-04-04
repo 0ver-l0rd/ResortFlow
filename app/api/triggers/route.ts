@@ -1,12 +1,12 @@
 import { db } from "@/db";
 import { triggers } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const { userId: clerkId } = await auth();
-  if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
+  try {
+    const clerkId = getDemoUserId();
 
   const user = await db.query.users.findFirst({
     where: (users, { eq }) => eq(users.clerkId, clerkId),
@@ -14,17 +14,19 @@ export async function GET() {
 
   if (!user) return new NextResponse("User not found", { status: 404 });
 
-  const data = await db.query.triggers.findMany({
-    where: eq(triggers.userId, user.id),
-    orderBy: (triggers, { desc }) => [desc(triggers.createdAt)],
-  });
+    const data = await db.query.triggers.findMany({
+      where: eq(triggers.userId, user.id),
+      orderBy: (triggers, { desc }) => [desc(triggers.createdAt)],
+    });
 
-  return NextResponse.json(data);
+    return NextResponse.json(data);
+  } catch (error: any) {
+    return new NextResponse(error.message, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
-  const { userId: clerkId } = await auth();
-  if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
+  const clerkId = getDemoUserId();
 
   const user = await db.query.users.findFirst({
     where: (users, { eq }) => eq(users.clerkId, clerkId),

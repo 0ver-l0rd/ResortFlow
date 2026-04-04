@@ -4,7 +4,7 @@ import { Navbar } from "@/components/marketing/navbar";
 import { Footer } from "@/components/marketing/footer";
 
 export const metadata: Metadata = {
-  title: "Social Copilot | Premium Social Media Management",
+  title: "ResortFlow | Premium Social Media Management",
   description: "Connect all your social accounts, compose once, publish everywhere, and auto-reply with AI.",
 };
 

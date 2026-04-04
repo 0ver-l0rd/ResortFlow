@@ -139,7 +139,7 @@ function ConnectionsContent() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-3">
-        <Loader2 className="w-6 h-6 text-[#635bff] animate-spin" />
+        <Loader2 className="w-6 h-6 text-[#2d6a4f] animate-spin" />
         <p className="text-sm text-[#8792a2]">Loading connections…</p>
       </div>
     );
@@ -252,7 +252,7 @@ export default function ConnectionsPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center h-[60vh]">
-          <Loader2 className="w-5 h-5 text-[#635bff] animate-spin" />
+          <Loader2 className="w-5 h-5 text-[#2d6a4f] animate-spin" />
         </div>
       }
     >

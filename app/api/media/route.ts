@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { mediaAssets } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { eq, desc } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = getDemoUserId();
 
     const dbUser = await db.query.users.findFirst({
       where: (u, { eq }) => eq(u.clerkId, userId),
@@ -29,8 +28,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = getDemoUserId();
 
     const dbUser = await db.query.users.findFirst({
       where: (u, { eq }) => eq(u.clerkId, userId),

@@ -125,7 +125,7 @@ export function RuleBuilderForm({ initialData, onSuccess }: RuleBuilderFormProps
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger render={<Button className="bg-[#635bff] hover:bg-[#5851e0] text-white gap-2 font-semibold shadow-sm" />}>
+      <DialogTrigger render={<Button className="bg-[#2d6a4f] hover:bg-[#5851e0] text-white gap-2 font-semibold shadow-sm" />}>
         <Plus className="w-4 h-4" />
         {initialData ? "Edit Rule" : "Create Rule"}
       </DialogTrigger>
@@ -146,7 +146,7 @@ export function RuleBuilderForm({ initialData, onSuccess }: RuleBuilderFormProps
                 <FieldLabel className="text-sm font-semibold text-[#3c4257]">Rule Name</FieldLabel>
                 <Input 
                   placeholder="e.g. Welcome Message" 
-                  className="border-[#e3e8ef] focus:ring-[#635bff] focus:border-[#635bff]" 
+                  className="border-[#e3e8ef] focus:ring-[#2d6a4f] focus:border-[#2d6a4f]" 
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
@@ -230,18 +230,18 @@ export function RuleBuilderForm({ initialData, onSuccess }: RuleBuilderFormProps
             )}
 
             <div className="space-y-4 pt-2">
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#635bff]/5 to-[#7f78ff]/5 border border-[#635bff]/10 rounded-xl">
+              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#2d6a4f]/5 to-[#40916c]/5 border border-[#2d6a4f]/10 rounded-xl">
                 <div className="space-y-1">
                   <h4 className="text-sm font-bold text-[#1a1f36] flex items-center gap-1.5">
                     Reply Mode
-                    <Badge variant="outline" className="text-[9px] h-4 bg-white border-[#635bff]/20 text-[#635bff]">Gemini AI</Badge>
+                    <Badge variant="outline" className="text-[9px] h-4 bg-white border-[#2d6a4f]/20 text-[#2d6a4f]">Gemini AI</Badge>
                   </h4>
                   <p className="text-xs text-[#697386]">Choose between a static template or AI generation.</p>
                 </div>
                 <Switch
                   checked={formData.useAI}
                   onCheckedChange={(checked) => setFormData({ ...formData, useAI: checked })}
-                  className="data-[state=checked]:bg-[#635bff]"
+                  className="data-[state=checked]:bg-[#2d6a4f]"
                 />
               </div>
 
@@ -288,7 +288,7 @@ export function RuleBuilderForm({ initialData, onSuccess }: RuleBuilderFormProps
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="bg-[#635bff] hover:bg-[#5851e0] text-white min-w-[100px] font-semibold"
+              className="bg-[#2d6a4f] hover:bg-[#5851e0] text-white min-w-[100px] font-semibold"
             >
               {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : initialData ? "Save Changes" : "Create Rule"}
             </Button>

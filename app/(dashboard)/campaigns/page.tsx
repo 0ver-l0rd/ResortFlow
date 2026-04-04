@@ -1,19 +1,16 @@
 import { db } from "@/db";
 import { campaigns, users } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { eq, desc } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { CampaignsClient } from "./CampaignsClient";
 
 export default async function CampaignsPage() {
-  const { userId } = await auth();
-  if (!userId) redirect("/sign-in");
+  const userId = getDemoUserId();
 
-  const user = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
-  });
+  const user = await db.query.users.findFirst();
 
-  if (!user) redirect("/sign-in");
+  if (!user) redirect("/");
 
   const userCampaigns = await db.query.campaigns.findMany({
     where: eq(campaigns.userId, user.id),

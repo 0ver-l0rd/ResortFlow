@@ -1,24 +1,19 @@
 import { db } from "@/db";
 import { posts, socialAccounts, autoReplyLogs } from "@/db/schema";
 import { eq, desc, isNotNull, and, count } from "drizzle-orm";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { formatDistanceToNow } from "date-fns";
 import DashboardClient from "@/components/dashboard/dashboard-client";
 import { FaInstagram, FaLinkedinIn, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
 export default async function DashboardPage() {
-  const { userId } = await auth();
-  if (!userId) {
-    return <div>Unauthorized</div>;
-  }
-
-  const dbUser = await db.query.users.findFirst({
-    where: (u, { eq }) => eq(u.clerkId, userId),
-  });
+  const userId = getDemoUserId();
+  
+  const dbUser = await db.query.users.findFirst();
 
   if (!dbUser) {
-    return <div>User not found in DB</div>;
+    return <div>No users found in database. Please run migrations or seeds.</div>;
   }
 
   // Fetch real data
@@ -78,7 +73,7 @@ export default async function DashboardPage() {
       label: `Post ${p.status}`,
       detail: p.platforms.join(" & ") || "Multiple platforms",
       time: formatDistanceToNow(new Date(p.createdAt), { addSuffix: true }),
-      dot: p.status === "published" ? "#09825d" : p.status === "scheduled" ? "#f5a623" : "#635bff",
+      dot: p.status === "published" ? "#09825d" : p.status === "scheduled" ? "#f5a623" : "#2d6a4f",
       avatarUrl: matchingAccount?.avatarUrl || null,
     };
   });
@@ -93,7 +88,7 @@ export default async function DashboardPage() {
   };
 
   const connectedAccounts = accounts.map(a => {
-    const meta = platformMeta[a.platform.toLowerCase()] || { icon: "FaXTwitter", color: "#635bff", bg: "#f6f9fc" };
+    const meta = platformMeta[a.platform.toLowerCase()] || { icon: "FaXTwitter", color: "#2d6a4f", bg: "#f6f9fc" };
     return {
       platform: a.platform,
       handle: a.username || "Connected",

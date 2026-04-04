@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { agentConversations } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -7,8 +7,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
+    const clerkId = getDemoUserId();
 
     const user = await getUserByClerkId(clerkId);
     if (!user) return new NextResponse("User not found", { status: 404 });
@@ -29,8 +28,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
+    const clerkId = getDemoUserId();
 
     const user = await getUserByClerkId(clerkId);
     if (!user) return new NextResponse("User not found", { status: 404 });

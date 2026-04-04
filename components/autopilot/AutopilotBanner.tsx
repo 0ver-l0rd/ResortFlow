@@ -29,13 +29,13 @@ export function AutopilotBanner({ lastRun }: AutopilotBannerProps) {
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none" />
         
         {/* Background Effects */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#635bff] rounded-full blur-[120px] opacity-[0.15] translate-x-1/4 -translate-y-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#4f46e5] rounded-full blur-[100px] opacity-10 -translate-x-1/4 translate-y-1/2 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#2d6a4f] rounded-full blur-[120px] opacity-[0.15] translate-x-1/4 -translate-y-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#1b4332] rounded-full blur-[100px] opacity-10 -translate-x-1/4 translate-y-1/2 pointer-events-none" />
 
         <div className="relative z-10 p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-8">
           <div className="flex flex-col gap-4 max-w-xl text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-3">
-              <div className="px-3 py-1 rounded-full bg-[#635bff]/20 border border-[#635bff]/20 flex items-center gap-2">
+              <div className="px-3 py-1 rounded-full bg-[#2d6a4f]/20 border border-[#2d6a4f]/20 flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-[#8b84ff] fill-[#8b84ff]/20 shadow-sm" />
                 <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#8b84ff]">
                   Autopilot mode
@@ -56,7 +56,7 @@ export function AutopilotBanner({ lastRun }: AutopilotBannerProps) {
               onClick={() => setModalOpen(true)}
               className="flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-bold text-white shadow-[0_20px_40px_-12px_rgba(99,91,255,0.5)] hover:shadow-[0_25px_50px_-12px_rgba(99,91,255,0.6)] active:scale-[0.97] transition-all duration-300 border border-white/10 w-full sm:w-auto relative overflow-hidden group/btn"
               style={{
-                background: "linear-gradient(135deg, #635bff 0%, #443ae0 100%)"
+                background: "linear-gradient(135deg, #2d6a4f 0%, #443ae0 100%)"
               }}
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />

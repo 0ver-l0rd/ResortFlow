@@ -78,7 +78,7 @@ export function ContactsClient() {
         </div>
         <button
           onClick={() => setIsImportOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#635bff] text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-[#635bff]/20 transition-all active:scale-[0.98]"
+          className="flex items-center gap-2 px-4 py-2 bg-[#2d6a4f] text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-[#2d6a4f]/20 transition-all active:scale-[0.98]"
         >
           <Upload className="w-4 h-4" /> Import CSV
         </button>
@@ -87,7 +87,7 @@ export function ContactsClient() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Total Contacts", value: contacts.length, icon: Users, color: "#635bff", bg: "#f0eeff" },
+          { label: "Total Contacts", value: contacts.length, icon: Users, color: "#2d6a4f", bg: "#f0eeff" },
           { label: "WhatsApp Opt-in", value: contacts.filter(c => c.whatsappOptIn).length, icon: MessageSquare, color: "#25D366", bg: "#e6f8ed" },
           { label: "SMS Opt-in", value: contacts.filter(c => c.smsOptIn).length, icon: CheckCircle2, color: "#09825d", bg: "#efffee" },
         ].map((stat) => (
@@ -113,7 +113,7 @@ export function ContactsClient() {
               placeholder="Search by name or phone..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm bg-[#f6f9fc] border-none rounded-lg focus:ring-2 focus:ring-[#635bff]/10 outline-none"
+              className="w-full pl-9 pr-4 py-2 text-sm bg-[#f6f9fc] border-none rounded-lg focus:ring-2 focus:ring-[#2d6a4f]/10 outline-none"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -126,7 +126,7 @@ export function ContactsClient() {
         <div className="overflow-x-auto">
           {isLoading ? (
             <div className="p-12 flex justify-center">
-              <Loader2 className="w-6 h-6 text-[#635bff] animate-spin" />
+              <Loader2 className="w-6 h-6 text-[#2d6a4f] animate-spin" />
             </div>
           ) : filteredContacts.length === 0 ? (
             <div className="p-12 text-center text-sm text-[#8792a2]">
@@ -196,15 +196,15 @@ export function ContactsClient() {
                       <p className="text-sm text-[#8792a2] mt-1">Paste your CSV content below. Requires 'phone' and 'name' columns.</p>
                   </div>
                   <div className="p-6 space-y-4">
-                      <div className="bg-[#f0eeff] rounded-xl p-4 border border-[#635bff]/10">
-                          <p className="text-xs font-semibold text-[#635bff] mb-1">Example Format:</p>
+                      <div className="bg-[#f0eeff] rounded-xl p-4 border border-[#2d6a4f]/10">
+                          <p className="text-xs font-semibold text-[#2d6a4f] mb-1">Example Format:</p>
                           <code className="text-[11px] text-[#3c4257]">name, phone<br />John Doe, +1234567890<br />Jane Smith, +0987654321</code>
                       </div>
                       <textarea
                         value={csvContent}
                         onChange={(e) => setCsvContent(e.target.value)}
                         placeholder="Paste CSV here..."
-                        className="w-full h-48 p-4 bg-[#f6f9fc] rounded-xl border border-[#e3e8ef] focus:bg-white focus:border-[#635bff] focus:ring-4 focus:ring-[#635bff]/10 outline-none transition-all resize-none text-sm"
+                        className="w-full h-48 p-4 bg-[#f6f9fc] rounded-xl border border-[#e3e8ef] focus:bg-white focus:border-[#2d6a4f] focus:ring-4 focus:ring-[#2d6a4f]/10 outline-none transition-all resize-none text-sm"
                       />
                   </div>
                   <div className="p-6 bg-[#fcfdfe] border-t border-[#f0f3f7] flex justify-end gap-3">
@@ -216,7 +216,7 @@ export function ContactsClient() {
                       </button>
                       <button 
                         onClick={handleImport}
-                        className="px-6 py-2 bg-[#635bff] text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-[#635bff]/20 active:scale-[0.98] transition-all"
+                        className="px-6 py-2 bg-[#2d6a4f] text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-[#2d6a4f]/20 active:scale-[0.98] transition-all"
                       >
                         Start Import
                       </button>

@@ -20,7 +20,7 @@ export function AISummaryCard({ data, isLoading, platform }: AISummaryCardProps)
     return (
       <div className="bg-white rounded-xl border border-[#e3e8ef] p-8 shadow-[0_1px_3px_rgba(60,66,87,0.05)] flex flex-col items-center justify-center text-center gap-4 h-[300px]">
         <div className="relative">
-          <Loader2 className="w-10 h-10 text-[#635bff] animate-spin" />
+          <Loader2 className="w-10 h-10 text-[#2d6a4f] animate-spin" />
           <Sparkles className="w-5 h-5 text-[#f5a623] absolute -top-1 -right-1 animate-pulse" />
         </div>
         <div>
@@ -36,14 +36,14 @@ export function AISummaryCard({ data, isLoading, platform }: AISummaryCardProps)
   return (
     <div className="bg-white rounded-xl border border-[#e3e8ef] shadow-[0_1px_3px_rgba(60,66,87,0.05)] overflow-hidden h-full flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500">
       {/* Header */}
-      <div className="px-6 py-5 border-b border-[#f0f3f7] flex items-center justify-between bg-gradient-to-r from-[#635bff]/5 via-transparent to-transparent">
+      <div className="px-6 py-5 border-b border-[#f0f3f7] flex items-center justify-between bg-gradient-to-r from-[#2d6a4f]/5 via-transparent to-transparent">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#635bff] flex items-center justify-center shadow-lg shadow-primary/20">
+          <div className="w-8 h-8 rounded-lg bg-[#2d6a4f] flex items-center justify-center shadow-lg shadow-primary/20">
             <Sparkles className="w-4 h-4 text-white" fill="white" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-[#1a1f36]">AI Performance Summary</h3>
-            <p className="text-[10px] font-semibold text-[#635bff] uppercase tracking-wider">Insights for {platform}</p>
+            <p className="text-[10px] font-semibold text-[#2d6a4f] uppercase tracking-wider">Insights for {platform}</p>
           </div>
         </div>
       </div>

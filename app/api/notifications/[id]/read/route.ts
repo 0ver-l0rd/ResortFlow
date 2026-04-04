@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { notifications } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -9,11 +9,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
+    const userId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.clerkId, clerkId),
+      where: (users, { eq }) => eq(users.id, userId),
     });
 
     if (!user) return new NextResponse("User not found", { status: 404 });

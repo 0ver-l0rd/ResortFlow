@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { 
   socialAccounts, 
@@ -16,10 +16,9 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = getDemoUserId();
 
-    const user = await getUserByClerkId(clerkId);
+    const user = await getUserByClerkId(userId);
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     const { searchParams } = new URL(request.url);

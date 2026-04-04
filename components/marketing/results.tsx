@@ -9,7 +9,7 @@ const results = [
     label: "Direct Bookings",
     desc: "AI optimization increases guest conversion across all digital touchpoints.",
     icon: TrendingUp,
-    color: "text-[#635bff] bg-[#635bff]/10",
+    color: "text-[#2d6a4f] bg-[#2d6a4f]/10",
   },
   {
     metric: "2.4x",
@@ -30,7 +30,7 @@ const results = [
     label: "Target Accuracy",
     desc: "AI segmentation precisely identifies your most profitable guest personas.",
     icon: Target,
-    color: "text-indigo-600 bg-indigo-50",
+    color: "text-emerald-800 bg-emerald-50",
   }
 ];
 
@@ -39,12 +39,12 @@ export function Results() {
     <section className="py-24 md:py-32 bg-[#f6f9fc] border-t border-black/5 relative overflow-hidden">
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto text-center mb-20">
-          <h2 className="text-[#635bff] font-black tracking-tight text-sm uppercase mb-4 px-4 py-1.5 rounded-full bg-[#635bff]/10 inline-block">
+          <h2 className="text-[#2d6a4f] font-black tracking-tight text-sm uppercase mb-4 px-4 py-1.5 rounded-full bg-[#2d6a4f]/10 inline-block">
              Proven Resilience
           </h2>
           <h3 className="text-[32px] md:text-[54px] font-black tracking-tight text-[#1a1f36] leading-tight mb-8">
              Results that <br />
-             <span className="text-[#635bff]">Impact Your Bottom Line.</span>
+             <span className="text-[#2d6a4f]">Impact Your Bottom Line.</span>
           </h3>
           <p className="text-lg md:text-xl text-[#3c4257] font-medium opacity-80 max-w-2xl mx-auto leading-relaxed">
              Join leading resorts that have modernized their growth strategies using our autonomous marketing agent.
@@ -61,7 +61,7 @@ export function Results() {
                    <res.icon className="w-7 h-7" />
                 </div>
                 <h4 className="text-5xl font-black text-[#1a1f36] mb-3 tracking-tighter">{res.metric}</h4>
-                <p className="text-md font-black text-[#635bff] uppercase tracking-widest mb-4">{res.label}</p>
+                <p className="text-md font-black text-[#2d6a4f] uppercase tracking-widest mb-4">{res.label}</p>
                 <p className="text-sm text-slate-500 font-medium leading-relaxed">{res.desc}</p>
              </div>
            ))}

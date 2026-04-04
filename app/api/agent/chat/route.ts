@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { openai } from "@/lib/openai";
 import { buildSystemPrompt } from "@/lib/agent/system-prompt";
 import { executeAgentTool, openAIToolDeclarations } from "@/lib/agent/tool-registry";
@@ -18,8 +18,7 @@ function deriveTitle(message: string): string {
 }
 
 export async function POST(req: Request) {
-  const { userId: clerkId } = await auth();
-  if (!clerkId) return new Response("Unauthorized", { status: 401 });
+  const clerkId = getDemoUserId();
 
   const user = await getUserByClerkId(clerkId);
   if (!user) return new Response("User not found", { status: 404 });

@@ -54,7 +54,7 @@ export function WeekView({ currentDate, posts, onEventClick, onDayClick }: WeekV
             return (
               <div key={day.toString()} className="py-3 px-2 text-center border-r border-gray-100 last:border-r-0">
                 <div className="text-xs font-medium text-gray-500 uppercase">{format(day, "eee")}</div>
-                <div className={`mt-1 text-lg font-semibold ${isToday ? "text-indigo-600" : "text-gray-900"}`}>
+                <div className={`mt-1 text-lg font-semibold ${isToday ? "text-emerald-800" : "text-gray-900"}`}>
                   {format(day, "d")}
                 </div>
               </div>

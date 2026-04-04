@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { getPlatform } from "@/lib/platforms/factory";
 import { db } from "@/db";
 import { socialAccounts, posts, postPlatformResults } from "@/db/schema";
@@ -8,10 +8,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const { userId: clerkId } = await auth();
-  if (!clerkId) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
+  const clerkId = getDemoUserId();
 
   try {
     const { platform } = await request.json();

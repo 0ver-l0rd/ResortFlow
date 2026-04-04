@@ -25,7 +25,7 @@ export const PLATFORM_THEMES: Record<string, PlatformTheme> = {
     logo: FaXTwitter,
     primary: "#000000",
     secondary: "#1a1f36",
-    accent: "#635bff",
+    accent: "#2d6a4f",
     bg: "#f8fafc",
     border: "#e2e8f0",
     vibe: "minimal",

@@ -55,7 +55,7 @@ export function NotificationBell() {
       case "success": return <CheckCircle2 className="w-4 h-4 text-[#09825d]" />;
       case "warning": return <Zap className="w-4 h-4 text-[#f5a623]" />;
       case "error": return <AlertCircle className="w-4 h-4 text-[#e11d48]" />;
-      default: return <Bell className="w-4 h-4 text-[#635bff]" />;
+      default: return <Bell className="w-4 h-4 text-[#2d6a4f]" />;
     }
   };
 
@@ -87,7 +87,7 @@ export function NotificationBell() {
               <div className="p-4 border-b border-[#f0f3f7] flex items-center justify-between">
                 <h3 className="text-sm font-bold text-[#1a1f36]">Notifications</h3>
                 {unreadCount > 0 && (
-                    <span className="text-[10px] font-semibold text-[#635bff] bg-[#f0eeff] px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-semibold text-[#2d6a4f] bg-[#f0eeff] px-2 py-0.5 rounded-full">
                         {unreadCount} New
                     </span>
                 )}
@@ -96,7 +96,7 @@ export function NotificationBell() {
               <div className="max-h-[400px] overflow-y-auto divide-y divide-[#f0f3f7]">
                 {isLoading ? (
                   <div className="p-8 flex justify-center">
-                    <Loader2 className="w-5 h-5 text-[#635bff] animate-spin" />
+                    <Loader2 className="w-5 h-5 text-[#2d6a4f] animate-spin" />
                   </div>
                 ) : notifications.length === 0 ? (
                   <div className="p-8 text-center">
@@ -118,7 +118,7 @@ export function NotificationBell() {
                                 {n.title}
                            </p>
                            {!n.isRead && (
-                               <div className="w-1.5 h-1.5 rounded-full bg-[#635bff]" />
+                               <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
                            )}
                         </div>
                         <p className="text-[11px] text-[#8792a2] mt-0.5 line-clamp-2 leading-relaxed">
@@ -134,7 +134,7 @@ export function NotificationBell() {
               </div>
 
               <div className="p-3 bg-[#fcfdfe] border-t border-[#f0f3f7] text-center">
-                <button className="text-[11px] font-bold text-[#635bff] hover:text-[#4f46e5] transition-colors">
+                <button className="text-[11px] font-bold text-[#2d6a4f] hover:text-[#1b4332] transition-colors">
                   View All Alerts
                 </button>
               </div>

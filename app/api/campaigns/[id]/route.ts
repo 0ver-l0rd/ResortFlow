@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { campaigns, users } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -9,8 +9,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+    const userId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
       where: eq(users.clerkId, userId)
@@ -45,8 +44,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+    const userId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
       where: eq(users.clerkId, userId)

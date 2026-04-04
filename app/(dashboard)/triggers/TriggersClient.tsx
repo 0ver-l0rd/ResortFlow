@@ -69,7 +69,7 @@ const TYPE_CONFIG: Record<string, any> = {
   low_engagement: { icon: TrendingDown, color: "#e11d48" },
   viral_spike: { icon: TrendingUp, color: "#09825d" },
   booking_slump: { icon: AlertCircle, color: "#f5a623" },
-  follower_milestone: { icon: Users, color: "#635bff" },
+  follower_milestone: { icon: Users, color: "#2d6a4f" },
   no_post_48h: { icon: Clock, color: "#8792a2" },
   content_gap: { icon: Clock, color: "#8792a2" },
   high_comment_volume: { icon: Bell, color: "#0284c7" },
@@ -133,20 +133,20 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-24">
-        <Loader2 className="w-6 h-6 text-[#635bff] animate-spin" />
+        <Loader2 className="w-6 h-6 text-[#2d6a4f] animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="bg-[#f6f9fc] min-h-screen flex flex-col font-sans selection:bg-[#635bff44]">
+    <div className="bg-[#f6f9fc] min-h-screen flex flex-col font-sans selection:bg-[#2d6a4f44]">
       {/* ── Extreme Stripe Sticky Header ── */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-[#e3e8ef]">
           <div className="max-w-7xl mx-auto px-6 sm:px-10 py-8">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-10">
                   <div className="space-y-1">
                       <div className="flex items-center gap-2.5">
-                          <span className="text-[11px] font-black uppercase tracking-[0.3em] text-[#635bff]">Autopilot</span>
+                          <span className="text-[11px] font-black uppercase tracking-[0.3em] text-[#2d6a4f]">Autopilot</span>
                           <span className="w-1 h-1 rounded-full bg-[#1a1f36]/10" />
                           <span className="text-[11px] font-black uppercase tracking-[0.3em] text-[#8792a2]">Triggers</span>
                       </div>
@@ -163,9 +163,9 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
                       <button 
                         onClick={() => toast.info("Initializing Trigger Builder...", {
                           description: "The AI agent is preparing the behavioral monitoring environment.",
-                          icon: <Sparkles className="w-4 h-4 text-[#635bff]" />
+                          icon: <Sparkles className="w-4 h-4 text-[#2d6a4f]" />
                         })}
-                        className="flex items-center gap-2 px-6 py-2 rounded-lg bg-[#635bff] text-white text-[12px] font-bold shadow-sm hover:opacity-90 active:scale-[0.98] transition-all"
+                        className="flex items-center gap-2 px-6 py-2 rounded-lg bg-[#2d6a4f] text-white text-[12px] font-bold shadow-sm hover:opacity-90 active:scale-[0.98] transition-all"
                       >
                           <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
                           <span>Add Trigger</span>
@@ -188,8 +188,8 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
                 ].map((stat) => (
                   <div key={stat.label} className="p-10 flex-1 hover:bg-[#fcfdfe] transition-colors group">
                       <div className="flex items-center justify-between mb-8">
-                         <p className="text-[11px] font-black uppercase tracking-[0.3em] text-[#8792a2] group-hover:text-[#635bff]">{stat.label}</p>
-                         <stat.icon size={16} strokeWidth={1.2} className="text-[#8792a2] group-hover:text-[#635bff] transition-colors" />
+                         <p className="text-[11px] font-black uppercase tracking-[0.3em] text-[#8792a2] group-hover:text-[#2d6a4f]">{stat.label}</p>
+                         <stat.icon size={16} strokeWidth={1.2} className="text-[#8792a2] group-hover:text-[#2d6a4f] transition-colors" />
                       </div>
                       <p className="text-[32px] font-black text-[#1a1f36] tracking-[-0.04em] leading-tight mb-2">{stat.value}</p>
                       <p className="text-[12px] font-bold text-[#697386]">{stat.sub}</p>
@@ -203,7 +203,7 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
                 <div className="lg:col-span-2 space-y-12">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                             <div className="w-2 h-2 rounded-full bg-[#635bff] shadow-[0_0_8px_rgba(99,91,255,0.3)]" />
+                             <div className="w-2 h-2 rounded-full bg-[#2d6a4f] shadow-[0_0_8px_rgba(99,91,255,0.3)]" />
                              <h3 className="text-xl font-black text-[#1a1f36] tracking-tight">Active Configurations</h3>
                         </div>
                         <p className="text-[13px] text-[#8792a2] font-semibold uppercase tracking-widest">Autonomous behavioral units</p>
@@ -211,13 +211,13 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
 
                     <div className="divide-y divide-[#f0f3f7] border-t border-b border-[#f0f3f7]">
                         {triggers.map((trigger) => {
-                            const config = TYPE_CONFIG[trigger.type] || { icon: Zap, color: "#635bff" };
+                            const config = TYPE_CONFIG[trigger.type] || { icon: Zap, color: "#2d6a4f" };
                             const Icon = config.icon;
                             return (
                                 <div key={trigger.id} className="py-10 flex items-center justify-between group hover:bg-[#fcfdfe] transition-all px-6 rounded-2xl">
                                     <div className="flex items-center gap-6">
-                                        <div className="w-10 h-10 rounded-2xl bg-[#f6f9fc] flex items-center justify-center border border-[#e3e8ef] group-hover:bg-[#635bff]/5 group-hover:border-[#635bff]/20 transition-all">
-                                            <Icon size={18} strokeWidth={1.2} className="text-[#635bff]" />
+                                        <div className="w-10 h-10 rounded-2xl bg-[#f6f9fc] flex items-center justify-center border border-[#e3e8ef] group-hover:bg-[#2d6a4f]/5 group-hover:border-[#2d6a4f]/20 transition-all">
+                                            <Icon size={18} strokeWidth={1.2} className="text-[#2d6a4f]" />
                                         </div>
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-3">
@@ -227,7 +227,7 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
                                                  </span>
                                             </div>
                                             <div className="flex items-center gap-4 text-[11px] font-bold text-[#697386]">
-                                                  <span className="text-[#635bff]">{trigger.fireCount} events</span>
+                                                  <span className="text-[#2d6a4f]">{trigger.fireCount} events</span>
                                                   <span className="w-1 h-1 rounded-full bg-[#e3e8ef]" />
                                                   <span>{timeAgo(trigger.lastFiredAt)}</span>
                                                   <span className="w-1 h-1 rounded-full bg-[#e3e8ef]" />
@@ -239,7 +239,7 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
                                          <button
                                             onClick={(e) => { e.stopPropagation(); toggleTrigger(trigger.id, trigger.isActive); }}
                                             className="relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center rounded-full transition-all active:scale-[0.95]"
-                                            style={{ backgroundColor: trigger.isActive ? "#635bff" : "#e3e8ef" }}
+                                            style={{ backgroundColor: trigger.isActive ? "#2d6a4f" : "#e3e8ef" }}
                                          >
                                             <motion.span
                                                 animate={{ x: trigger.isActive ? 22 : 2 }}
@@ -247,7 +247,7 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
                                                 className="pointer-events-none block h-4 w-4 rounded-full bg-white shadow-md"
                                             />
                                          </button>
-                                         <ArrowUpRight className="w-4 h-4 text-[#c4cdd6] group-hover:text-[#635bff] group-hover:translate-x-1 transition-all" />
+                                         <ArrowUpRight className="w-4 h-4 text-[#c4cdd6] group-hover:text-[#2d6a4f] group-hover:translate-x-1 transition-all" />
                                     </div>
                                 </div>
                             );
@@ -297,14 +297,14 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
                     </div>
 
                     {/* AI Advisory Box */}
-                    <div className="p-10 rounded-[32px] border border-[#635bff]/15 bg-[#fcfdfe] relative group overflow-hidden shadow-sm hover:shadow-md transition-all">
+                    <div className="p-10 rounded-[32px] border border-[#2d6a4f]/15 bg-[#fcfdfe] relative group overflow-hidden shadow-sm hover:shadow-md transition-all">
                         <div className="absolute top-0 right-0 p-8 opacity-40 group-hover:opacity-100 transition-opacity">
-                             <Sparkles size={18} strokeWidth={1.2} className="text-[#635bff]" />
+                             <Sparkles size={18} strokeWidth={1.2} className="text-[#2d6a4f]" />
                         </div>
                         <div className="space-y-6">
-                            <h4 className="text-[11px] font-black uppercase tracking-widest text-[#635bff]">Strategic Shield Active</h4>
+                            <h4 className="text-[11px] font-black uppercase tracking-widest text-[#2d6a4f]">Strategic Shield Active</h4>
                             <p className="text-[16px] text-[#3c4257] leading-relaxed font-semibold italic">
-                                "Triggers are currently monitoring for <span className="text-[#1a1f36] font-black underline decoration-[#635bff]/20 underline-offset-4">engagement spikes</span> and content gaps. Autonomous protection is synchronized."
+                                "Triggers are currently monitoring for <span className="text-[#1a1f36] font-black underline decoration-[#2d6a4f]/20 underline-offset-4">engagement spikes</span> and content gaps. Autonomous protection is synchronized."
                             </p>
                         </div>
                     </div>
@@ -319,7 +319,7 @@ export function TriggersClient({ initialTriggers = [] }: { initialTriggers?: any
                     <span className="uppercase tracking-[0.2em]">Live system scanning frequencies active. Last heartbeat: Just now.</span>
                 </div>
                 <div className="flex items-center gap-10 mt-6 grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all cursor-crosshair">
-                     <Zap size={16} strokeWidth={1.5} className="text-[#635bff]" />
+                     <Zap size={16} strokeWidth={1.5} className="text-[#2d6a4f]" />
                      <ShieldCheck size={16} strokeWidth={1.5} />
                      <Activity size={16} strokeWidth={1.5} />
                 </div>

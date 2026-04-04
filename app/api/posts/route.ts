@@ -1,34 +1,18 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { posts, mediaAssets, users } from "@/db/schema";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { eq, desc, and, gte, lte, or } from "drizzle-orm";
 import { inngest } from "@/lib/inngest/client";
 
 export async function GET(request: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = getDemoUserId();
 
-    let dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.clerkId, userId),
-    });
+    let dbUser = await db.query.users.findFirst();
     
-    // Auto-sync user if they don't exist yet
     if (!dbUser) {
-      const clerkUser = await currentUser();
-      if (!clerkUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-      const email = clerkUser.emailAddresses[0]?.emailAddress || "no-email@example.com";
-      const [newUser] = await db.insert(users).values({
-        clerkId: userId,
-        email: email,
-      }).returning();
-      dbUser = newUser;
-    }
-
-    if (!dbUser) {
-      return NextResponse.json({ error: "Failed to load user" }, { status: 500 });
+      return NextResponse.json({ error: "No users found in DB. Run seeds." }, { status: 500 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -79,28 +63,12 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = getDemoUserId();
 
-    let dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.clerkId, userId),
-    });
-
-    // Auto-sync user if they don't exist yet but are authenticated in Clerk
-    if (!dbUser) {
-      const clerkUser = await currentUser();
-      if (!clerkUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      
-      const email = clerkUser.emailAddresses[0]?.emailAddress || "no-email@example.com";
-      const [newUser] = await db.insert(users).values({
-        clerkId: userId,
-        email: email,
-      }).returning();
-      dbUser = newUser;
-    }
+    let dbUser = await db.query.users.findFirst();
 
     if (!dbUser) {
-      return NextResponse.json({ error: "User not found in database" }, { status: 404 });
+      return NextResponse.json({ error: "No users found in database" }, { status: 404 });
     }
 
     const { content, mediaUrls, platforms, scheduledAt, status, isAiGenerated, aiPrompt } = await request.json();

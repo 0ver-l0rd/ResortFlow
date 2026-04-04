@@ -2,20 +2,20 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 export function FinalCTA() {
   return (
     <section className="py-20 md:py-28 bg-[#f6f9fc] relative overflow-hidden">
       {/* High-Fidelity Background Elements */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,#635bff08_0%,transparent_50%)]" />
-      <div className="absolute -bottom-[20%] -left-[10%] w-[40%] h-[40%] bg-[#635bff]/5 blur-[120px] rounded-full" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,#2d6a4f08_0%,transparent_50%)]" />
+      <div className="absolute -bottom-[20%] -left-[10%] w-[40%] h-[40%] bg-[#2d6a4f]/5 blur-[120px] rounded-full" />
       
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-5xl mx-auto bg-[#1a1f36] rounded-[4rem] p-12 md:p-20 relative overflow-hidden shadow-2xl shadow-indigo-900/20 group">
+        <div className="max-w-5xl mx-auto bg-[#1a1f36] rounded-[4rem] p-12 md:p-20 relative overflow-hidden shadow-2xl shadow-[#2d6a4f]/20 group">
           {/* Animated Background Gradients */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#635bff] to-[#a29bfe] opacity-0 group-hover:opacity-10 transition-opacity duration-1000" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#2d6a4f] to-[#40916c] opacity-0 group-hover:opacity-10 transition-opacity duration-1000" />
           <div className="absolute top-0 right-0 p-20 opacity-10 group-hover:opacity-20 transition-opacity duration-1000">
              <Sparkles className="w-64 h-64 text-white" />
           </div>
@@ -36,11 +36,11 @@ export function FinalCTA() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <SignUpButton mode="modal">
+              <Link href="/dashboard">
                 <Button className="h-16 px-12 text-[18px] bg-white hover:bg-slate-50 text-[#1a1f36] font-black rounded-2xl shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.98]">
                   Get Started Free
                 </Button>
-              </SignUpButton>
+              </Link>
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {[1,2,3,4].map(i => (

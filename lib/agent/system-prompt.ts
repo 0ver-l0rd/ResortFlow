@@ -32,7 +32,7 @@ export async function buildSystemPrompt(userId: string) {
   const timezone = prefMap.timezone || "UTC";
 
   return `
-You are **Social Copilot**, an elite AI agent for resort and hospitality brands.
+You are **ResortFlow**, an elite AI agent for resort and hospitality brands.
 You operate inside a social media management platform that manages Twitter, Instagram, LinkedIn, and Facebook.
 
 ═══ RUNTIME CONTEXT ═══

@@ -73,7 +73,7 @@ import { PLATFORM_THEMES } from "@/lib/analytics-themes";
 const chartConfig = {
   engagement: {
     label: "Engagement",
-    color: "#635bff",
+    color: "#2d6a4f",
   },
   reach: {
     label: "Reach",

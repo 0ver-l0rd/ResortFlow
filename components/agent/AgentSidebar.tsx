@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useUser } from "@clerk/nextjs";
 import {
   Send, Sparkles, Zap, Clock, Loader2, X, Plus, Image as ImageIcon,
   CheckCircle2, XCircle, Terminal, ChevronDown, ChevronUp,
@@ -71,7 +70,7 @@ const TOOL_META: Record<string, { label: string; icon: React.ReactNode; color: s
   getAnalyticsOverview:{ label: "Pulling analytics",    icon: <BarChart3 className="w-3 h-3" />,    color: "text-orange-600 bg-orange-50 border-orange-200" },
   askClarification:   { label: "Asking for clarity",    icon: <MessageSquare className="w-3 h-3" />, color: "text-slate-600 bg-slate-50 border-slate-200" },
   confirmAction:      { label: "Requesting confirmation",icon: <CheckCircle2 className="w-3 h-3" />, color: "text-green-600 bg-green-50 border-green-200" },
-  rememberPreference: { label: "Saving preference",     icon: <Terminal className="w-3 h-3" />,     color: "text-purple-600 bg-purple-50 border-purple-200" },
+  rememberPreference: { label: "Saving preference",     icon: <Terminal className="w-3 h-3" />,     color: "text-emerald-800 bg-emerald-50 border-purple-200" },
   getBestTime:        { label: "Finding best time",     icon: <Clock className="w-3 h-3" />,        color: "text-teal-600 bg-teal-50 border-teal-200" },
 };
 
@@ -199,7 +198,7 @@ function MessageBubble({
             <AvatarFallback className="bg-[#1a1f36] text-white text-[10px] font-bold">U</AvatarFallback>
           </>
         ) : (
-          <AvatarFallback className="bg-gradient-to-br from-[#635bff] to-[#a3a1ff] text-white">
+          <AvatarFallback className="bg-gradient-to-br from-[#2d6a4f] to-[#a3a1ff] text-white">
             <Sparkles className="w-3 h-3" />
           </AvatarFallback>
         )}
@@ -255,7 +254,7 @@ function MessageBubble({
           )}>
             <TextWithMarkdown content={msg.content} />
             {msg.isStreaming && (
-              <span className="inline-block w-1 h-3.5 bg-[#635bff] rounded-sm ml-0.5 animate-pulse" />
+              <span className="inline-block w-1 h-3.5 bg-[#2d6a4f] rounded-sm ml-0.5 animate-pulse" />
             )}
           </div>
         )}
@@ -279,7 +278,7 @@ function PromptVisualizer({ status, isClickable = true }: { status: string; isCl
       animate={{ opacity: 1, y: 0, scale: 1 }}
       whileHover={isClickable ? { scale: 1.02 } : {}}
       className={cn(
-        "group flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-[#e3e8ef] shadow-xl shadow-[#635bff]/5 transition-all",
+        "group flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-[#e3e8ef] shadow-xl shadow-[#2d6a4f]/5 transition-all",
         isClickable && "cursor-pointer active:scale-95"
       )}
     >
@@ -287,16 +286,16 @@ function PromptVisualizer({ status, isClickable = true }: { status: string; isCl
         <motion.div 
           animate={{ rotate: 360 }}
           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 rounded-full border-2 border-dashed border-[#635bff]/30"
+          className="absolute inset-0 rounded-full border-2 border-dashed border-[#2d6a4f]/30"
         />
         <motion.div 
           animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
           transition={{ duration: 4, repeat: Infinity }}
-          className="w-3 h-3 bg-[#635bff] rounded-sm shadow-[0_0_12px_rgba(99,91,255,0.6)]"
+          className="w-3 h-3 bg-[#2d6a4f] rounded-sm shadow-[0_0_12px_rgba(99,91,255,0.6)]"
         />
       </div>
       <div className="flex flex-col">
-        <span className="text-[10px] font-black text-[#635bff] uppercase tracking-widest opacity-60">SOCIAL COPILOT WORKING</span>
+        <span className="text-[10px] font-black text-[#2d6a4f] uppercase tracking-widest opacity-60">RESORTFLOW WORKING</span>
         <span className="text-[12px] font-bold text-[#1a1f36] tracking-tight truncate max-w-[180px]">
           {status}...
         </span>
@@ -335,7 +334,7 @@ function QuickActionButtons({
           transition={{ delay: i * 0.05 }}
           onClick={() => onAction(opt)}
           disabled={disabled}
-          className="h-8 px-4 rounded-xl border border-[#635bff]/20 bg-[#635bff]/5 text-[#635bff] text-[11px] font-black uppercase tracking-wider hover:bg-[#635bff] hover:text-white hover:shadow-lg hover:shadow-[#635bff]/20 transition-all disabled:opacity-30 active:scale-95 whitespace-nowrap"
+          className="h-8 px-4 rounded-xl border border-[#2d6a4f]/20 bg-[#2d6a4f]/5 text-[#2d6a4f] text-[11px] font-black uppercase tracking-wider hover:bg-[#2d6a4f] hover:text-white hover:shadow-lg hover:shadow-[#2d6a4f]/20 transition-all disabled:opacity-30 active:scale-95 whitespace-nowrap"
         >
           {opt}
         </motion.button>
@@ -364,7 +363,7 @@ function TextWithMarkdown({ content }: { content: string }) {
                 <p key={li} className={line.startsWith("- ") || line.startsWith("• ") ? "flex gap-1.5" : ""}>
                   {line.startsWith("- ") || line.startsWith("• ") ? (
                     <>
-                      <span className="text-[#635bff] font-bold mt-0.5">•</span>
+                      <span className="text-[#2d6a4f] font-bold mt-0.5">•</span>
                       <span>
                         {renderInline(line.replace(/^[-•]\s/, ""))}
                       </span>
@@ -389,7 +388,7 @@ function renderInline(text: string) {
       return <strong key={i} className="font-bold text-[#1a1f36]">{part.slice(2, -2)}</strong>;
     }
     if (part.startsWith("`") && part.endsWith("`")) {
-      return <code key={i} className="font-mono text-[11px] bg-[#f0f0ff] text-[#635bff] px-1 rounded">{part.slice(1, -1)}</code>;
+      return <code key={i} className="font-mono text-[11px] bg-[#f0f0ff] text-[#2d6a4f] px-1 rounded">{part.slice(1, -1)}</code>;
     }
     return <span key={i}>{part}</span>;
   });
@@ -399,7 +398,6 @@ function renderInline(text: string) {
 // Main AgentSidebar
 // ──────────────────────────────────────────────
 export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
-  const { user } = useUser();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -706,11 +704,11 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
           {/* ── Header ── */}
           <div className="h-14 px-5 border-b border-[#e3e8ef] flex items-center justify-between shrink-0 bg-white/90 backdrop-blur-md">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#635bff] to-[#a3a1ff] flex items-center justify-center shadow-md">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#2d6a4f] to-[#a3a1ff] flex items-center justify-center shadow-md">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-[#1a1f36] leading-none">Social Copilot</h2>
+                <h2 className="text-sm font-bold text-[#1a1f36] leading-none">ResortFlow</h2>
                 <p className="text-[10px] text-[#8792a2] font-semibold mt-0.5 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
                   GPT-4o · Ready
@@ -730,7 +728,7 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                 variant="ghost" size="icon"
                 onClick={() => setShowHistory(!showHistory)}
                 title="History"
-                className={cn("w-8 h-8 rounded-lg hover:bg-[#f6f9fc]", showHistory ? "text-[#635bff] bg-[#f6f9fc]" : "text-[#697386]")}
+                className={cn("w-8 h-8 rounded-lg hover:bg-[#f6f9fc]", showHistory ? "text-[#2d6a4f] bg-[#f6f9fc]" : "text-[#697386]")}
               >
                 <Clock className="w-4 h-4" />
               </Button>
@@ -757,7 +755,7 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                 >
                   <div className="px-5 py-3.5 border-b border-[#e3e8ef] flex items-center justify-between">
                     <span className="text-[11px] font-black text-[#8792a2] uppercase tracking-widest">Conversations</span>
-                    <Button onClick={handleNewChat} variant="ghost" size="sm" className="h-7 text-[11px] font-bold text-[#635bff] hover:bg-[#f6f9fc]">
+                    <Button onClick={handleNewChat} variant="ghost" size="sm" className="h-7 text-[11px] font-bold text-[#2d6a4f] hover:bg-[#f6f9fc]">
                       + New
                     </Button>
                   </div>
@@ -773,16 +771,16 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                           className={cn(
                             "w-full text-left p-3 rounded-xl transition-all group",
                             currentId === conv.id
-                              ? "bg-[#635bff]/5 border border-[#635bff]/20"
+                              ? "bg-[#2d6a4f]/5 border border-[#2d6a4f]/20"
                               : "hover:bg-[#f6f9fc] border border-transparent"
                           )}
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-6 h-6 rounded-lg bg-[#635bff]/10 flex items-center justify-center shrink-0 mt-0.5">
-                              <MessageSquare className="w-3 h-3 text-[#635bff]" />
+                            <div className="w-6 h-6 rounded-lg bg-[#2d6a4f]/10 flex items-center justify-center shrink-0 mt-0.5">
+                              <MessageSquare className="w-3 h-3 text-[#2d6a4f]" />
                             </div>
                             <div className="min-w-0">
-                              <p className={cn("text-[12px] font-semibold truncate", currentId === conv.id ? "text-[#635bff]" : "text-[#3c4257]")}>
+                              <p className={cn("text-[12px] font-semibold truncate", currentId === conv.id ? "text-[#2d6a4f]" : "text-[#3c4257]")}>
                                 {conv.title || "Untitled"}
                               </p>
                               <span className="text-[10px] text-[#8792a2]">
@@ -808,8 +806,8 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                     animate={{ opacity: 1, y: 0 }}
                     className="py-10 text-center"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#635bff]/10 to-[#a3a1ff]/10 flex items-center justify-center mx-auto mb-4">
-                      <Sparkles className="w-6 h-6 text-[#635bff]" />
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2d6a4f]/10 to-[#a3a1ff]/10 flex items-center justify-center mx-auto mb-4">
+                      <Sparkles className="w-6 h-6 text-[#2d6a4f]" />
                     </div>
                     <h3 className="text-[15px] font-black text-[#1a1f36] mb-1.5">Your AI Agent</h3>
                     <p className="text-[12px] text-slate-500 font-medium mb-6 leading-relaxed max-w-[260px] mx-auto">
@@ -823,11 +821,11 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: i * 0.07 }}
                           onClick={() => setInput(s.text)}
-                          className="w-full flex items-center gap-2.5 p-3 rounded-xl border border-[#e3e8ef] bg-[#fafbfc] hover:border-[#635bff]/30 hover:bg-white hover:shadow-sm transition-all text-left group"
+                          className="w-full flex items-center gap-2.5 p-3 rounded-xl border border-[#e3e8ef] bg-[#fafbfc] hover:border-[#2d6a4f]/30 hover:bg-white hover:shadow-sm transition-all text-left group"
                         >
                           <span className="shrink-0">{s.icon}</span>
-                          <span className="text-[12px] font-semibold text-[#3c4257] group-hover:text-[#635bff] transition-colors">{s.text}</span>
-                          <ArrowRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-40 transition-opacity text-[#635bff]" />
+                          <span className="text-[12px] font-semibold text-[#3c4257] group-hover:text-[#2d6a4f] transition-colors">{s.text}</span>
+                          <ArrowRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-40 transition-opacity text-[#2d6a4f]" />
                         </motion.button>
                       ))}
                     </div>
@@ -839,7 +837,7 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                   <MessageBubble 
                     key={msg.id} 
                     msg={msg} 
-                    userImageUrl={user?.imageUrl} 
+                    userImageUrl={undefined} 
                     onInteractiveAction={handleInteractiveAction}
                     completedAction={completedActions[msg.id]}
                   />
@@ -896,12 +894,12 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                 )}
 
                 <div className={cn(
-                  "relative bg-[#f6f9fc] border border-[#e3e8ef] rounded-2xl focus-within:border-[#635bff] transition-all",
+                  "relative bg-[#f6f9fc] border border-[#e3e8ef] rounded-2xl focus-within:border-[#2d6a4f] transition-all",
                   isUploadingMedia && "opacity-50 pointer-events-none"
                 )}>
                   <Textarea
                     ref={textareaRef}
-                    placeholder="Ask your copilot to post, schedule, or analyse..."
+                    placeholder="Ask ResortFlow to post, schedule, or analyse..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => {
@@ -920,7 +918,7 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                       disabled={isUploadingMedia || isLoading}
                       size="sm"
                       variant="ghost"
-                      className="h-8 w-8 rounded-xl p-0 text-[#697386] hover:bg-[#635bff]/10 hover:text-[#635bff]"
+                      className="h-8 w-8 rounded-xl p-0 text-[#697386] hover:bg-[#2d6a4f]/10 hover:text-[#2d6a4f]"
                     >
                       {isUploadingMedia ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -954,7 +952,7 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                       onClick={handleSend}
                       disabled={isLoading || !input.trim()}
                       size="sm"
-                      className="h-8 rounded-xl bg-[#635bff] hover:bg-[#4f46e5] text-white text-[11px] font-bold px-3.5 shadow-md shadow-[#635bff]/20 transition-all active:scale-95 disabled:opacity-40"
+                      className="h-8 rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-[11px] font-bold px-3.5 shadow-md shadow-[#2d6a4f]/20 transition-all active:scale-95 disabled:opacity-40"
                     >
                       {isLoading ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -966,7 +964,7 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
                 </div>
               </div>
               <p className="mt-2 text-center text-[9px] font-bold text-[#c4cdd8] uppercase tracking-widest">
-                GPT-4o · Social Copilot Agent
+                GPT-4o · ResortFlow Agent
               </p>
             </div>
           </div>

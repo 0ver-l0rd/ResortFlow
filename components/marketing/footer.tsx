@@ -12,11 +12,11 @@ export function Footer() {
           {/* Logo Section */}
           <div className="space-y-8">
             <Link href="/" className="flex items-center gap-2.5 group w-fit">
-              <div className="w-9 h-9 rounded-xl bg-[#635bff] flex items-center justify-center transition-transform group-hover:scale-110 shadow-lg shadow-[#635bff]/20">
+              <div className="w-9 h-9 rounded-xl bg-[#2d6a4f] flex items-center justify-center transition-transform group-hover:scale-110 shadow-lg shadow-[#2d6a4f]/20">
                 <span className="text-white font-black text-xl leading-none">✦</span>
               </div>
               <span className="font-black text-xl tracking-tight text-[#1a1f36]">
-                SocialCopilot
+                ResortFlow
               </span>
             </Link>
             <p className="text-[15px] font-semibold text-[#8792a2] leading-relaxed max-w-xs">
@@ -29,7 +29,7 @@ export function Footer() {
                 { icon: FaInstagram, href: "#" },
                 { icon: FaGithub, href: "#" }
               ].map((social, i) => (
-                <Link key={i} href={social.href} className="w-10 h-10 rounded-xl bg-slate-50 border border-[#e3e8ef] flex items-center justify-center text-[#8792a2] hover:text-[#635bff] hover:border-[#635bff]/30 transition-all duration-300">
+                <Link key={i} href={social.href} className="w-10 h-10 rounded-xl bg-slate-50 border border-[#e3e8ef] flex items-center justify-center text-[#8792a2] hover:text-[#2d6a4f] hover:border-[#2d6a4f]/30 transition-all duration-300">
                   <social.icon className="w-4 h-4" />
                 </Link>
               ))}
@@ -71,7 +71,7 @@ export function Footer() {
               <input 
                 type="email" 
                 placeholder="hotel@email.com" 
-                className="w-full bg-[#f8fafc] border border-[#e3e8ef] rounded-xl px-5 py-3 text-sm font-bold focus:outline-none focus:border-[#635bff]/30 placeholder:text-[#8792a2] transition-all"
+                className="w-full bg-[#f8fafc] border border-[#e3e8ef] rounded-xl px-5 py-3 text-sm font-bold focus:outline-none focus:border-[#2d6a4f]/30 placeholder:text-[#8792a2] transition-all"
               />
               <button className="w-full bg-[#1a1f36] hover:bg-[#1a1f36]/90 text-white font-black py-3 px-6 rounded-xl text-[11px] uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-[#1a1f36]/10">
                 Join Now
@@ -82,7 +82,7 @@ export function Footer() {
  
         <div className="pt-10 border-t border-[#e3e8ef] flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-4 text-[13px] font-bold text-[#8792a2]">
-            <span>© 2026 SocialCopilot</span>
+            <span>© 2026 ResortFlow</span>
             <span className="hidden md:block w-1 h-1 rounded-full bg-slate-200" />
             <span>Smart Hotel Assistant</span>
           </div>

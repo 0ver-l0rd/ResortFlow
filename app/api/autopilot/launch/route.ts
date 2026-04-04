@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { campaigns, campaignPosts, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -7,8 +7,7 @@ import { postPublishQueue } from "@/lib/queue";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+    const userId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
       where: eq(users.clerkId, userId)

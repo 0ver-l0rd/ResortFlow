@@ -1,7 +1,7 @@
 import { ContactsClient } from "./ContactsClient";
 
 export const metadata = {
-  title: "Contacts | Social Copilot",
+  title: "Contacts | ResortFlow",
   description: "Manage your audience and messaging opt-ins.",
 };
 

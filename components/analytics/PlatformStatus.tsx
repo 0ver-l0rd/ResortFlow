@@ -54,7 +54,7 @@ export function PlatformStatus({ selected, onSelect, connectedPlatforms }: Platf
                 "relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl border-2 transition-all duration-300",
                 "min-w-fit whitespace-nowrap group",
                 isActive 
-                  ? "border-[#635bff] bg-white shadow-lg shadow-[#635bff]/8 scale-[1.02]" 
+                  ? "border-[#2d6a4f] bg-white shadow-lg shadow-[#2d6a4f]/8 scale-[1.02]" 
                   : "border-[#e3e8ef] bg-white hover:border-[#c9d0ef] hover:bg-[#f6f9fc]"
               )}
             >
@@ -69,13 +69,13 @@ export function PlatformStatus({ selected, onSelect, connectedPlatforms }: Platf
               <div 
                 className={cn(
                   "w-7 h-7 rounded-lg flex items-center justify-center transition-colors",
-                  isActive ? "bg-[#635bff]/10" : "bg-muted/50 group-hover:bg-muted"
+                  isActive ? "bg-[#2d6a4f]/10" : "bg-muted/50 group-hover:bg-muted"
                 )}
               >
                 {Icon ? (
-                  <Icon className="w-4 h-4" style={{ color: isActive ? "#635bff" : "#8792a2" }} />
+                  <Icon className="w-4 h-4" style={{ color: isActive ? "#2d6a4f" : "#8792a2" }} />
                 ) : (
-                  <Sparkles className="w-4 h-4" style={{ color: isActive ? "#635bff" : "#8792a2" }} />
+                  <Sparkles className="w-4 h-4" style={{ color: isActive ? "#2d6a4f" : "#8792a2" }} />
                 )}
               </div>
               
@@ -89,7 +89,7 @@ export function PlatformStatus({ selected, onSelect, connectedPlatforms }: Platf
                   {theme.name}
                 </span>
                 {isActive && (
-                   <span className="text-[9px] font-bold text-[#635bff] uppercase tracking-tight">Active</span>
+                   <span className="text-[9px] font-bold text-[#2d6a4f] uppercase tracking-tight">Active</span>
                 )}
               </div>
             </button>

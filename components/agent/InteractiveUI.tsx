@@ -72,8 +72,8 @@ export function InteractiveUI({
               className={cn(
                 "rounded-xl text-[11px] font-bold h-9 px-4 transition-all active:scale-95 flex items-center gap-2",
                 selectedValue === opt 
-                  ? "bg-[#635bff] text-white border-[#635bff] shadow-md shadow-[#635bff]/20" 
-                  : "bg-white border-[#e3e8ef] text-[#3c4257] hover:border-[#635bff] hover:text-[#635bff]"
+                  ? "bg-[#2d6a4f] text-white border-[#2d6a4f] shadow-md shadow-[#2d6a4f]/20" 
+                  : "bg-white border-[#e3e8ef] text-[#3c4257] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
               )}
             >
               {opt}
@@ -99,8 +99,8 @@ export function InteractiveUI({
               className={cn(
                 "rounded-full text-[11px] font-bold h-8 px-5 transition-all active:scale-95 border-2",
                 selectedValue === opt 
-                  ? "bg-[#635bff] text-white border-[#635bff] shadow-lg shadow-[#635bff]/30" 
-                  : "bg-white border-[#e3e8ef] text-[#3c4257] hover:border-[#635bff]/40 hover:bg-[#f6f9fc] hover:text-[#635bff]"
+                  ? "bg-[#2d6a4f] text-white border-[#2d6a4f] shadow-lg shadow-[#2d6a4f]/30" 
+                  : "bg-white border-[#e3e8ef] text-[#3c4257] hover:border-[#2d6a4f]/40 hover:bg-[#f6f9fc] hover:text-[#2d6a4f]"
               )}
             >
               {opt}
@@ -155,7 +155,7 @@ export function InteractiveUI({
           "relative group rounded-2xl border-2 border-dashed transition-all duration-300 p-6 flex flex-col items-center justify-center text-center",
           isCompleted 
             ? "border-emerald-100 bg-emerald-50/30" 
-            : "border-[#e3e8ef] hover:border-[#635bff] hover:bg-[#f6f9fc] cursor-pointer"
+            : "border-[#e3e8ef] hover:border-[#2d6a4f] hover:bg-[#f6f9fc] cursor-pointer"
         )}
         onClick={() => !isCompleted && !isUploading && fileInputRef.current?.click()}
         >
@@ -174,12 +174,12 @@ export function InteractiveUI({
             <>
               <div className={cn(
                 "w-12 h-12 rounded-2xl flex items-center justify-center mb-3 transition-all",
-                isUploading ? "bg-[#635bff]/10" : "bg-slate-50 group-hover:bg-[#635bff]/10"
+                isUploading ? "bg-[#2d6a4f]/10" : "bg-slate-50 group-hover:bg-[#2d6a4f]/10"
               )}>
                 {isUploading ? (
-                  <Loader2 className="w-6 h-6 text-[#635bff] animate-spin" />
+                  <Loader2 className="w-6 h-6 text-[#2d6a4f] animate-spin" />
                 ) : (
-                  <Upload className="w-6 h-6 text-[#8792a2] group-hover:text-[#635bff]" />
+                  <Upload className="w-6 h-6 text-[#8792a2] group-hover:text-[#2d6a4f]" />
                 )}
               </div>
               <p className="text-[12px] font-bold text-[#1a1f36] mb-1">Click to upload media</p>
@@ -198,7 +198,7 @@ export function InteractiveUI({
       <div className="mt-3 space-y-3">
         <div className="p-4 bg-white border border-[#e3e8ef] rounded-2xl shadow-sm">
           <div className="flex items-center gap-3 mb-4 text-[#1a1f36]">
-            <CalendarIcon className="w-4 h-4 text-[#635bff]" />
+            <CalendarIcon className="w-4 h-4 text-[#2d6a4f]" />
             <span className="text-[12px] font-bold tracking-tight">Select Schedule Time</span>
           </div>
           
@@ -211,7 +211,7 @@ export function InteractiveUI({
                 className={cn(
                   "w-full flex items-center justify-between p-3 rounded-xl text-[11px] font-bold transition-all group",
                   selectedValue === s
-                    ? "bg-[#635bff] text-white"
+                    ? "bg-[#2d6a4f] text-white"
                     : "hover:bg-[#f6f9fc] text-[#3c4257] border border-transparent hover:border-[#e3e8ef]"
                 )}
               >

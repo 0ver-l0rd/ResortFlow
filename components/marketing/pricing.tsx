@@ -2,7 +2,7 @@
 
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 const plans = [
@@ -57,12 +57,12 @@ export function Pricing() {
     <section id="pricing" className="py-24 md:py-32 bg-[#f6f9fc] relative overflow-hidden">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <h2 className="text-[#635bff] font-black tracking-tight text-sm uppercase mb-4 px-4 py-1.5 rounded-full bg-[#635bff]/10 inline-block">
+          <h2 className="text-[#2d6a4f] font-black tracking-tight text-sm uppercase mb-4 px-4 py-1.5 rounded-full bg-[#2d6a4f]/10 inline-block">
             Pricing
           </h2>
           <h3 className="text-[32px] md:text-[54px] font-black tracking-tight text-[#1a1f36] leading-tight mb-8">
             Strategic Growth Plans for <br />
-            <span className="text-[#635bff]">Modern Resorts.</span>
+            <span className="text-[#2d6a4f]">Modern Resorts.</span>
           </h3>
           <p className="text-xl text-[#3c4257] font-medium leading-relaxed opacity-80">
             Choose the plan that's right for your property's expansion.
@@ -75,12 +75,12 @@ export function Pricing() {
               key={i}
               className={`relative flex flex-col p-10 rounded-[2.5rem] border transition-all duration-500 hover:shadow-2xl ${
                 plan.featured
-                  ? "bg-white border-[#635bff] ring-4 ring-[#635bff]/5 shadow-xl shadow-[#635bff]/10 z-10"
-                  : "bg-white border-black/5 hover:border-[#635bff]/20"
+                  ? "bg-white border-[#2d6a4f] ring-4 ring-[#2d6a4f]/5 shadow-xl shadow-[#2d6a4f]/10 z-10"
+                  : "bg-white border-black/5 hover:border-[#2d6a4f]/20"
               }`}
             >
               {plan.featured && (
-                <div className="absolute top-0 right-10 -translate-y-1/2 px-5 py-2 rounded-full bg-[#635bff] text-[10px] font-black text-white shadow-xl shadow-[#635bff]/20 uppercase tracking-widest leading-none">
+                <div className="absolute top-0 right-10 -translate-y-1/2 px-5 py-2 rounded-full bg-[#2d6a4f] text-[10px] font-black text-white shadow-xl shadow-[#2d6a4f]/20 uppercase tracking-widest leading-none">
                   ✦ Most Popular
                 </div>
               )}
@@ -97,7 +97,7 @@ export function Pricing() {
               <div className="flex-1 space-y-5 mb-10">
                 {plan.features.map((feature, j) => (
                   <div key={j} className="flex items-center gap-3">
-                    <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${feature.available ? "bg-[#635bff]/10 text-[#635bff]" : "bg-slate-50 text-slate-300"}`}>
+                    <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${feature.available ? "bg-[#2d6a4f]/10 text-[#2d6a4f]" : "bg-slate-50 text-slate-300"}`}>
                         {feature.available ? (
                         <Check className="w-3.5 h-3.5 stroke-[3]" />
                         ) : (
@@ -111,18 +111,18 @@ export function Pricing() {
                 ))}
               </div>
  
-              <SignUpButton mode="modal">
+              <Link href="/dashboard" className="w-full">
                 <Button
                   size="lg"
                   className={`w-full rounded-2xl h-16 font-black transition-all hover:scale-[1.02] active:scale-[0.98] text-[15px] shadow-2xl ${
                     plan.featured 
-                      ? "bg-[#635bff] hover:bg-[#4f46e5] text-white shadow-[#635bff]/30" 
+                      ? "bg-[#2d6a4f] hover:bg-[#1b4332] text-white shadow-[#2d6a4f]/30" 
                       : "bg-[#1a1f36] hover:bg-black text-white shadow-black/10"
                   }`}
                 >
                   {plan.buttonText}
                 </Button>
-              </SignUpButton>
+              </Link>
             </div>
           ))}
         </div>

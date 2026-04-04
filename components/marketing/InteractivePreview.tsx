@@ -125,7 +125,7 @@ const OverviewView = () => (
         >
           <div className="flex items-center justify-between mb-2">
             <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-[0.1em]">{stat.label}</p>
-            <stat.icon className="w-3.5 h-3.5 text-[#8792a2] group-hover:text-[#635bff] transition-colors" />
+            <stat.icon className="w-3.5 h-3.5 text-[#8792a2] group-hover:text-[#2d6a4f] transition-colors" />
           </div>
           <p className="text-xl font-bold text-[#1a1f36]">
              <AnimatedNumber value={stat.value} />
@@ -148,7 +148,7 @@ const OverviewView = () => (
           <div className="divide-y divide-[#f0f3f7]">
             {[
               { label: "Post published", detail: "Instagram & Twitter", time: "2 min ago", color: "#09825d" },
-              { label: "Auto-reply sent", detail: "LinkedIn comment", time: "15 min ago", color: "#635bff" },
+              { label: "Auto-reply sent", detail: "LinkedIn comment", time: "15 min ago", color: "#2d6a4f" },
               { label: "Post scheduled", detail: "Tomorrow at 9:00 AM", time: "1 hr ago", color: "#f5a623" }
             ].map((activity, i) => (
               <motion.div 
@@ -174,14 +174,14 @@ const OverviewView = () => (
       <motion.div variants={{ hidden: { opacity: 0, x: 20 }, show: { opacity: 1, x: 0 } }} className="space-y-4">
         <motion.div 
           whileHover={{ y: -4 }}
-          className="bg-[#635bff] rounded-xl p-5 text-white relative overflow-hidden shadow-lg shadow-[#635bff]/20 cursor-pointer group"
+          className="bg-[#2d6a4f] rounded-xl p-5 text-white relative overflow-hidden shadow-lg shadow-[#2d6a4f]/20 cursor-pointer group"
         >
           <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:rotate-12 transition-transform duration-500">
             <Zap className="w-12 h-12" />
           </div>
           <p className="text-[10px] font-black uppercase tracking-widest mb-1.5 opacity-80">Upgrade to Pro</p>
           <p className="text-sm font-bold leading-tight mb-4">Unlock Business <br />Intelligence Tools</p>
-          <button className="w-full py-2 bg-white text-[#635bff] rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-colors shadow-sm">Upgrade Now</button>
+          <button className="w-full py-2 bg-white text-[#2d6a4f] rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-colors shadow-sm">Upgrade Now</button>
         </motion.div>
       </motion.div>
     </div>
@@ -222,7 +222,7 @@ const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: s
         { label: "ROI Pick", val: "+12.4% Lift", icon: TrendingUp, color: "text-green-600", bg: "bg-green-50" },
         { label: "Optimal", val: "10:00 AM", icon: Clock, color: "text-orange-600", bg: "bg-orange-50" },
         { label: "Sentiment", val: "98% Pos.", icon: Sparkles, color: "text-pink-600", bg: "bg-pink-50" },
-        { label: "Reach", val: "High Est.", icon: ZapIcon, color: "text-[#635bff]", bg: "bg-[#635bff]/5" }
+        { label: "Reach", val: "High Est.", icon: ZapIcon, color: "text-[#2d6a4f]", bg: "bg-[#2d6a4f]/5" }
     ];
 
     const platforms = [
@@ -237,8 +237,8 @@ const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: s
             <div className="lg:col-span-7 flex flex-col gap-4 min-h-0 h-full">
                 <div className="flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-[#635bff]/10 flex items-center justify-center shadow-sm border border-[#635bff]/5">
-                            <Wand2 className="w-4.5 h-4.5 text-[#635bff]" />
+                        <div className="w-8 h-8 rounded-lg bg-[#2d6a4f]/10 flex items-center justify-center shadow-sm border border-[#2d6a4f]/5">
+                            <Wand2 className="w-4.5 h-4.5 text-[#2d6a4f]" />
                         </div>
                         <h2 className="text-lg font-bold tracking-tight text-[#1a1f36]">AI Composer</h2>
                     </div>
@@ -250,7 +250,7 @@ const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: s
                                 animate={{ opacity: 1, scale: 1 }}
                                 className={cn(
                                     "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 border shadow-sm",
-                                    processStep === 'ready' ? "bg-[#e7f6f2] text-[#09825d] border-[#09825d]/10" : "bg-[#f6f9fc] text-[#635bff] border-[#635bff]/10"
+                                    processStep === 'ready' ? "bg-[#e7f6f2] text-[#09825d] border-[#09825d]/10" : "bg-[#f6f9fc] text-[#2d6a4f] border-[#2d6a4f]/10"
                                 )}
                             >
                                 {processStep === 'conceptualizing' && <><Clock className="w-3 h-3 animate-spin" /> Thinking</>}
@@ -271,7 +271,7 @@ const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: s
                     </div>
                     
                     <div className="p-7 flex-1 relative overflow-y-auto custom-scrollbar bg-slate-50/20">
-                        <div className="absolute top-0 left-0 w-1 h-full bg-[#635bff]/10" />
+                        <div className="absolute top-0 left-0 w-1 h-full bg-[#2d6a4f]/10" />
                         <p className="text-[15px] text-[#1a1f36] leading-relaxed whitespace-pre-wrap font-medium">
                             {processStep === 'conceptualizing' ? (
                                 <span className="text-[#8792a2] italic opacity-50">AI is conceptualizing your resort narrative...</span>
@@ -283,7 +283,7 @@ const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: s
                                             initial={{ opacity: 0 }} 
                                             animate={{ opacity: [0, 1, 0] }} 
                                             transition={{ repeat: Infinity, duration: 1 }} 
-                                            className="inline-block w-[2.5px] h-[18px] bg-[#635bff] ml-1 align-bottom shadow-[0_0_8px_#635bff]" 
+                                            className="inline-block w-[2.5px] h-[18px] bg-[#2d6a4f] ml-1 align-bottom shadow-[0_0_8px_#2d6a4f]" 
                                         />
                                     )}
                                 </>
@@ -302,7 +302,7 @@ const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: s
                         </div>
                         <div className="flex items-center gap-4">
                            <div className="h-1.5 w-28 bg-[#e3e8ef] rounded-full overflow-hidden shadow-inner hidden sm:block">
-                              <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, (typedText.length/280)*100)}%` }} className="h-full bg-gradient-to-r from-[#635bff] to-[#a29bfe]" />
+                              <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, (typedText.length/280)*100)}%` }} className="h-full bg-gradient-to-r from-[#2d6a4f] to-[#a29bfe]" />
                            </div>
                            <span className="text-[10px] font-black text-[#8792a2] tabular-nums whitespace-nowrap">{typedText.length} / 280</span>
                         </div>
@@ -315,7 +315,7 @@ const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: s
                     <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#f6f9fc] to-transparent z-10 pointer-events-none" />
                     <div className="flex items-center gap-3 overflow-x-auto pb-4 pt-1 px-1 custom-scrollbar no-scrollbar scroll-smooth">
                         {metrics.map((m, i) => (
-                            <div key={i} className="p-4 rounded-2xl border border-[#e3e8ef] bg-white flex items-center gap-3.5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md min-w-[170px] shrink-0 border-l-4" style={{ borderLeftColor: m.color === 'text-blue-600' ? '#3b82f6' : m.color === 'text-green-600' ? '#22c55e' : m.color === 'text-orange-600' ? '#f97316' : '#635bff' }}>
+                            <div key={i} className="p-4 rounded-2xl border border-[#e3e8ef] bg-white flex items-center gap-3.5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md min-w-[170px] shrink-0 border-l-4" style={{ borderLeftColor: m.color === 'text-blue-600' ? '#3b82f6' : m.color === 'text-green-600' ? '#22c55e' : m.color === 'text-orange-600' ? '#f97316' : '#2d6a4f' }}>
                                 <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm", m.bg)}>
                                     <m.icon className={cn("w-4.5 h-4.5", m.color)} />
                                 </div>
@@ -387,8 +387,8 @@ const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: s
                                                 </motion.div>
                                             ) : (
                                                 <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-slate-50">
-                                                   <div className="w-10 h-10 rounded-full border-2 border-[#635bff]/20 border-t-[#635bff] animate-spin" />
-                                                   <span className="text-[9px] font-black text-[#635bff] uppercase tracking-widest">Optimizing Assets</span>
+                                                   <div className="w-10 h-10 rounded-full border-2 border-[#2d6a4f]/20 border-t-[#2d6a4f] animate-spin" />
+                                                   <span className="text-[9px] font-black text-[#2d6a4f] uppercase tracking-widest">Optimizing Assets</span>
                                                 </div>
                                             )}
                                         </div>
@@ -396,10 +396,10 @@ const ComposeView = ({ displayedPrompt: targetText, step }: { displayedPrompt: s
                                         <div className="flex items-center justify-between py-1 px-1">
                                             <div className="flex items-center gap-5 text-[#1a1f36]">
                                                 <Heart className="w-7 h-7 cursor-pointer hover:text-[#ff3040] hover:scale-110 transition-all" />
-                                                <MessageCircle className="w-7 h-7 cursor-pointer hover:text-[#635bff] hover:scale-110 transition-all" />
-                                                <Send className="w-7 h-7 cursor-pointer hover:text-[#635bff] hover:scale-110 transition-all" />
+                                                <MessageCircle className="w-7 h-7 cursor-pointer hover:text-[#2d6a4f] hover:scale-110 transition-all" />
+                                                <Send className="w-7 h-7 cursor-pointer hover:text-[#2d6a4f] hover:scale-110 transition-all" />
                                             </div>
-                                            <Bookmark className="w-7 h-7 cursor-pointer hover:text-[#635bff] hover:scale-110 transition-all" />
+                                            <Bookmark className="w-7 h-7 cursor-pointer hover:text-[#2d6a4f] hover:scale-110 transition-all" />
                                         </div>
 
                                         <div className="space-y-1.5 px-1 pb-6">
@@ -476,7 +476,7 @@ const CalendarView = () => {
                   "min-h-[75px] border-r border-b border-[#f0f3f7] p-1.5 hover:bg-[#fcfdfe] transition-colors last:border-r-0 relative group",
                   day > 31 && "bg-[#f8fafc]/50"
                )}>
-                 <span className={cn("text-[10px] font-bold", [4, 14, 29].includes(day) ? "text-[#635bff]" : "text-[#d1d5db]")}>{actualDay}</span>
+                 <span className={cn("text-[10px] font-bold", [4, 14, 29].includes(day) ? "text-[#2d6a4f]" : "text-[#d1d5db]")}>{actualDay}</span>
                  {schedules.length > 0 && (
                     <div className="mt-1 space-y-0.5">
                        {schedules.map((s, idx) => (
@@ -612,7 +612,7 @@ const ConnectionsView = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                             {available.map((conn, i) => (
-                                <div key={i} className="bg-[#fcfdfe] rounded-xl border border-[#e3e8ef] border-dashed p-5 flex items-center gap-4 group hover:border-[#635bff] transition-colors cursor-pointer">
+                                <div key={i} className="bg-[#fcfdfe] rounded-xl border border-[#e3e8ef] border-dashed p-5 flex items-center gap-4 group hover:border-[#2d6a4f] transition-colors cursor-pointer">
                                     <div className="w-12 h-12 rounded-xl flex items-center justify-center grayscale group-hover:grayscale-0 transition-all" style={{ background: conn.bg }}>
                                         <conn.icon className="w-6 h-6" style={{ color: conn.color }} />
                                     </div>
@@ -620,7 +620,7 @@ const ConnectionsView = () => {
                                         <p className="text-[13px] font-bold text-[#697386] tracking-tight group-hover:text-[#1a1f36]">{conn.platform}</p>
                                         <p className="text-[10px] font-medium text-[#8792a2]">Click to authorize</p>
                                     </div>
-                                    <Plus className="w-4 h-4 text-[#c1c9d2] group-hover:text-[#635bff]" />
+                                    <Plus className="w-4 h-4 text-[#c1c9d2] group-hover:text-[#2d6a4f]" />
                                 </div>
                             ))}
                         </div>
@@ -676,7 +676,7 @@ const AnalyticsView = () => (
         <div className="flex items-center justify-between mb-6 shrink-0">
            <h3 className="text-[11px] font-black text-[#1a1f36] uppercase tracking-widest">Global Retention Velocity</h3>
            <div className="flex gap-4">
-              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#635bff]" /><span className="text-[9px] font-bold text-[#3c4257]">TikTok</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#2d6a4f]" /><span className="text-[9px] font-bold text-[#3c4257]">TikTok</span></div>
               <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-slate-200" /><span className="text-[9px] font-bold text-[#3c4257]">Benchmark</span></div>
            </div>
         </div>
@@ -689,7 +689,7 @@ const AnalyticsView = () => (
                  transition={{ duration: 1.5, ease: "easeOut" }}
                  d="M 50 180 C 150 100, 300 150, 450 50 S 650 100, 750 20"
                  fill="none"
-                 stroke="#635bff"
+                 stroke="#2d6a4f"
                  strokeWidth="4"
                  strokeLinecap="round"
               />
@@ -845,10 +845,10 @@ const AutoReplyView = () => {
                                           exit={{ opacity: 0, scale: 0.95 }}
                                           className="flex items-center gap-3 py-2"
                                        >
-                                          <div className="w-8 h-8 rounded-full bg-[#635bff]/10 flex items-center justify-center">
-                                             <Bot className="w-4 h-4 text-[#635bff] animate-pulse" />
+                                          <div className="w-8 h-8 rounded-full bg-[#2d6a4f]/10 flex items-center justify-center">
+                                             <Bot className="w-4 h-4 text-[#2d6a4f] animate-pulse" />
                                           </div>
-                                          <span className="text-[10px] font-black text-[#635bff] uppercase tracking-widest">AI Agent is thinking...</span>
+                                          <span className="text-[10px] font-black text-[#2d6a4f] uppercase tracking-widest">AI Agent is thinking...</span>
                                        </motion.div>
                                     )}
 
@@ -859,13 +859,13 @@ const AutoReplyView = () => {
                                           className="space-y-1"
                                        >
                                           <div className="flex items-center gap-2">
-                                             <div className="w-5 h-5 rounded-full bg-[#635bff] flex items-center justify-center text-white">
+                                             <div className="w-5 h-5 rounded-full bg-[#2d6a4f] flex items-center justify-center text-white">
                                                 <Bot className="w-3 h-3" />
                                              </div>
-                                             <span className="text-[10px] font-black text-[#635bff] uppercase tracking-widest">Resort Assistant</span>
+                                             <span className="text-[10px] font-black text-[#2d6a4f] uppercase tracking-widest">Resort Assistant</span>
                                              <div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
                                           </div>
-                                          <div className="p-4 bg-[#635bff] text-white border border-[#635bff]/20 rounded-2xl rounded-tl-none shadow-lg shadow-[#635bff]/20 max-w-[90%]">
+                                          <div className="p-4 bg-[#2d6a4f] text-white border border-[#2d6a4f]/20 rounded-2xl rounded-tl-none shadow-lg shadow-[#2d6a4f]/20 max-w-[90%]">
                                              <p className="text-[13px] font-bold leading-relaxed italic">
                                                 "{current.reply}"
                                              </p>
@@ -984,7 +984,7 @@ const AIAgentPanel = ({ activeTab }: { activeTab: string }) => {
             <div className="p-4 rounded-xl bg-[#f8fafc] border border-black/5 min-h-[60px]">
                <p className="text-[11px] font-bold text-[#3c4257] leading-relaxed">
                   "{displayedPrompt}"
-                  {step === 0 && <span className="inline-block w-1 h-3.5 bg-[#635bff] ml-1 animate-pulse rounded-full" />}
+                  {step === 0 && <span className="inline-block w-1 h-3.5 bg-[#2d6a4f] ml-1 animate-pulse rounded-full" />}
                </p>
             </div>
          </div>
@@ -993,8 +993,8 @@ const AIAgentPanel = ({ activeTab }: { activeTab: string }) => {
             <p className="text-[9px] font-black text-[#8792a2] uppercase tracking-[0.2em] px-2">Logs</p>
             <AnimatePresence mode="popLayout">
                {visibleLogs.map((log) => (
-                  <motion.div key={log.text} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="p-4 rounded-xl border border-[#635bff]/10 bg-white shadow-sm flex items-center gap-3">
-                     <Sparkles className="w-3.5 h-3.5 text-[#635bff]" />
+                  <motion.div key={log.text} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="p-4 rounded-xl border border-[#2d6a4f]/10 bg-white shadow-sm flex items-center gap-3">
+                     <Sparkles className="w-3.5 h-3.5 text-[#2d6a4f]" />
                      <div className="flex-1">
                         <p className="text-[10px] font-black text-[#1a1f36] leading-none mb-1">{log.text}</p>
                         <p className="text-[8px] font-bold text-[#8792a2] uppercase tracking-widest">{log.status}</p>
@@ -1019,14 +1019,14 @@ export function InteractivePreview({ activeTab: externalTab, setActiveTab: setEx
       <div className="w-20 lg:w-60 bg-[#fcfdfe] border-r border-[#f0f3f7] flex flex-col shrink-0">
          <div className="p-6 border-b border-[#f0f3f7] flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#1a1f36] flex items-center justify-center text-white shadow-lg"><Zap className="w-4.5 h-4.5" /></div>
-            <span className="hidden lg:block font-black text-[15px] tracking-tight text-[#1a1f36]">SocialCopilot</span>
+            <span className="hidden lg:block font-black text-[15px] tracking-tight text-[#1a1f36]">ResortFlow</span>
          </div>
          <div className="flex-1 py-8 px-4 space-y-1">
             {navItems.map((item) => {
                const isActive = activeTab === item.id;
                return (
-                  <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all", isActive ? "bg-white text-[#635bff] shadow-sm border border-[#eceff3]" : "text-[#697386] hover:bg-[#f6f9fc]")}>
-                     <item.icon className={cn("w-4 h-4", isActive ? "text-[#635bff]" : "text-[#8792a2]")} />
+                  <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all", isActive ? "bg-white text-[#2d6a4f] shadow-sm border border-[#eceff3]" : "text-[#697386] hover:bg-[#f6f9fc]")}>
+                     <item.icon className={cn("w-4 h-4", isActive ? "text-[#2d6a4f]" : "text-[#8792a2]")} />
                      <span className="hidden lg:block text-[12px] font-black tracking-tight">{item.label}</span>
                   </button>
                );
@@ -1040,7 +1040,7 @@ export function InteractivePreview({ activeTab: externalTab, setActiveTab: setEx
                <Search className="w-3.5 h-3.5" />
                <span className="text-[11px] font-black text-[#8792a2] uppercase tracking-widest">Search Console</span>
             </div>
-            <Button className="h-9 px-5 bg-[#635bff] text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[#635bff]/20"><Plus className="w-3.5 h-3.5 mr-2" /> New</Button>
+            <Button className="h-9 px-5 bg-[#2d6a4f] text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[#2d6a4f]/20"><Plus className="w-3.5 h-3.5 mr-2" /> New</Button>
          </header>
 
          <div className="flex-1 p-6 overflow-hidden">

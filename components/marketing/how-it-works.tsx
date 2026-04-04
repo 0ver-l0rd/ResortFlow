@@ -22,7 +22,7 @@ export function HowItWorks() {
       title: "Connect Your Hotel System",
       desc: "Connect your hotel software in seconds. Our AI starts learning about your rooms and guests right away.",
       icon: Link2,
-      color: "text-[#635bff]",
+      color: "text-[#2d6a4f]",
       label: "Everything Connected"
     },
     {
@@ -46,7 +46,7 @@ export function HowItWorks() {
       title: "Start & Grow",
       desc: "Your posts go live everywhere. The AI watches them and makes changes to help you earn more money.",
       icon: Zap,
-      color: "text-[#635bff]",
+      color: "text-[#2d6a4f]",
       label: "Working Now"
     }
   ];
@@ -55,7 +55,7 @@ export function HowItWorks() {
     <section id="how-it-works" className="py-16 md:py-24 bg-white relative overflow-hidden" ref={containerRef}>
       {/* Background Accents */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#e3e8ef] to-transparent" />
-      <div className="absolute -top-[10%] right-[-5%] w-[600px] h-[600px] bg-[#635bff03] blur-[120px] rounded-full -z-10" />
+      <div className="absolute -top-[10%] right-[-5%] w-[600px] h-[600px] bg-[#2d6a4f03] blur-[120px] rounded-full -z-10" />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center mb-20 md:mb-28">
@@ -65,7 +65,7 @@ export function HowItWorks() {
             viewport={{ once: true }}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f6f9fc] border border-[#e3e8ef] mb-8"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#635bff]" />
+            <Sparkles className="w-3.5 h-3.5 text-[#2d6a4f]" />
             <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.2em]">Simple Steps</span>
           </motion.div>
           <motion.h2 
@@ -75,7 +75,7 @@ export function HowItWorks() {
             className="text-[40px] md:text-[60px] font-black tracking-[-0.04em] text-[#1a1f36] leading-[1.05] mb-8"
           >
             How It Works. <br />
-            <span className="text-[#635bff]">Simple & Smart.</span>
+            <span className="text-[#2d6a4f]">Simple & Smart.</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -99,7 +99,7 @@ export function HowItWorks() {
               className="flex flex-col group relative"
             >
               <div className="mb-8 relative">
-                <div className="w-16 h-16 rounded-2xl bg-white border border-[#e3e8ef] flex items-center justify-center shadow-premium-subtle group-hover:border-[#635bff]/30 transition-all duration-500 relative z-10">
+                <div className="w-16 h-16 rounded-2xl bg-white border border-[#e3e8ef] flex items-center justify-center shadow-premium-subtle group-hover:border-[#2d6a4f]/30 transition-all duration-500 relative z-10">
                    <item.icon className={cn("w-7 h-7", item.color)} />
                 </div>
                 {/* Connector Line (Desktop) */}

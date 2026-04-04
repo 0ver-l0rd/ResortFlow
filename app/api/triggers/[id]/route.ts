@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { triggers } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -9,8 +9,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
+    const clerkId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
         where: (users, { eq }) => eq(users.clerkId, clerkId),
@@ -46,8 +45,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
+    const clerkId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
         where: (users, { eq }) => eq(users.clerkId, clerkId),

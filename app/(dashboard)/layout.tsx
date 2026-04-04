@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
-import { UserButton } from "@clerk/nextjs";
 import { LayoutDashboard, PenSquare, Calendar, Link2, MessageSquare, BarChart3, Bell, Plus, Zap, Sparkles, Target, Users, DollarSign, Contact } from "lucide-react";
 import Link from "next/link";
 import { AgentSidebar } from "@/components/agent/AgentSidebar";
@@ -59,12 +58,12 @@ export default function DashboardLayout({
             <div className="flex items-center gap-2.5">
               <div
                 className="w-7 h-7 rounded-lg flex items-center justify-center"
-                style={{ background: "linear-gradient(135deg, #635bff 0%, #7f78ff 100%)" }}
+                style={{ background: "linear-gradient(135deg, #2d6a4f 0%, #40916c 100%)" }}
               >
                 <Zap className="w-3.5 h-3.5 text-white" fill="white" />
               </div>
               <span className="font-bold text-[15px] tracking-[-0.02em] text-[#1a1f36]">
-                SocialCopilot
+                ResortFlow
               </span>
             </div>
           </SidebarHeader>
@@ -114,7 +113,7 @@ export default function DashboardLayout({
                 text-sm font-semibold text-white
                 transition-all duration-150 active:scale-[0.98]
               "
-              style={{ background: "linear-gradient(135deg, #635bff 0%, #7f78ff 100%)" }}
+              style={{ background: "linear-gradient(135deg, #2d6a4f 0%, #40916c 100%)" }}
             >
               <Plus className="w-3.5 h-3.5" />
               New Post
@@ -141,14 +140,9 @@ export default function DashboardLayout({
               </div>
               <div className="h-6 w-px bg-[#e3e8ef]" />
               <div className="flex items-center gap-3">
-                <UserButton
-                  appearance={{
-                    elements: {
-                      userButtonAvatarBox: "w-8 h-8 border border-black/5 shadow-sm hover:scale-105 transition-transform",
-                      userButtonPopoverCard: "shadow-xl rounded-xl border border-[#e3e8ef]",
-                    },
-                  }}
-                />
+                <div className="w-8 h-8 rounded-full bg-slate-200 border border-black/5 shadow-sm overflow-hidden flex items-center justify-center font-bold text-slate-500 text-xs transition-transform hover:scale-105 cursor-pointer">
+                  U
+                </div>
               </div>
             </div>
           </header>

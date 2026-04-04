@@ -152,8 +152,8 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
               className="flex flex-col"
             >
               <DialogHeader className="p-8 pb-4">
-                <div className="flex items-center gap-3 text-[#635bff] mb-2">
-                  <div className="w-10 h-10 rounded-2xl bg-[#635bff]/10 flex items-center justify-center shadow-sm border border-[#635bff]/20">
+                <div className="flex items-center gap-3 text-[#2d6a4f] mb-2">
+                  <div className="w-10 h-10 rounded-2xl bg-[#2d6a4f]/10 flex items-center justify-center shadow-sm border border-[#2d6a4f]/20">
                     <Brain className="w-6 h-6" />
                   </div>
                   <div>
@@ -167,7 +167,7 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
 
               <div className="px-8 py-4 space-y-6">
                 <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-[#635bff]/20 to-[#4f46e5]/10 rounded-[20px] blur opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-[#2d6a4f]/20 to-[#1b4332]/10 rounded-[20px] blur opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
                   <textarea
                     value={goal}
                     onKeyDown={(e) => {
@@ -175,7 +175,7 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
                     }}
                     onChange={(e) => setGoal(e.target.value)}
                     placeholder="e.g., We have a few empty suites this weekend. Let's create a flash sale for 20% off to drive bookings."
-                    className="relative w-full h-40 p-5 rounded-[18px] border border-[#e3e8ef] bg-[#fcfdfe] focus:bg-white focus:border-[#635bff] focus:ring-0 outline-none transition-all resize-none text-[15px] font-medium text-[#1a1f36] placeholder:text-[#8792a2] leading-relaxed shadow-inner"
+                    className="relative w-full h-40 p-5 rounded-[18px] border border-[#e3e8ef] bg-[#fcfdfe] focus:bg-white focus:border-[#2d6a4f] focus:ring-0 outline-none transition-all resize-none text-[15px] font-medium text-[#1a1f36] placeholder:text-[#8792a2] leading-relaxed shadow-inner"
                   />
                   <div className="absolute bottom-4 right-4 text-[10px] font-bold text-[#8792a2] uppercase tracking-[0.1em]">
                     ⌘ + Enter to plan
@@ -189,7 +189,7 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
                       <button
                         key={suggestion}
                         onClick={() => setGoal(suggestion)}
-                        className="px-4 py-2 text-[12px] font-bold rounded-xl bg-[#f6f9fc] text-[#475467] border border-[#e3e8ef] hover:border-[#635bff]/30 hover:bg-[#635bff]/5 hover:text-[#635bff] transition-all shadow-sm active:scale-95"
+                        className="px-4 py-2 text-[12px] font-bold rounded-xl bg-[#f6f9fc] text-[#475467] border border-[#e3e8ef] hover:border-[#2d6a4f]/30 hover:bg-[#2d6a4f]/5 hover:text-[#2d6a4f] transition-all shadow-sm active:scale-95"
                       >
                         {suggestion}
                       </button>
@@ -209,7 +209,7 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
                   onClick={handlePlanMyCampaign}
                   disabled={!goal.trim()}
                   className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-[15px] font-bold text-white shadow-[0_16px_32px_-12px_rgba(99,91,255,0.4)] hover:shadow-[0_20px_40px_-12px_rgba(99,91,255,0.5)] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ background: "linear-gradient(135deg, #635bff 0%, #443ae0 100%)" }}
+                  style={{ background: "linear-gradient(135deg, #2d6a4f 0%, #443ae0 100%)" }}
                 >
                   Generate strategy <ArrowRight className="w-4 h-4" />
                 </button>
@@ -227,7 +227,7 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
             >
                {/* Gemini-like background pulse */}
                <div className="absolute inset-0 z-0">
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#635bff] rounded-full blur-[120px] opacity-10 animate-pulse" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#2d6a4f] rounded-full blur-[120px] opacity-10 animate-pulse" />
                </div>
 
                <div className="relative z-10 space-y-8">
@@ -235,18 +235,18 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
                     <motion.div 
                       animate={{ scale: [1, 1.1, 1], rotate: [0, 90, 180, 270, 360] }}
                       transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                      className="absolute inset-0 bg-gradient-to-tr from-[#635bff] to-[#4f46e5] rounded-[30%] blur-xl opacity-20"
+                      className="absolute inset-0 bg-gradient-to-tr from-[#2d6a4f] to-[#1b4332] rounded-[30%] blur-xl opacity-20"
                     />
                     <div className="relative bg-white rounded-[24px] w-full h-full flex items-center justify-center border border-[#e3e8ef] shadow-2xl overflow-hidden group">
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#635bff]/5 to-transparent animate-pulse" />
-                      <Sparkles className="w-10 h-10 text-[#635bff] animate-bounce" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#2d6a4f]/5 to-transparent animate-pulse" />
+                      <Sparkles className="w-10 h-10 text-[#2d6a4f] animate-bounce" />
                     </div>
                   </div>
                   
                   <div className="space-y-3">
                     <h3 className="text-2xl font-extrabold text-[#1a1f36] tracking-tight">Agent is thinking</h3>
                     <div className="flex flex-col items-center gap-1.5">
-                       <p className="text-[14px] font-bold text-[#635bff] px-4 py-1.5 bg-[#635bff]/5 rounded-full border border-[#635bff]/10 flex items-center gap-3">
+                       <p className="text-[14px] font-bold text-[#2d6a4f] px-4 py-1.5 bg-[#2d6a4f]/5 rounded-full border border-[#2d6a4f]/10 flex items-center gap-3">
                         <Loader2 className="w-4 h-4 animate-spin" />
                         {planningStatus}
                       </p>
@@ -324,11 +324,11 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
                           transition={{ delay: i * 0.1 }}
                           key={i} 
                           className="bg-white rounded-2xl border border-[#e3e8ef] p-5 shadow-sm hover:shadow-md transition-all group border-l-4"
-                          style={{ borderLeftColor: post.platform.toLowerCase() === 'instagram' ? '#E1306C' : '#635bff' }}
+                          style={{ borderLeftColor: post.platform.toLowerCase() === 'instagram' ? '#E1306C' : '#2d6a4f' }}
                         >
                           <div className="flex items-center justify-between mb-2">
                              <div className="flex items-center gap-2">
-                                <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${post.platform.toLowerCase() === 'instagram' ? 'bg-[#E1306C]/5 text-[#E1306C]' : 'bg-[#635bff]/5 text-[#635bff]'}`}>
+                                <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${post.platform.toLowerCase() === 'instagram' ? 'bg-[#E1306C]/5 text-[#E1306C]' : 'bg-[#2d6a4f]/5 text-[#2d6a4f]'}`}>
                                   {post.platform}
                                 </span>
                                 <span className="text-[10px] font-bold text-[#8792a2] flex items-center gap-1">
@@ -389,7 +389,7 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
                   <button
                     onClick={handleLaunchCampaign}
                     className="flex items-center gap-3 px-10 py-4 rounded-2xl text-[16px] font-bold text-white shadow-[0_20px_40px_-12px_rgba(99,91,255,0.4)] hover:shadow-[0_25px_50px_-12px_rgba(99,91,255,0.5)] active:scale-[0.98] transition-all duration-300"
-                    style={{ background: "linear-gradient(135deg, #635bff 0%, #443ae0 100%)" }}
+                    style={{ background: "linear-gradient(135deg, #2d6a4f 0%, #443ae0 100%)" }}
                   >
                     Deploy campaign <Zap className="w-4 h-4 fill-white/20" />
                   </button>

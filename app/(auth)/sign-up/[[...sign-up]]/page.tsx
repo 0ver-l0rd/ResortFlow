@@ -7,7 +7,7 @@ export default function Page() {
       <SignUp
         appearance={{
           elements: {
-            formButtonPrimary: "bg-gradient-to-r from-cyan-600 to-purple-600 hover:opacity-90 transition-opacity",
+            formButtonPrimary: "bg-gradient-to-r from-cyan-600 to-emerald-800 hover:opacity-90 transition-opacity",
             card: "bg-[#0f0f1a] border border-[#1e1e2e]",
             headerTitle: "text-white",
             headerSubtitle: "text-slate-400",

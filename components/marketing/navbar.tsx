@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -10,7 +9,6 @@ import { motion } from "framer-motion";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { isLoaded, isSignedIn } = useUser();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,44 +33,34 @@ export function Navbar() {
       <div className="container mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group relative z-10">
-          <div className="w-9 h-9 rounded-xl bg-[#635bff] flex items-center justify-center shadow-lg shadow-[#635bff]/20 group-hover:scale-110 transition-all duration-500">
+          <div className="w-9 h-9 rounded-xl bg-[#2d6a4f] flex items-center justify-center shadow-lg shadow-[#2d6a4f]/20 group-hover:scale-110 transition-all duration-500">
             <span className="text-white font-black text-xl">✦</span>
           </div>
           <span className="font-black text-xl tracking-tight text-[#1a1f36] transition-colors">
-            SocialCopilot
+            ResortFlow
           </span>
         </Link>
 
         {/* Centered Navigation (Floating Island) */}
         <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 bg-white/60 backdrop-blur-xl px-1.5 py-1 rounded-full border border-white/80 shadow-premium-subtle">
-          <Link href="#features" className="px-5 py-2 text-[13px] font-black text-[#3c4257] hover:text-[#635bff] transition-colors uppercase tracking-widest">
+          <Link href="#features" className="px-5 py-2 text-[13px] font-black text-[#3c4257] hover:text-[#2d6a4f] transition-colors uppercase tracking-widest">
             Features
           </Link>
-          <Link href="#workflow" className="px-5 py-2 text-[13px] font-black text-[#3c4257] hover:text-[#635bff] transition-colors uppercase tracking-widest">
+          <Link href="#workflow" className="px-5 py-2 text-[13px] font-black text-[#3c4257] hover:text-[#2d6a4f] transition-colors uppercase tracking-widest">
             Workflow
           </Link>
-          <Link href="#autopilot" className="px-5 py-2 text-[13px] font-black text-[#3c4257] hover:text-[#635bff] transition-colors uppercase tracking-widest">
+          <Link href="#autopilot" className="px-5 py-2 text-[13px] font-black text-[#3c4257] hover:text-[#2d6a4f] transition-colors uppercase tracking-widest">
              Autopilot
           </Link>
         </div>
 
         {/* Auth Actions */}
         <div className="flex items-center gap-3 relative z-10">
-          {!isLoaded ? (
-            <div className="w-20 h-8 animate-pulse bg-muted rounded-full" />
-          ) : !isSignedIn ? (
-            <SignUpButton mode="modal">
-              <Button size="sm" className="bg-[#635bff] hover:bg-[#4f46e5] text-white font-black px-6 h-10 rounded-full transition-all active:scale-95 shadow-md shadow-[#635bff]/10 border-none text-[11px] uppercase tracking-widest">
-                Start Here
-              </Button>
-            </SignUpButton>
-          ) : (
-            <Link href="/dashboard">
-              <Button size="sm" className="bg-[#635bff] hover:bg-[#4f46e5] text-white font-black px-6 h-10 rounded-full transition-all active:scale-95 shadow-md shadow-[#635bff]/10 border-none text-[11px] uppercase tracking-widest">
-                Dashboard
-              </Button>
-            </Link>
-          )}
+          <Link href="/dashboard">
+            <Button size="sm" className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-black px-6 h-10 rounded-full transition-all active:scale-95 shadow-md shadow-[#2d6a4f]/10 border-none text-[11px] uppercase tracking-widest">
+              Start Here
+            </Button>
+          </Link>
         </div>
       </div>
     </motion.nav>

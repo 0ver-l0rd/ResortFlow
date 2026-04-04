@@ -62,15 +62,15 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
   const [activeRange, setActiveRange] = useState("Last 30 days");
 
   return (
-    <div className="bg-[#f6f9fc] min-h-screen flex flex-col font-sans selection:bg-[#635bff44]">
+    <div className="bg-[#f6f9fc] min-h-screen flex flex-col font-sans selection:bg-[#2d6a4f44]">
       {/* ── Extreme Stripe Sticky Header ── */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-[#e3e8ef]">
           <div className="max-w-7xl mx-auto px-6 sm:px-10 py-8">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-10">
                   <div className="space-y-1">
                       <div className="flex items-center gap-2.5">
-                          <span className="text-[11px] font-black uppercase tracking-[0.3em] text-[#635bff]">Revenue</span>
-                          <span className="w-1 h-1 rounded-full bg-[#635bff]/20" />
+                          <span className="text-[11px] font-black uppercase tracking-[0.3em] text-[#2d6a4f]">Revenue</span>
+                          <span className="w-1 h-1 rounded-full bg-[#2d6a4f]/20" />
                           <span className="text-[11px] font-black uppercase tracking-[0.3em] text-[#8792a2]">Intelligence</span>
                       </div>
                       <h1 className="text-[36px] font-black tracking-[-0.05em] text-[#1a1f36]">
@@ -79,17 +79,17 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                   </div>
                   
                   <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-3 px-4 py-2.5 bg-[#f6f9fc] border border-[#e3e8ef] rounded-xl hover:border-[#635bff] transition-all cursor-pointer group active:scale-[0.98]">
-                          <Calendar className="w-3.5 h-3.5 text-[#8792a2] group-hover:text-[#635bff]" strokeWidth={1.2} />
+                      <div className="flex items-center gap-3 px-4 py-2.5 bg-[#f6f9fc] border border-[#e3e8ef] rounded-xl hover:border-[#2d6a4f] transition-all cursor-pointer group active:scale-[0.98]">
+                          <Calendar className="w-3.5 h-3.5 text-[#8792a2] group-hover:text-[#2d6a4f]" strokeWidth={1.2} />
                           <span className="text-[13px] font-bold text-[#1a1f36]">{activeRange}</span>
                           <ChevronDown className="w-3 h-3 text-[#c4cdd6]" strokeWidth={2.0} />
                       </div>
                       <button 
                         onClick={() => toast.success("Generating financial intelligence report...", {
                           description: "Your report will be ready for download in a few seconds.",
-                          icon: <Activity className="w-4 h-4 text-[#635bff]" />
+                          icon: <Activity className="w-4 h-4 text-[#2d6a4f]" />
                         })}
-                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#635bff] text-white text-[13px] font-bold shadow-[0_4px_12px_rgba(99,91,255,0.25)] hover:opacity-90 active:scale-[0.98] transition-all"
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#2d6a4f] text-white text-[13px] font-bold shadow-[0_4px_12px_rgba(99,91,255,0.25)] hover:opacity-90 active:scale-[0.98] transition-all"
                       >
                           <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
                           <span>Generated Report</span>
@@ -113,8 +113,8 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                 ].map((stat) => (
                   <div key={stat.label} className="p-10 flex-1 hover:bg-[#fcfdfe] transition-colors group">
                       <div className="flex items-center justify-between mb-8">
-                         <p className="text-[11px] font-black uppercase tracking-[0.3em] text-[#8792a2] group-hover:text-[#635bff]">{stat.label}</p>
-                         <stat.icon size={16} strokeWidth={1.2} className="text-[#8792a2] group-hover:text-[#635bff] transition-colors" />
+                         <p className="text-[11px] font-black uppercase tracking-[0.3em] text-[#8792a2] group-hover:text-[#2d6a4f]">{stat.label}</p>
+                         <stat.icon size={16} strokeWidth={1.2} className="text-[#8792a2] group-hover:text-[#2d6a4f] transition-colors" />
                       </div>
                       <div className="flex items-baseline gap-4 mb-3">
                           <p className="text-[32px] font-black text-[#1a1f36] tracking-[-0.04em] leading-tight">{stat.value}</p>
@@ -163,7 +163,7 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                         <path 
                             d="M 50 240 L 210 200 L 370 210 L 530 130 L 690 110 L 850 50" 
                             fill="none" 
-                            stroke="#635bff" 
+                            stroke="#2d6a4f" 
                             strokeWidth="3.5" 
                             strokeLinecap="round" 
                             strokeLinejoin="round" 
@@ -171,7 +171,7 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                         />
                         
                         {[50, 210, 370, 530, 690, 850].map((x, i) => (
-                            <circle key={i} cx={x} cy={[240, 200, 210, 130, 110, 50][i]} r="4" fill="white" stroke="#635bff" strokeWidth="2.5" />
+                            <circle key={i} cx={x} cy={[240, 200, 210, 130, 110, 50][i]} r="4" fill="white" stroke="#2d6a4f" strokeWidth="2.5" />
                         ))}
                     </svg>
                     <div className="flex justify-between px-1.5 mt-8 text-[11px] font-black text-[#8792a2] uppercase tracking-[0.3em]">
@@ -200,13 +200,13 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                         {CAMPAIGN_ROI_DATA.map((row) => (
                             <div key={row.campaign} className="py-10 flex items-center justify-between group hover:bg-[#fcfdfe] transition-all px-6 rounded-2xl">
                                 <div className="flex items-center gap-6">
-                                    <div className="w-10 h-10 rounded-2xl bg-[#f6f9fc] flex items-center justify-center border border-[#e3e8ef] group-hover:bg-[#635bff]/5 group-hover:border-[#635bff]/20 transition-all">
-                                        <Zap size={16} strokeWidth={1.2} className="text-[#635bff]" />
+                                    <div className="w-10 h-10 rounded-2xl bg-[#f6f9fc] flex items-center justify-center border border-[#e3e8ef] group-hover:bg-[#2d6a4f]/5 group-hover:border-[#2d6a4f]/20 transition-all">
+                                        <Zap size={16} strokeWidth={1.2} className="text-[#2d6a4f]" />
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[16px] font-black text-[#1a1f36] tracking-tight">{row.campaign}</p>
                                         <div className="flex items-center gap-4 text-[11px] font-bold text-[#697386] uppercase tracking-wider">
-                                              <span className="text-[#635bff]">{row.reach.toLocaleString()} Reached</span>
+                                              <span className="text-[#2d6a4f]">{row.reach.toLocaleString()} Reached</span>
                                               <span className="text-[#09825d]">{row.roi} ROI</span>
                                         </div>
                                     </div>
@@ -216,7 +216,7 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                                          <p className="text-[18px] font-black text-[#1a1f36]">+${row.revenue.toLocaleString()}</p>
                                          <p className="text-[10px] font-bold text-[#8792a2] uppercase tracking-widest mt-1">Captured</p>
                                      </div>
-                                     <ArrowRight className="w-4 h-4 text-[#c4cdd6] group-hover:text-[#635bff] group-hover:translate-x-1 transition-all" />
+                                     <ArrowRight className="w-4 h-4 text-[#c4cdd6] group-hover:text-[#2d6a4f] group-hover:translate-x-1 transition-all" />
                                 </div>
                             </div>
                         ))}
@@ -241,7 +241,7 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                                             initial={{ width: 0 }}
                                             animate={{ width: `${item.pct}%` }}
                                             transition={{ duration: 1, ease: "circOut" }}
-                                            className="h-full bg-[#635bff] rounded-full"
+                                            className="h-full bg-[#2d6a4f] rounded-full"
                                         />
                                     </div>
                                 </div>
@@ -249,21 +249,21 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                         </div>
                     </div>
 
-                    <div className="p-10 rounded-[32px] border border-[#635bff]/15 bg-white relative group overflow-hidden shadow-[0_8px_32px_-12px_rgba(99,91,255,0.15)] hover:shadow-2xl hover:shadow-[#635bff]/10 transition-all duration-500">
+                    <div className="p-10 rounded-[32px] border border-[#2d6a4f]/15 bg-white relative group overflow-hidden shadow-[0_8px_32px_-12px_rgba(99,91,255,0.15)] hover:shadow-2xl hover:shadow-[#2d6a4f]/10 transition-all duration-500">
                         <div className="absolute top-0 right-0 p-8 opacity-40 group-hover:opacity-100 transition-opacity">
-                             <Sparkles size={18} strokeWidth={1.2} className="text-[#635bff]" />
+                             <Sparkles size={18} strokeWidth={1.2} className="text-[#2d6a4f]" />
                         </div>
                         <div className="space-y-6">
-                            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-[#635bff]">Strategic Guidance</h4>
+                            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-[#2d6a4f]">Strategic Guidance</h4>
                             <p className="text-[17px] text-[#3c4257] leading-relaxed font-semibold italic">
-                                "Weekend stay trends currently generate <span className="text-[#635bff] font-black underline decoration-[#635bff]/20 underline-offset-4 pointer-events-none">2.4× more intensity</span>. Deploying a Thursday blast would optimize efficiency."
+                                "Weekend stay trends currently generate <span className="text-[#2d6a4f] font-black underline decoration-[#2d6a4f]/20 underline-offset-4 pointer-events-none">2.4× more intensity</span>. Deploying a Thursday blast would optimize efficiency."
                             </p>
                             <button 
                               onClick={() => toast.info("Opening AI Strategy Model...", {
                                 description: "Loading latest seasonal behavioral weights.",
-                                icon: <Sparkles className="w-4 h-4 text-[#635bff]" />
+                                icon: <Sparkles className="w-4 h-4 text-[#2d6a4f]" />
                               })}
-                              className="text-[12px] font-black text-[#635bff] hover:underline flex items-center gap-2 group/link"
+                              className="text-[12px] font-black text-[#2d6a4f] hover:underline flex items-center gap-2 group/link"
                             >
                                 Analyze model
                                 <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
@@ -281,7 +281,7 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                 </div>
                 <div className="flex items-center gap-8 mt-4 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all">
                      <PieChart size={16} strokeWidth={1.5} />
-                     <Zap size={16} strokeWidth={1.5} className="text-[#635bff]" />
+                     <Zap size={16} strokeWidth={1.5} className="text-[#2d6a4f]" />
                      <Activity size={16} strokeWidth={1.5} />
                 </div>
             </div>

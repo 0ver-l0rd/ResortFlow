@@ -27,7 +27,7 @@ const data = [
 const chartConfig = {
   reach: {
     label: "Reach",
-    color: "#635bff",
+    color: "#2d6a4f",
   },
 } satisfies ChartConfig;
 

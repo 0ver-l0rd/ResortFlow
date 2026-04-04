@@ -28,9 +28,9 @@ const problems = [
     title: "Software That Doesn't Talk",
     description: "Most tools are hard to use and don't work together, making it hard to find the right guests.",
     icon: Layers,
-    color: "text-[#635bff]",
-    bg: "bg-[#635bff]/5",
-    accent: "border-[#635bff]/10",
+    color: "text-[#2d6a4f]",
+    bg: "bg-[#2d6a4f]/5",
+    accent: "border-[#2d6a4f]/10",
     animation: "layers"
   },
 ];
@@ -62,7 +62,7 @@ export function Problem() {
             className="text-[40px] md:text-[60px] font-black tracking-[-0.04em] text-[#1a1f36] leading-[1.05] mb-8"
           >
             Hotel marketing is <br />
-            <span className="text-[#635bff]">hard and takes too much time.</span>
+            <span className="text-[#2d6a4f]">hard and takes too much time.</span>
           </motion.h2>
           
           <motion.p 
@@ -120,7 +120,7 @@ export function Problem() {
                         transition={{ duration: 1.5, repeat: Infinity, times: [0, 0.5, 1] }}
                         className="absolute inset-0 flex items-center justify-center"
                     >
-                        <ZapOff className="w-10 h-10 text-[#635bff]/10" />
+                        <ZapOff className="w-10 h-10 text-[#2d6a4f]/10" />
                     </motion.div>
                 )}
               </div>
@@ -137,7 +137,7 @@ export function Problem() {
                         initial={{ width: "100%" }}
                         whileInView={{ width: "30%" }}
                         transition={{ duration: 2, delay: 0.5 }}
-                        className={cn("h-full", i === 0 ? "bg-[#ff3b30]" : i === 1 ? "bg-[#f5a623]" : "bg-[#635bff]")}
+                        className={cn("h-full", i === 0 ? "bg-[#ff3b30]" : i === 1 ? "bg-[#f5a623]" : "bg-[#2d6a4f]")}
                     />
                  </div>
                  <span className="text-[9px] font-black uppercase tracking-widest text-[#8792a2]">Work Level</span>

@@ -6,7 +6,7 @@ import { FaInstagram, FaLinkedinIn, FaYoutube, FaFacebook, FaTiktok, FaPinterest
 import { FaXTwitter } from "react-icons/fa6";
 
 const platforms = [
-  { id: "All Platforms", name: "Overview", icon: null, color: "#635bff", bg: "#f6f9fc" },
+  { id: "All Platforms", name: "Overview", icon: null, color: "#2d6a4f", bg: "#f6f9fc" },
   { id: "Instagram", name: "Instagram", icon: FaInstagram, color: "#E1306C", bg: "#fdf0f5" },
   { id: "Twitter / X", name: "Twitter / X", icon: FaXTwitter, color: "#000000", bg: "#f0f0f0" },
   { id: "LinkedIn", name: "LinkedIn", icon: FaLinkedinIn, color: "#0077B5", bg: "#eef6fb" },
@@ -35,20 +35,20 @@ export function PlatformSelector({ selected, onSelect }: PlatformSelectorProps) 
             className={cn(
               "flex flex-col items-center justify-center min-w-[100px] h-[100px] rounded-2xl border-2 transition-all duration-200 group",
               isActive 
-                ? "border-[#635bff] bg-white shadow-lg shadow-[#635bff]/10 -translate-y-1" 
+                ? "border-[#2d6a4f] bg-white shadow-lg shadow-[#2d6a4f]/10 -translate-y-1" 
                 : "border-[#e3e8ef] bg-white hover:border-[#c9d0ef]"
             )}
           >
             <div 
               className={cn(
                 "w-10 h-10 rounded-xl flex items-center justify-center mb-2 transition-colors",
-                isActive ? "bg-[#635bff]/10" : "bg-[#f6f9fc] group-hover:bg-[#f0f3f7]"
+                isActive ? "bg-[#2d6a4f]/10" : "bg-[#f6f9fc] group-hover:bg-[#f0f3f7]"
               )}
             >
               {Icon ? (
-                <Icon className="w-5 h-5" style={{ color: isActive ? "#635bff" : "#8792a2" }} />
+                <Icon className="w-5 h-5" style={{ color: isActive ? "#2d6a4f" : "#8792a2" }} />
               ) : (
-                <div className={cn("w-5 h-5 rounded-sm border-2", isActive ? "border-[#635bff]" : "border-[#8792a2]")} />
+                <div className={cn("w-5 h-5 rounded-sm border-2", isActive ? "border-[#2d6a4f]" : "border-[#8792a2]")} />
               )}
             </div>
             <span 

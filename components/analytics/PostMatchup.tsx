@@ -32,7 +32,7 @@ const matchupData: Record<string, { best: PostData; worst: PostData }> = {
     worst: { content: "We are hiring!", likes: "45", comments: "2", shares: "1", engagement: "0.5%", date: "1 week ago" },
   },
   "YouTube": {
-    best: { content: "Social Copilot: Full Walkthrough & Setup Guide 🎥", likes: "5.2k", comments: "310", shares: "890", engagement: "9.8%", date: "2 weeks ago" },
+    best: { content: "ResortFlow: Full Walkthrough & Setup Guide 🎥", likes: "5.2k", comments: "310", shares: "890", engagement: "9.8%", date: "2 weeks ago" },
     worst: { content: "Short: Testing the new camera.", likes: "840", comments: "15", shares: "10", engagement: "2.5%", date: "1 month ago" },
   },
   "Facebook": {
@@ -89,7 +89,7 @@ export function PostMatchup({ platform }: PostMatchupProps) {
                  <span className="text-xs font-bold">{data.best.likes}</span>
                </div>
                <div className="flex items-center gap-1">
-                 <MessageSquare className="w-3.5 h-3.5 text-[#635bff]" />
+                 <MessageSquare className="w-3.5 h-3.5 text-[#2d6a4f]" />
                  <span className="text-xs font-bold">{data.best.comments}</span>
                </div>
                <div className="flex items-center gap-1">

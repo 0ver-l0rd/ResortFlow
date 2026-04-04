@@ -42,8 +42,8 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
       <div className="flex justify-end">
          <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98] bg-[#635bff] hover:bg-[#4f46e5]"
-            style={{ background: "linear-gradient(135deg, #635bff 0%, #4f46e5 100%)" }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98] bg-[#2d6a4f] hover:bg-[#1b4332]"
+            style={{ background: "linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%)" }}
           >
             <Zap className="w-4 h-4 fill-white/20" /> New Campaign
           </button>
@@ -104,7 +104,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
                           className="h-full rounded-full transition-all duration-1000 ease-out" 
                           style={{ 
                             width: `${percentage}%`, 
-                            background: "linear-gradient(90deg, #635bff 0%, #09825d 100%)" 
+                            background: "linear-gradient(90deg, #2d6a4f 0%, #09825d 100%)" 
                           }} 
                         />
                       </div>

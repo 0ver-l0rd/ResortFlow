@@ -62,9 +62,9 @@ export function TopPosts() {
       <div className="bg-white rounded-[2rem] border border-[#e2e8f0] p-12 shadow-[0_1px_1px_rgba(0,0,0,0.02),0_8px_40px_-12px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center text-center gap-6 h-[400px]">
         <div className="relative">
           <div className="w-16 h-16 rounded-2xl bg-white shadow-xl flex items-center justify-center border border-[#e2e8f0]">
-             <Loader2 className="w-8 h-8 text-[#635bff] animate-spin" />
+             <Loader2 className="w-8 h-8 text-[#2d6a4f] animate-spin" />
           </div>
-          <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#635bff] flex items-center justify-center shadow-lg animate-pulse">
+          <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#2d6a4f] flex items-center justify-center shadow-lg animate-pulse">
              <Zap className="w-3 h-3 text-white fill-white" />
           </div>
         </div>
@@ -80,7 +80,7 @@ export function TopPosts() {
     return (
       <div className="bg-white rounded-[2rem] border border-[#e2e8f0] p-12 shadow-[0_1px_1px_rgba(0,0,0,0.02),0_8px_40px_-12px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center text-center gap-6 h-[400px]">
         <div className="w-16 h-16 rounded-3xl bg-[#f8fafc] flex items-center justify-center shadow-inner border border-[#e2e8f0]">
-            <Sparkles className="w-8 h-8 text-[#635bff]" />
+            <Sparkles className="w-8 h-8 text-[#2d6a4f]" />
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-bold text-[#1a1f36]">Broadcast your first message</h3>
@@ -91,7 +91,7 @@ export function TopPosts() {
         <button 
           onClick={() => syncMutation.mutate()}
           disabled={syncMutation.isPending}
-          className="mt-2 inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#635bff] text-white text-xs font-bold shadow-lg hover:bg-[#5a51e6] transition-all disabled:opacity-50"
+          className="mt-2 inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#2d6a4f] text-white text-xs font-bold shadow-lg hover:bg-[#5a51e6] transition-all disabled:opacity-50"
         >
           {syncMutation.isPending ? (
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -130,7 +130,7 @@ export function TopPosts() {
              disabled={syncMutation.isPending}
              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#e2e8f0] hover:bg-white hover:shadow-sm transition-all group disabled:opacity-50"
            >
-             <RefreshCw className={cn("w-3.5 h-3.5 text-[#635bff] transition-transform group-hover:rotate-180 duration-500", syncMutation.isPending && "animate-spin")} />
+             <RefreshCw className={cn("w-3.5 h-3.5 text-[#2d6a4f] transition-transform group-hover:rotate-180 duration-500", syncMutation.isPending && "animate-spin")} />
              <span className="text-[10px] font-bold text-[#3c4257] uppercase tracking-wider">Sync History</span>
            </button>
         </div>
@@ -148,7 +148,7 @@ export function TopPosts() {
           </thead>
           <tbody className="divide-y divide-[#f1f4f9]">
             {filteredPosts.map((post: any, idx: number) => {
-                const platformInfo = PLATFORM_ICONS[post.platform] || { icon: Sparkles, color: "#635bff" };
+                const platformInfo = PLATFORM_ICONS[post.platform] || { icon: Sparkles, color: "#2d6a4f" };
                 const Icon = platformInfo.icon;
                 const isSimulated = post.isSimulated || post.error === "SIMULATED_SUCCESS";
                 
@@ -170,7 +170,7 @@ export function TopPosts() {
                               className="w-12 h-12 rounded-xl object-cover border border-[#e2e8f0] shadow-sm group-hover/media:scale-105 transition-transform duration-300"
                             />
                             {post.mediaUrls.length > 1 && (
-                              <div className="absolute -bottom-1 -right-1 bg-[#635bff] text-white text-[8px] font-black px-1 rounded-md border-2 border-white shadow-sm">
+                              <div className="absolute -bottom-1 -right-1 bg-[#2d6a4f] text-white text-[8px] font-black px-1 rounded-md border-2 border-white shadow-sm">
                                 +{post.mediaUrls.length - 1}
                               </div>
                             )}
@@ -178,7 +178,7 @@ export function TopPosts() {
                         )}
                         <div className="flex flex-col gap-1.5 flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-semibold text-[#1a1f36] truncate group-hover:text-[#635bff] transition-colors leading-[1.6]">
+                            <p className="text-sm font-semibold text-[#1a1f36] truncate group-hover:text-[#2d6a4f] transition-colors leading-[1.6]">
                               {post.content}
                             </p>
                             {isSimulated && (
@@ -227,7 +227,7 @@ export function TopPosts() {
                           <span className="text-[11px] font-bold text-[#1a1f36]">{post.likes}</span>
                         </div>
                         <div className="flex items-center gap-1.5 group/stat">
-                          <MessageSquare className="w-4 h-4 transition-colors group-hover/stat:text-[#635bff]" />
+                          <MessageSquare className="w-4 h-4 transition-colors group-hover/stat:text-[#2d6a4f]" />
                           <span className="text-[11px] font-bold text-[#1a1f36]">{post.comments}</span>
                         </div>
                         <div className="flex items-center gap-1.5 group/stat">

@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { users, autoReplyLogs, autoReplyRules } from "@/db/schema";
 import { eq, desc, count } from "drizzle-orm";
 
 export async function GET(req: Request) {
   try {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const clerkId = getDemoUserId();
 
     const userRecord = await db.query.users.findFirst({
       where: eq(users.clerkId, clerkId),

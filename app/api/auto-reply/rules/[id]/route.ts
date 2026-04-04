@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { users, autoReplyRules } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -7,10 +7,7 @@ import { eq, and } from "drizzle-orm";
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const { userId: clerkId } = await auth();
-    if (!clerkId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const clerkId = getDemoUserId();
 
     const userRecord = await db.query.users.findFirst({
       where: eq(users.clerkId, clerkId),
@@ -47,13 +44,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { id } = await params;
-    const { userId: clerkId } = await auth();
-    if (!clerkId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const clerkId = getDemoUserId();
 
     const userRecord = await db.query.users.findFirst({
       where: eq(users.clerkId, clerkId),

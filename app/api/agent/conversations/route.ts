@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { agentConversations } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -9,8 +9,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
+    const clerkId = getDemoUserId();
 
     const user = await getUserByClerkId(clerkId);
     if (!user) return new NextResponse("User not found", { status: 404 });

@@ -96,7 +96,7 @@ export function MonthView({ currentDate, posts, onDayClick, onEventClick, onEven
                 <span
                   className={`
                     w-7 h-7 flex items-center justify-center text-sm rounded-full
-                    ${isToday ? "bg-indigo-600 text-white font-semibold shadow-sm" : 
+                    ${isToday ? "bg-emerald-800 text-white font-semibold shadow-sm" : 
                       !isCurrentMonth ? "text-gray-400" : "text-gray-700 font-medium"}
                   `}
                 >
