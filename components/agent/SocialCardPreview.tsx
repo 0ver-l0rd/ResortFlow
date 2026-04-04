@@ -9,7 +9,9 @@ import {
   MoreHorizontal, 
   Bookmark, 
   Send,
-  CheckCircle2
+  CheckCircle2,
+  RefreshCw,
+  Music
 } from "lucide-react";
 import { FaXTwitter, FaInstagram, FaLinkedinIn, FaFacebookF } from "react-icons/fa6";
 import { motion } from "framer-motion";
@@ -33,6 +35,78 @@ export function SocialCardPreview({
   handle = "resort_luxury" 
 }: SocialCardPreviewProps) {
   
+  const isTikTok = platform.toLowerCase().includes("tiktok") || platform.toLowerCase() === "tt";
+  
+  if (isTikTok) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full bg-black rounded-2xl overflow-hidden shadow-xl aspect-[9/16] relative font-sans text-left"
+      >
+        {/* Background Media */}
+        <div className="absolute inset-0 bg-[#111] flex items-center justify-center">
+          {mediaUrl ? (
+            <img src={mediaUrl} alt="TikTok Video" className="w-full h-full object-cover opacity-70" />
+          ) : (
+            <div className="flex flex-col items-center gap-3 opacity-20">
+              <RefreshCw className="w-12 h-12 text-white animate-spin-slow" />
+              <p className="text-white text-[10px] font-bold tracking-widest uppercase">Video Preview</p>
+            </div>
+          )}
+        </div>
+
+        {/* Action Sidebar */}
+        <div className="absolute right-3 bottom-24 flex flex-col items-center gap-5 z-10">
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white">
+              <Heart className="w-6 h-6 fill-transparent" />
+            </div>
+            <span className="text-white text-[10px] font-bold">0</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white">
+              <MessageCircle className="w-6 h-6" />
+            </div>
+            <span className="text-white text-[10px] font-bold">0</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white">
+              <Share2 className="w-6 h-6" />
+            </div>
+            <span className="text-white text-[10px] font-bold">0</span>
+          </div>
+        </div>
+
+        {/* Content Overlays */}
+        <div className="absolute inset-x-0 bottom-0 p-4 pb-8 bg-gradient-to-t from-black/80 to-transparent">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-white font-bold text-[14px]">@{handle}</span>
+            <span className="bg-[#fe2c55] text-white text-[9px] font-black px-1.5 py-0.5 rounded-sm">FOLLOW</span>
+          </div>
+          <p className="text-white text-[13px] leading-snug line-clamp-3">
+            {content}
+          </p>
+          <div className="flex items-center gap-2 mt-3 overflow-hidden">
+             <div className="w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
+               <Music className="w-3 h-3 text-white animate-spin-slow" />
+             </div>
+             <div className="text-white text-[11px] font-medium animate-marquee whitespace-nowrap">
+               Original Sound - {username}
+             </div>
+          </div>
+        </div>
+
+        {/* TikTok Music Logo Spinning */}
+        <div className="absolute right-3 bottom-6">
+           <div className="w-10 h-10 rounded-full bg-[#333] border-4 border-[#111] flex items-center justify-center animate-spin-slow">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#fe2c55] via-white to-[#25f4ee]" />
+           </div>
+        </div>
+      </motion.div>
+    );
+  }
+
   const isTwitter = platform.toLowerCase().includes("twitter") || platform.toLowerCase() === "x";
   const isInstagram = platform.toLowerCase().includes("instagram") || platform.toLowerCase() === "ig";
   const isLinkedIn = platform.toLowerCase().includes("linkedin") || platform.toLowerCase() === "li";

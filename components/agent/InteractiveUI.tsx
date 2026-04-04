@@ -42,41 +42,70 @@ export function InteractiveUI({
   postData
 }: InteractiveUIProps) {
   
-  if (type === "buttons" || type === "post_preview") {
+  if (type === "post_preview") {
     return (
-      <div className="space-y-3 mt-2 w-full">
+      <div className="space-y-4 mt-2 w-full">
         {postData && (
-          <div className="mb-3">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl overflow-hidden border border-[#e3e8ef] shadow-sm bg-white"
+          >
             <SocialCardPreview 
               platform={postData.platform}
               content={postData.content}
               mediaUrl={postData.mediaUrl}
             />
-          </div>
+          </motion.div>
         )}
         
-        {type === "buttons" && (
-          <div className="flex flex-wrap gap-2">
-            {options.map((opt) => (
-              <Button
-                key={opt}
-                size="sm"
-                variant={selectedValue === opt ? "default" : "outline"}
-                disabled={isCompleted}
-                onClick={() => onAction(opt)}
-                className={cn(
-                  "rounded-full text-[11px] font-bold h-8 px-4 transition-all active:scale-95",
-                  selectedValue === opt 
-                    ? "bg-[#635bff] text-white border-[#635bff] shadow-md shadow-[#635bff]/20" 
-                    : "bg-white border-[#e3e8ef] text-[#3c4257] hover:border-[#635bff] hover:text-[#635bff]"
-                )}
-              >
-                {opt}
-                {selectedValue === opt && <Check className="w-3 h-3 ml-1.5" />}
-              </Button>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-wrap gap-2">
+          {options.map((opt) => (
+            <Button
+              key={opt}
+              size="sm"
+              variant={selectedValue === opt ? "default" : "outline"}
+              disabled={isCompleted}
+              onClick={() => onAction(opt)}
+              className={cn(
+                "rounded-xl text-[11px] font-bold h-9 px-4 transition-all active:scale-95 flex items-center gap-2",
+                selectedValue === opt 
+                  ? "bg-[#635bff] text-white border-[#635bff] shadow-md shadow-[#635bff]/20" 
+                  : "bg-white border-[#e3e8ef] text-[#3c4257] hover:border-[#635bff] hover:text-[#635bff]"
+              )}
+            >
+              {opt}
+              {selectedValue === opt && <Check className="w-3.5 h-3.5" />}
+            </Button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "buttons") {
+    return (
+      <div className="space-y-3 mt-2 w-full">
+        <div className="flex flex-wrap gap-2">
+          {options.map((opt) => (
+            <Button
+              key={opt}
+              size="sm"
+              variant={selectedValue === opt ? "default" : "outline"}
+              disabled={isCompleted}
+              onClick={() => onAction(opt)}
+              className={cn(
+                "rounded-full text-[11px] font-bold h-8 px-4 transition-all active:scale-95",
+                selectedValue === opt 
+                  ? "bg-[#635bff] text-white border-[#635bff] shadow-md shadow-[#635bff]/20" 
+                  : "bg-white border-[#e3e8ef] text-[#3c4257] hover:border-[#635bff] hover:text-[#635bff]"
+              )}
+            >
+              {opt}
+              {selectedValue === opt && <Check className="w-3 h-3 ml-1.5" />}
+            </Button>
+          ))}
+        </div>
       </div>
     );
   }

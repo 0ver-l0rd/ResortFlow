@@ -565,9 +565,17 @@ export function AgentSidebar({ isOpen, onClose }: AgentSidebarProps) {
     if (toolName === "askClarification") {
       followUpText = typeof value === "string" && value.startsWith("http") 
         ? `[Media Attached]: ${value}` 
-        : `[Choice Selected]: ${value}`;
+        : value; // Direct choice text
     } else if (toolName === "confirmAction") {
-      followUpText = value === "Confirm" ? "Yes, please proceed." : "No, let's cancel that.";
+      switch (value) {
+        case "🚀 Post Now": followUpText = "Yes, post it now."; break;
+        case "📅 Schedule": followUpText = "I want to schedule this post."; break;
+        case "✏️ Edit":     followUpText = "Let me edit the content before posting."; break;
+        case "🔄 Regenerate": followUpText = "Please regenerate the post content."; break;
+        case "Confirm":    followUpText = "Yes, please proceed."; break;
+        case "Cancel":     followUpText = "No, let's cancel that."; break;
+        default:           followUpText = value;
+      }
     }
 
     // 3. Send to agent

@@ -20,14 +20,15 @@ export async function askClarification(params: { question: string; uiType?: stri
 /**
  * Requests final user confirmation for a sensitive action with interactive buttons.
  */
-export async function confirmAction(params: { action: string; data?: any; options?: string[]; postData?: any }, userId: string) {
+export async function confirmAction(params: { action: string; data?: any; options?: string[]; postData?: any; uiType?: string }, userId: string) {
   return { 
     success: true, 
     isConfirmation: true, 
     action: params.action, 
     data: params.data,
     postData: params.postData,
-    options: params.options || ["Confirm", "Cancel"]
+    uiType: params.uiType || (params.postData ? "post_preview" : "buttons"),
+    options: params.options || ["🚀 Post Now", "📅 Schedule", "✏️ Edit", "🔄 Regenerate"]
   };
 }
 
