@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' }
     ],
   },
+  allowedDevOrigins: ['nonpalpable-zayden-slangily.ngrok-free.dev'],
 };
 
 export default nextConfig;

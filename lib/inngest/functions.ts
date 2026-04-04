@@ -6,8 +6,8 @@ import { inngest } from "./client";
 import { db } from "@/db";
 import { posts } from "@/db/schema";
 export const publishPost = inngest.createFunction(
-  { 
-    id: "publish-post", 
+  {
+    id: "publish-post",
     name: "Publish Social Post",
     triggers: [{ event: "post/created" }]
   },
@@ -40,7 +40,7 @@ export const publishPost = inngest.createFunction(
 
       for (const platformName of post.platforms) {
         const account = accounts.find((a) => a.platform.toLowerCase() === platformName.toLowerCase());
-        
+
         if (!account) {
           console.warn(`No connected account found for platform ${platformName}`);
           publishResults.push({ platform: platformName, status: "error", error: "Account not connected" });
@@ -50,8 +50,8 @@ export const publishPost = inngest.createFunction(
         try {
           const driver = getPlatform(platformName);
           const response = await driver.publishPost(
-            { 
-              accessToken: account.accessToken, 
+            {
+              accessToken: account.accessToken,
               refreshToken: account.refreshToken || undefined,
               expiresAt: account.expiresAt || undefined
             },
@@ -95,12 +95,12 @@ export const publishPost = inngest.createFunction(
 
       await db
         .update(posts)
-        .set({ 
+        .set({
           status: allFailed ? "failed" : "published",
           publishedAt: anySuccess ? new Date() : null,
         })
         .where(eq(posts.id, postId));
-      
+
       return { status: anySuccess ? "published" : "failed" };
     });
 

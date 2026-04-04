@@ -12,7 +12,7 @@ export class TwitterPlatform implements SocialPlatform {
       "users.read",
       "offline.access", // Required for refresh token
     ].join(" ");
-    
+
     const params = new URLSearchParams({
       response_type: "code",
       client_id: this.clientId,
@@ -22,7 +22,7 @@ export class TwitterPlatform implements SocialPlatform {
       code_challenge: "challenge", // Simplified PKCE for now
       code_challenge_method: "plain",
     });
-    
+
     return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
   }
 
@@ -47,7 +47,7 @@ export class TwitterPlatform implements SocialPlatform {
     }
 
     const data = await response.json();
-    
+
     const tokens: OAuthTokens = {
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
@@ -55,7 +55,7 @@ export class TwitterPlatform implements SocialPlatform {
     };
 
     const profile = await this.getProfile(tokens.accessToken);
-    
+
     return { tokens, profile };
   }
 
@@ -77,7 +77,7 @@ export class TwitterPlatform implements SocialPlatform {
     }
 
     const data = await response.json();
-    
+
     return {
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
@@ -97,7 +97,7 @@ export class TwitterPlatform implements SocialPlatform {
     }
 
     const { data } = await response.json();
-    
+
     return {
       platformUserId: data.id,
       username: data.username,
@@ -107,7 +107,7 @@ export class TwitterPlatform implements SocialPlatform {
 
   async publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<{ postId: string; platform: string }> {
     console.log(`[Twitter] Publishing tweet: "${content.substring(0, 50)}..." with ${mediaUrls.length} media items.`);
-    
+
     // Simulate Twitter API behavior
     if (content.length > 280) {
       throw new Error("Twitter content exceeds 280 characters.");
