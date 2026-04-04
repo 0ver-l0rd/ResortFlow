@@ -9,9 +9,28 @@ import { motion } from "framer-motion";
 interface PlatformStatusProps {
   selected: string;
   onSelect: (id: string) => void;
+  connectedPlatforms: string[];
 }
 
-export function PlatformStatus({ selected, onSelect }: PlatformStatusProps) {
+const PLATFORM_MAP: Record<string, string> = {
+  "twitter": "Twitter / X",
+  "instagram": "Instagram",
+  "linkedin": "LinkedIn",
+  "facebook": "Facebook",
+  "tiktok": "TikTok",
+  "youtube": "YouTube",
+  "pinterest": "Pinterest"
+};
+
+export function PlatformStatus({ selected, onSelect, connectedPlatforms }: PlatformStatusProps) {
+  const filteredThemes = Object.values(PLATFORM_THEMES).filter(theme => {
+    if (theme.id === "All Platforms") return true;
+    
+    // Check if the theme matches any connected platform
+    const dbName = Object.keys(PLATFORM_MAP).find(key => PLATFORM_MAP[key] === theme.id);
+    return dbName ? connectedPlatforms.includes(dbName) : false;
+  });
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -23,7 +42,7 @@ export function PlatformStatus({ selected, onSelect }: PlatformStatusProps) {
       </div>
       
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        {Object.values(PLATFORM_THEMES).map((theme) => {
+        {filteredThemes.map((theme) => {
           const isActive = selected === theme.id;
           const Icon = theme.icon;
 

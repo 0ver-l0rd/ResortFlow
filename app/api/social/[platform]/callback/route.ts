@@ -67,8 +67,22 @@ export async function GET(
       await db.insert(socialAccounts).values(accountData);
     }
 
-    // Redirect back to connections page
+    // Trigger historical sync immediately
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    try {
+      // Internal fetch or just call the sync logic if we exported it.
+      // For simplicity in a hackathon, let's just trigger the API route.
+      // We don't block the redirect for this.
+      fetch(`${baseUrl}/api/social/sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ platform }),
+      }).catch(e => console.error("Auto-sync trigger failed:", e));
+    } catch (e) {
+      console.error("Failed to trigger initial sync:", e);
+    }
+
+    // Redirect back to connections page
     return NextResponse.redirect(`${baseUrl}/connections?success=true`);
   } catch (err: any) {
     console.error(`Failed to handle ${platform} callback:`, err);

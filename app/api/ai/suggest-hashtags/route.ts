@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { geminiModel } from "@/lib/ai";
+import { generateText } from "@/lib/openai";
 import { auth } from "@clerk/nextjs/server";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -30,10 +32,9 @@ Draft:
 ${content}
     `;
 
-    const result = await geminiModel.generateContent(prompt);
-    const text = result.response.text();
+    const hashtags = await generateText(prompt);
 
-    return NextResponse.json({ hashtags: text.trim() });
+    return NextResponse.json({ hashtags: hashtags.trim() });
   } catch (error) {
     console.error("AI Hashtag Error:", error);
     return NextResponse.json(

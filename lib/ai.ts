@@ -1,53 +1,49 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const apiKey = process.env.GEMINI_API_KEY || "";
-
-// Initialize the Google Generative AI client
-export const genAI = new GoogleGenerativeAI(apiKey);
-
-// Primary and Secondary models for resilience
-const PRIMARY_MODEL = "gemini-flash-latest";
-const SECONDARY_MODEL = "gemini-2.5-flash-image";
-
-export const geminiModel = genAI.getGenerativeModel({ model: PRIMARY_MODEL });
+import { openai } from "./openai";
 
 /**
- * Resilient text generation with automatic fallback
+ * Standard text generation with resilience using OpenAI GPT-4o-mini.
  */
-export async function generateTextSafe(prompt: string) {
-  try {
-    // Try Primary (High demand/latest)
-    const model = genAI.getGenerativeModel({ model: PRIMARY_MODEL });
-    const result = await model.generateContent(prompt);
-    return result.response.text().trim();
-  } catch (error: any) {
-    console.error(`AI Error (${PRIMARY_MODEL}):`, error.message);
-    
-    // If it's a 503, 404, or 429, try the secondary
-    if (error.status === 503 || error.status === 404 || error.status === 429 || error.message?.includes("503")) {
-      console.log(`Switching to fallback model: ${SECONDARY_MODEL}`);
-      try {
-        const model = genAI.getGenerativeModel({ model: SECONDARY_MODEL });
-        const result = await model.generateContent(prompt);
-        return result.response.text().trim();
-      } catch (fallbackError: any) {
-        console.error(`AI Error (${SECONDARY_MODEL}):`, fallbackError.message);
-        throw fallbackError;
+export async function generateTextSafe(prompt: string, model: "gpt-4o" | "gpt-4o-mini" = "gpt-4o-mini"): Promise<string> {
+  const tryGenerate = async (attempt = 0): Promise<string> => {
+    try {
+      const response = await openai.chat.completions.create({
+        model,
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+        max_tokens: 1500,
+      });
+
+      return response.choices[0]?.message?.content?.trim() ?? "";
+    } catch (error: any) {
+      const status = error.status ?? 0;
+      const is429 = status === 429 || (error.message ?? "").includes("429");
+      const isOverloaded = (error.message ?? "").includes("overloaded");
+
+      if ((is429 || isOverloaded) && attempt < 3) {
+        const delay = is429 ? 2000 * (attempt + 1) : 1000;
+        console.warn(`[AI] OpenAI rate-limited (Attempt ${attempt + 1}), retrying in ${delay}ms...`);
+        await new Promise(r => setTimeout(r, delay));
+        return tryGenerate(attempt + 1);
       }
+      throw error;
     }
-    throw error;
-  }
+  };
+
+  return tryGenerate();
 }
 
-export async function generateAutoReply(commentText: string, aiPrompt: string) {
+/**
+ * Generate a hospitality-focused reply to a social media comment.
+ */
+export async function generateAutoReply(commentText: string, aiPrompt: string): Promise<string> {
   const prompt = `
-    User Prompt/Persona: ${aiPrompt}
-    
-    Incoming Comment: "${commentText}"
-    
-    Please draft a short, helpful, and natural-sounding reply according to the persona above.
-    Do not include any headers or metadata, just the reply text itself.
-  `;
+You are a hospitality brand's social media manager.
+Brand persona: ${aiPrompt}
+
+A guest left this comment: "${commentText}"
+
+Write a short, warm, professional reply (2–3 sentences max). No headers. No sign-offs.
+  `.trim();
 
   return generateTextSafe(prompt);
 }

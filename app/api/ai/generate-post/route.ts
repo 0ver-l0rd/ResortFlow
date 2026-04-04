@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { geminiModel } from "@/lib/ai";
+import { generateTextSafe } from "@/lib/ai";
 import { auth } from "@clerk/nextjs/server";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -48,10 +50,9 @@ ${rule}
 ${topic}
     `;
 
-    const result = await geminiModel.generateContent(prompt);
-    const text = result.response.text();
+    const generatedContent = await generateTextSafe(prompt);
 
-    return NextResponse.json({ content: text.trim() });
+    return NextResponse.json({ content: generatedContent.trim() });
   } catch (error) {
     console.error("AI Generate Post Error:", error);
     return NextResponse.json({ error: "Failed to generate post" }, { status: 500 });

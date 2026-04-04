@@ -10,6 +10,7 @@ import {
   isSameDay,
   format,
 } from "date-fns";
+import { FaXTwitter, FaInstagram, FaFacebookF, FaLinkedinIn } from "react-icons/fa6";
 import { Badge } from "@/components/ui/badge";
 
 interface MonthViewProps {
@@ -32,15 +33,16 @@ const getPlatformColor = (platforms: string[]) => {
   }
 };
 
-const getPlatformEmoji = (platforms: string[]) => {
-  if (!platforms || platforms.length === 0) return "🌐";
-  const mainPlatform = platforms[0].toLowerCase();
-  switch (mainPlatform) {
-    case "instagram": return "📸";
-    case "twitter": return "🐦";
-    case "linkedin": return "💼";
-    case "facebook": return "📘";
-    default: return "📱";
+const PlatformIcon = ({ platforms }: { platforms?: string[] }) => {
+  if (!platforms || platforms.length === 0) return <span className="text-gray-400">📝</span>;
+  const p = platforms[0].toLowerCase();
+  
+  switch (p) {
+    case "twitter": return <FaXTwitter className="w-2.5 h-2.5 text-gray-700" />;
+    case "instagram": return <FaInstagram className="w-2.5 h-2.5 text-pink-600" />;
+    case "linkedin": return <FaLinkedinIn className="w-2.5 h-2.5 text-blue-600" />;
+    case "facebook": return <FaFacebookF className="w-2.5 h-2.5 text-blue-500" />;
+    default: return <span className="text-[10px]">📝</span>;
   }
 };
 
@@ -62,14 +64,14 @@ export function MonthView({ currentDate, posts, onDayClick, onEventClick, onEven
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 flex-1 auto-rows-fr">
+      <div className="grid grid-cols-7 flex-1 auto-rows-[minmax(120px,auto)]">
         {days.map((day, dayIdx) => {
           const isCurrentMonth = isSameMonth(day, monthStart);
           const isToday = isSameDay(day, new Date());
           
           // Get posts for this day
           const dayPosts = posts.filter(post => 
-            post.scheduledAt && isSameDay(new Date(post.scheduledAt), day)
+            isSameDay(new Date(post.scheduledAt || post.createdAt), day)
           );
 
           return (
@@ -85,12 +87,12 @@ export function MonthView({ currentDate, posts, onDayClick, onEventClick, onEven
                 }
               }}
               className={`
-                min-h-[120px] p-2 border-b border-r border-gray-100 relative group cursor-pointer transition-colors
+                flex flex-col min-h-[120px] p-1 border-b border-r border-gray-100 relative group transition-colors
                 ${!isCurrentMonth ? "bg-gray-50/50" : "bg-white hover:bg-gray-50/30"}
                 ${(dayIdx + 1) % 7 === 0 ? "border-r-0" : ""}
               `}
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-1 px-1 pt-1">
                 <span
                   className={`
                     w-7 h-7 flex items-center justify-center text-sm rounded-full
@@ -108,30 +110,37 @@ export function MonthView({ currentDate, posts, onDayClick, onEventClick, onEven
                 )}
               </div>
               
-              <div className="flex flex-col gap-1.5 overflow-y-auto max-h-[80px] no-scrollbar">
+              <div className="flex flex-col gap-[2px] overflow-y-auto no-scrollbar flex-1 pb-1">
                 {dayPosts.map((post) => (
                   <div
                     key={post.id}
-                    draggable
+                    draggable={post.status !== "published"}
                     onDragStart={(e) => {
-                      e.dataTransfer.setData("postId", post.id);
+                      if (post.status !== "published") {
+                        e.dataTransfer.setData("postId", post.id);
+                      }
                     }}
                     onClick={(e) => {
                       e.stopPropagation();
                       onEventClick(post);
                     }}
                     className={`
-                      text-xs px-2 py-1.5 rounded-md border truncate shadow-sm transition-all cursor-move hover:shadow-md
+                      text-[11px] px-1.5 py-[3px] rounded border transition-all hover:shadow-sm
+                      ${post.status !== "published" ? "cursor-move" : "cursor-pointer"}
                       ${getPlatformColor(post.platforms)}
+                      ${post.status === "published" ? "opacity-75" : ""}
                     `}
                     title={post.content || "Media Post"}
                   >
-                    <span className="mr-1">{getPlatformEmoji(post.platforms)}</span>
-                    <span className="font-medium">
-                      {format(new Date(post.scheduledAt), "h:mm a")}
-                    </span>
-                    {" • "}
-                    <span className="opacity-90">{post.content || "Media Post"}</span>
+                    <div className="flex items-start gap-1 overflow-hidden">
+                      <span className="shrink-0 mt-0.5"><PlatformIcon platforms={post.platforms} /></span>
+                      <div className="flex flex-col gap-0.5 min-w-0">
+                        <span className="font-semibold text-[10px] leading-none shrink-0">
+                          {format(new Date(post.scheduledAt || post.createdAt), "h:mma").toLowerCase()}
+                        </span>
+                        <span className="opacity-90 whitespace-normal line-clamp-2 leading-snug">{post.content || "Media"}</span>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

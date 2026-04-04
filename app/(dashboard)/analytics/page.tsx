@@ -29,75 +29,98 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-
-const summaryStats = [
-  {
-    label: "Total Reach",
-    value: "148.5k",
-    change: "+12.4%",
-    trend: "up" as const,
-    icon: Eye,
-    color: "#635bff",
-    note: "vs last 7 days",
-  },
-  {
-    label: "Avg. Engagement",
-    value: "4.82%",
-    change: "+0.5%",
-    trend: "up" as const,
-    icon: BarChart3,
-    color: "#09825d",
-    note: "vs last 7 days",
-  },
-  {
-    label: "Total Followers",
-    value: "24.2k",
-    change: "+156",
-    trend: "up" as const,
-    icon: Users,
-    color: "#f5a623",
-    note: "new this week",
-  },
-  {
-    label: "Growth Rate",
-    value: "8.4%",
-    change: "-1.2%",
-    trend: "down" as const,
-    icon: TrendingUp,
-    color: "#e1306c",
-    note: "vs last month",
-  },
+const STATS_METADATA = [
+  { label: "Total Reach", icon: Eye, color: "#635bff", note: "vs last 7 days" },
+  { label: "Avg. Engagement", icon: BarChart3, color: "#09825d", note: "vs last 7 days" },
+  { label: "Total Followers", icon: Users, color: "#f5a623", note: "new this week" },
+  { label: "Growth Rate", icon: TrendingUp, color: "#e1306c", note: "vs last month" },
 ];
 
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState("Last 7 days");
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
 
+  // Fetch connected accounts to filter platforms
+  const { data: accounts = [] } = useQuery({
+    queryKey: ["social-accounts"],
+    queryFn: async () => {
+      const response = await fetch("/api/social/accounts");
+      if (!response.ok) throw new Error("Failed to fetch accounts");
+      return response.json() as Promise<{ platform: string }[]>;
+    },
+  });
+
+  const connectedPlatforms = accounts.map(a => a.platform);
   const currentTheme = PLATFORM_THEMES[selectedPlatform] || PLATFORM_THEMES["All Platforms"];
 
-  // Fetch AI Summary based on selected platform
+  // 1. Fetch Real Stats
+  const { data: realStats, isLoading: isStatsLoading } = useQuery({
+    queryKey: ["analytics-stats", selectedPlatform],
+    queryFn: async () => {
+      const response = await fetch(`/api/analytics/stats?platform=${encodeURIComponent(selectedPlatform)}`);
+      if (!response.ok) throw new Error("Failed to fetch stats");
+      return response.json();
+    },
+  });
+
+  // Map real stats to metadata for display
+  const dynamicStats = [
+    {
+      ...STATS_METADATA[0],
+      value: realStats?.reach > 1000 ? `${(realStats.reach / 1000).toFixed(1)}k` : realStats?.reach?.toString() || "0",
+      change: `+${realStats?.raw?.contacts || 0} contacts`,
+      trend: "up" as const,
+    },
+    {
+      ...STATS_METADATA[1],
+      value: realStats?.engagement || "0.0%",
+      change: "+0.5%", 
+      trend: "up" as const,
+    },
+    {
+      ...STATS_METADATA[2],
+      value: realStats?.followers > 1000 ? `${(realStats.followers / 1000).toFixed(1)}k` : realStats?.followers?.toString() || "0",
+      change: `+${realStats?.raw?.segments || 0} segments`,
+      trend: "up" as const,
+    },
+    {
+      ...STATS_METADATA[3],
+      value: realStats?.growth || "0.0%",
+      change: `${realStats?.raw?.successful || 0} posts`,
+      trend: realStats?.raw?.successful > 0 ? "up" as const : "down" as const,
+    },
+  ];
+
+  // 2. Fetch AI Summary based on REAL data
   const { data: aiSummary, isLoading: isAiLoading } = useQuery({
-    queryKey: ["analytics-summary", selectedPlatform, timeRange],
+    queryKey: ["analytics-summary", selectedPlatform, timeRange, realStats],
     queryFn: async () => {
       const response = await fetch("/api/ai/analytics-summary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           platform: selectedPlatform,
-          metrics: summaryStats 
+          metrics: {
+            reach: realStats?.reach,
+            engagement: realStats?.engagement,
+            followers: realStats?.followers,
+            growth: realStats?.growth,
+            successful: realStats?.raw?.successful,
+            totalPosts: realStats?.raw?.totalPosts
+          } 
         }),
       });
       if (!response.ok) throw new Error("Failed to fetch summary");
       return response.json();
     },
-    enabled: true,
+    enabled: !!realStats,
   });
 
   return (
     <div 
       className="min-h-screen pb-12 transition-colors duration-700" 
       style={{ 
-        backgroundColor: currentTheme.id === "All Platforms" ? "#f6f9fc" : `${currentTheme.primary}05` 
+        backgroundColor: currentTheme.id === "All Platforms" ? "#f8fafc" : `${currentTheme.primary}03` 
       }}
     >
       <div className="max-w-6xl mx-auto space-y-8 px-4 sm:px-6">
@@ -150,6 +173,7 @@ export default function AnalyticsPage() {
         <PlatformStatus 
           selected={selectedPlatform} 
           onSelect={(id) => setSelectedPlatform(id)} 
+          connectedPlatforms={connectedPlatforms}
         />
 
         {/* ── AI Strategy Card (CORE) ── */}
@@ -171,7 +195,7 @@ export default function AnalyticsPage() {
           >
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {summaryStats.map((stat) => (
+              {dynamicStats.map((stat) => (
                 <ThemedMetricCard key={stat.label} {...stat} theme={currentTheme} />
               ))}
             </div>
@@ -205,25 +229,28 @@ export default function AnalyticsPage() {
 
         {/* ── Footer Link ── */}
         <div 
-          className="relative rounded-3xl overflow-hidden px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-8 bg-white border border-[#e3e8ef] shadow-[0_1px_3px_rgba(0,0,0,0.02)] group hover:shadow-[0_8px_40px_rgba(0,0,0,0.05)] transition-all"
+          className="relative rounded-[2rem] overflow-hidden px-10 py-10 flex flex-col md:flex-row items-center justify-between gap-8 bg-white border border-[#e2e8f0] shadow-[0_1px_1px_rgba(0,0,0,0.02),0_8px_40px_-12px_rgba(0,0,0,0.05)] group hover:shadow-[0_8px_60px_-12px_rgba(0,0,0,0.08)] transition-all duration-500"
         >
-          <div className="flex items-center gap-6 text-center md:text-left">
-            <div className="shrink-0 w-14 h-14 rounded-2xl bg-[#efffee] flex items-center justify-center border border-[#09825d]/10 transition-transform group-hover:scale-110">
-              <TrendingUp className="w-7 h-7 text-[#09825d]" />
+          <div className="flex items-center gap-8 text-center md:text-left relative z-10">
+            <div className="shrink-0 w-16 h-16 rounded-[1.25rem] bg-[#efffee] flex items-center justify-center border border-[#09825d]/10 transition-transform group-hover:scale-110 duration-500 shadow-sm">
+              <TrendingUp className="w-8 h-8 text-[#09825d]" />
             </div>
-            <div>
-              <h4 className="text-lg font-bold text-[#1a1f36]">Ready for your next campaign? 🚀</h4>
-              <p className="text-sm text-[#8792a2] mt-1 max-w-md">
+            <div className="space-y-1">
+              <h4 className="text-xl font-bold text-[#1a1f36] tracking-tight">Ready for your next campaign? 🚀</h4>
+              <p className="text-sm font-medium text-[#8792a2] max-w-md leading-relaxed">
                 Based on current insights, your audience is peaking. Use our AI Composer to draft your next viral post.
               </p>
             </div>
           </div>
           <Button 
-            className="shrink-0 px-8 h-12 bg-[#635bff] hover:bg-[#4f46e5] text-white font-bold rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all"
+            className="shrink-0 px-10 h-14 bg-[#635bff] hover:bg-[#4f46e5] text-white font-bold rounded-2xl shadow-[0_4px_12px_rgba(99,91,255,0.25)] hover:shadow-[0_8px_24px_rgba(99,91,255,0.3)] active:scale-95 transition-all relative z-10"
             onClick={() => window.location.href = '/compose'}
           >
             Create New Post
           </Button>
+          
+          {/* Subtle background flair */}
+          <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#635bff] opacity-[0.02] blur-[60px] rounded-full" />
         </div>
 
       </div>

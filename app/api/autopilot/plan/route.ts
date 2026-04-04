@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { openai } from "@/lib/openai";
 import { predictRevenue } from "@/lib/autopilot/revenue-predictor";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,19 +20,19 @@ export async function POST(req: NextRequest) {
 
         try {
           sendEvent("message", { status: "Analyzing your goal..." });
-          await sleep(1500);
+          await sleep(1000);
           
           const platforms = ["instagram", "twitter", "linkedin"];
           sendEvent("message", { status: "Identifying best platforms..." });
-          await sleep(1500);
+          await sleep(1000);
           
           const revenue = await predictRevenue(goal, platforms, 10000, null);
           
-          sendEvent("message", { status: "Generating campaign content..." });
+          sendEvent("message", { status: "Generating campaign content (GPT-4o)..." });
 
-          if (!process.env.GEMINI_API_KEY) {
-             console.warn("No GEMINI_API_KEY found, using mock plan.");
-             await sleep(2000);
+          if (!process.env.OPENAI_API_KEY) {
+             console.warn("No OPENAI_API_KEY found, using mock plan.");
+             await sleep(1500);
              sendEvent("plan", {
                predictedRevenue: revenue,
                posts: [
@@ -44,23 +44,30 @@ export async function POST(req: NextRequest) {
              return;
           }
 
-          const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
           const prompt = `You are an expert marketing AI.
 Goal: ${goal}
 Platforms: ${platforms.join(', ')}
 Budget: ${budget || 'Not specified'}
 Deadline: ${deadline || 'Not specified'}
 
-Generate a JSON plan for a social media campaign with an array of "posts". Each post should have "platform", "content", and "scheduledAt" (ISO date string in the future).
-Return ONLY valid JSON data directly (no markdown blocks like \`\`\`json).`;
+Generate a JSON plan for a social media campaign with an array of "posts". Each post should have:
+- "platform" (must be one of: instagram, twitter, linkedin)
+- "content" (highly engaging, platform-specific text)
+- "scheduledAt" (ISO date string in the future, staggered)
 
-          const result = await model.generateContent(prompt);
-          const text = result.response.text();
+Return ONLY valid JSON data directly. No markdown code blocks.`;
+
+          const response = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [{ role: "user", content: prompt }],
+            response_format: { type: "json_object" },
+          });
+
+          const content = response.choices[0]?.message?.content || "{}";
           
           let parsedPlan;
           try {
-             const jsonStr = text.replace(/```json/g, "").replace(/```/g, "").trim();
-             parsedPlan = JSON.parse(jsonStr);
+             parsedPlan = JSON.parse(content);
           } catch (e) {
              parsedPlan = {
                posts: [
@@ -77,6 +84,7 @@ Return ONLY valid JSON data directly (no markdown blocks like \`\`\`json).`;
           sendEvent("plan", finalPlan);
           controller.close();
         } catch (e) {
+          console.error("Autopilot Plan Stream Error:", e);
           sendEvent("error", { message: (e as Error).message });
           controller.close();
         }

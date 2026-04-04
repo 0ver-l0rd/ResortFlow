@@ -2,6 +2,7 @@
 
 import { startOfWeek, endOfWeek, eachDayOfInterval, eachHourOfInterval, format, isSameDay, startOfDay, endOfDay } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { FaXTwitter, FaInstagram, FaFacebookF, FaLinkedinIn } from "react-icons/fa6";
 
 const getPlatformColor = (platforms: string[]) => {
   if (!platforms || platforms.length === 0) return "bg-gray-100 text-gray-800 border-gray-200";
@@ -11,7 +12,21 @@ const getPlatformColor = (platforms: string[]) => {
     case "twitter": return "bg-blue-100 text-blue-800 border-blue-200";
     case "linkedin": return "bg-blue-50 text-blue-900 border-blue-200";
     case "facebook": return "bg-indigo-100 text-indigo-800 border-indigo-200";
+    case "facebook": return "bg-indigo-100 text-indigo-800 border-indigo-200";
     default: return "bg-purple-100 text-purple-800 border-purple-200";
+  }
+};
+
+const PlatformIcon = ({ platforms }: { platforms?: string[] }) => {
+  if (!platforms || platforms.length === 0) return <span className="text-gray-400">📝</span>;
+  const p = platforms[0].toLowerCase();
+  
+  switch (p) {
+    case "twitter": return <FaXTwitter className="w-3 h-3" />;
+    case "instagram": return <FaInstagram className="w-3 h-3" />;
+    case "linkedin": return <FaLinkedinIn className="w-3 h-3" />;
+    case "facebook": return <FaFacebookF className="w-3 h-3" />;
+    default: return <span className="text-[10px]">📝</span>;
   }
 };
 
@@ -68,7 +83,7 @@ export function WeekView({ currentDate, posts, onEventClick, onDayClick }: WeekV
           {/* Day Columns */}
           <div className="absolute inset-0 grid grid-cols-7">
             {days.map((day) => {
-              const dayPosts = posts.filter(post => post.scheduledAt && isSameDay(new Date(post.scheduledAt), day));
+              const dayPosts = posts.filter(post => isSameDay(new Date(post.scheduledAt || post.createdAt), day));
               
               return (
                 <div 
@@ -76,8 +91,8 @@ export function WeekView({ currentDate, posts, onEventClick, onDayClick }: WeekV
                   className="relative border-r border-gray-100 last:border-r-0 cursor-pointer hover:bg-gray-50/30"
                   onClick={() => onDayClick(day)}
                 >
-                  {dayPosts.map((post) => {
-                    const postDate = new Date(post.scheduledAt);
+                  {dayPosts.map((post, idx) => {
+                    const postDate = new Date(post.scheduledAt || post.createdAt);
                     const topPercent = ((postDate.getHours() * 60 + postDate.getMinutes()) / (24 * 60)) * 100;
                     
                     return (
@@ -87,12 +102,21 @@ export function WeekView({ currentDate, posts, onEventClick, onDayClick }: WeekV
                           e.stopPropagation();
                           onEventClick(post);
                         }}
-                        className={`absolute left-1 right-1 p-2 rounded-md border shadow-sm cursor-pointer z-10 overflow-hidden ${getPlatformColor(post.platforms)}`}
-                        style={{ top: `${topPercent}%`, minHeight: "60px" }}
+                        className={`absolute p-1.5 rounded border shadow-sm cursor-pointer overflow-hidden flex flex-col ${getPlatformColor(post.platforms)}`}
+                        style={{ 
+                          top: `${topPercent}%`, 
+                          minHeight: "40px",
+                          left: `calc(0.25rem + ${idx * 8}px)`,
+                          right: "0.25rem",
+                          zIndex: 10 + idx
+                        }}
                         title={post.content}
                       >
-                        <div className="text-[10px] font-bold mb-1 opacity-80">{format(postDate, "h:mm a")}</div>
-                        <div className="text-xs font-medium line-clamp-2">{post.content || "Media Only"}</div>
+                        <div className="text-[10px] font-bold mb-0.5 opacity-80 leading-tight flex items-center gap-1">
+                          <PlatformIcon platforms={post.platforms} />
+                          {format(postDate, "h:mma").toLowerCase()}
+                          <span className="opacity-70 font-normal truncate">{post.content || "Media"}</span>
+                        </div>
                       </div>
                     );
                   })}
@@ -114,7 +138,7 @@ interface DayViewProps {
 
 export function DayView({ currentDate, posts, onEventClick }: DayViewProps) {
   const hours = Array.from({ length: 24 }).map((_, i) => i);
-  const dayPosts = posts.filter(post => post.scheduledAt && isSameDay(new Date(post.scheduledAt), currentDate));
+  const dayPosts = posts.filter(post => isSameDay(new Date(post.scheduledAt || post.createdAt), currentDate));
 
   return (
     <div className="flex flex-col h-[600px] bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
@@ -141,27 +165,34 @@ export function DayView({ currentDate, posts, onEventClick }: DayViewProps) {
           
           {/* Post Blocks */}
           <div className="absolute inset-0 pl-4 pr-6 pt-0">
-            {dayPosts.map((post) => {
-              const postDate = new Date(post.scheduledAt);
+            {dayPosts.map((post, idx) => {
+              const postDate = new Date(post.scheduledAt || post.createdAt);
               const topPercent = ((postDate.getHours() * 60 + postDate.getMinutes()) / (24 * 60)) * 100;
               
               return (
                 <div
                   key={post.id}
                   onClick={() => onEventClick(post)}
-                  className={`absolute left-4 right-6 p-4 rounded-lg border shadow-sm cursor-pointer z-10 ${getPlatformColor(post.platforms)}`}
-                  style={{ top: `${topPercent}%`, minHeight: "80px" }}
+                  className={`absolute p-3 rounded-lg border shadow-sm cursor-pointer ${getPlatformColor(post.platforms)}`}
+                  style={{ 
+                    top: `${topPercent}%`, 
+                    minHeight: "60px",
+                    left: `calc(1rem + ${idx * 12}px)`,
+                    right: `calc(1.5rem - ${idx * 4}px)`,
+                    zIndex: 10 + idx
+                  }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="outline" className="bg-white/50 border-white/20 capitalize font-medium">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Badge variant="outline" className="bg-white/50 border-white/20 capitalize font-medium text-[10px] px-1.5 py-0 h-4 flex items-center gap-1">
+                      <PlatformIcon platforms={post.platforms} />
                       {post.platforms[0] || "General"}
                     </Badge>
-                    <span className="text-xs font-semibold opacity-80">{format(postDate, "h:mm a")}</span>
+                    <span className="text-xs font-bold opacity-80">{format(postDate, "h:mma").toLowerCase()}</span>
                     {(post.status === "published") && (
-                      <Badge className="ml-auto bg-green-500/20 text-green-700 hover:bg-green-500/30 font-medium">Published</Badge>
+                      <Badge className="ml-auto bg-green-500/20 text-green-700 hover:bg-green-500/30 font-medium text-[10px] h-4">Published</Badge>
                     )}
                   </div>
-                  <p className="text-sm font-medium line-clamp-2">{post.content}</p>
+                  <p className="text-xs font-medium line-clamp-2">{post.content}</p>
                 </div>
               );
             })}

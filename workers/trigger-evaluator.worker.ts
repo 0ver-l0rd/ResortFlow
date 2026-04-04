@@ -3,6 +3,7 @@ import Redis from 'ioredis';
 import { db } from '../db';
 import { triggers, triggerLogs, posts, notifications } from '../db/schema';
 import { eq, desc } from 'drizzle-orm';
+import { generateTextSafe } from '../lib/ai';
 
 const redisUrl = process.env.REDIS_URL;
 const connection = redisUrl ? new Redis(redisUrl, { maxRetriesPerRequest: null, lazyConnect: true }) : new Redis({ maxRetriesPerRequest: null, lazyConnect: true });
@@ -76,6 +77,21 @@ export const triggerEvalWorker = new Worker('trigger-eval', async (job: Job) => 
         if (shouldFire) {
           console.log(`Trigger "${trigger.name}" fired for user ${trigger.userId}`);
           
+          // Generate AI Action Content
+          try {
+            const aiPrompt = `
+              Trigger: "${trigger.name}" (Type: ${trigger.type})
+              Context: ${JSON.stringify(conditionSnapshot)}
+              Goal: Generate a catchy hospitality-focused social media post draft (Instagram or Twitter style) to address this situation.
+              Keep it under 240 characters.
+            `.trim();
+            
+            const aiSuggestion = await generateTextSafe(aiPrompt);
+            actionTaken = aiSuggestion || actionTaken;
+          } catch (aiErr) {
+            console.error("[TriggerEval] AI action generation failed:", aiErr);
+          }
+
           // 4. Update trigger
           await db.update(triggers)
             .set({ 
@@ -89,18 +105,16 @@ export const triggerEvalWorker = new Worker('trigger-eval', async (job: Job) => 
             triggerId: trigger.id,
             conditionSnapshot,
             actionTaken,
-            result: "Action successfully initialized",
+            result: "AI content generated successfully",
           });
 
           // 6. Create Notification
           await db.insert(notifications).values({
             userId: trigger.userId,
             title: `⚡ Trigger: ${trigger.name}`,
-            message: actionTaken,
+            message: `Autopilot Suggestion: ${actionTaken}`,
             type: 'warning',
           });
-
-          // 7. Enqueue Action Job (In a real system, would enqueue rewrite-post, etc.)
         }
       } catch (err) {
         console.error(`Error evaluating individual trigger ${trigger.id}:`, err);

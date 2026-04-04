@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { geminiModel } from "@/lib/ai";
+import { openai } from "@/lib/openai";
 import { auth } from "@clerk/nextjs/server";
 
 export async function POST(request: Request) {
@@ -19,21 +19,21 @@ Analyze the following ${platform} metrics and top/bottom posts to provide:
 Metrics & Post Content:
 ${JSON.stringify(metrics, null, 2)}
 
-Return a JSON object ONLY with no markdown, in this exact format:
-{
-  "summary": "...",
-  "insights": ["...", "..."],
-  "tip": "..."
-}
-    `;
+Return a JSON object ONLY with the following keys:
+- "summary": (string, performance overview)
+- "insights": (array of 2 strings, platform insights)
+- "tip": (string, actionable strategy)
 
-    const result = await geminiModel.generateContent(prompt);
-    const text = result.response.text().trim();
+Return only the raw JSON.`;
 
-    // Parse JSON safely
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Invalid AI response");
-    const parsed = JSON.parse(jsonMatch[0]);
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" },
+    });
+
+    const content = response.choices[0]?.message?.content || "{}";
+    const parsed = JSON.parse(content);
 
     return NextResponse.json(parsed);
   } catch (error) {

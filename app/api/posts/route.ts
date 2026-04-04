@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { posts, mediaAssets, users } from "@/db/schema";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { eq, desc, and, gte, lte } from "drizzle-orm";
+import { eq, desc, and, gte, lte, or } from "drizzle-orm";
 import { inngest } from "@/lib/inngest/client";
 
 export async function GET(request: Request) {
@@ -37,13 +37,23 @@ export async function GET(request: Request) {
     const startDate = searchParams.get("start_date");
     const endDate = searchParams.get("end_date");
 
-    const conditions = [eq(posts.userId, dbUser.id)];
+    const conditions: any[] = [eq(posts.userId, dbUser.id)];
     
-    if (startDate) {
-      conditions.push(gte(posts.scheduledAt, new Date(startDate)));
-    }
-    if (endDate) {
-      conditions.push(lte(posts.scheduledAt, new Date(endDate)));
+    if (startDate && endDate) {
+      conditions.push(
+        or(
+          and(gte(posts.scheduledAt, new Date(startDate)), lte(posts.scheduledAt, new Date(endDate))),
+          and(gte(posts.createdAt, new Date(startDate)), lte(posts.createdAt, new Date(endDate)))
+        )
+      );
+    } else if (startDate) {
+      conditions.push(
+        or(gte(posts.scheduledAt, new Date(startDate)), gte(posts.createdAt, new Date(startDate)))
+      );
+    } else if (endDate) {
+      conditions.push(
+        or(lte(posts.scheduledAt, new Date(endDate)), lte(posts.createdAt, new Date(endDate)))
+      );
     }
 
     let query = db

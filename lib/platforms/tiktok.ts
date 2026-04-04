@@ -129,4 +129,9 @@ export class TikTokPlatform implements SocialPlatform {
     console.log(`[TikTok] Replying to comment: "${text}"`);
     return `tt-reply-${Math.random().toString(36).substring(7)}`;
   }
+
+  async fetchPostHistory(tokens: OAuthTokens, platformUserId: string): Promise<any[]> {
+    console.log(`[TikTok] Fetching history for user: ${platformUserId}`);
+    return [];
+  }
 }

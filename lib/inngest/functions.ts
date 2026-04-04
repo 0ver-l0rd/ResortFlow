@@ -4,7 +4,11 @@ import { postPlatformResults, socialAccounts } from "@/db/schema";
 
 import { inngest } from "./client";
 import { db } from "@/db";
-import { posts } from "@/db/schema";
+import { posts, socialAccounts as socialAccountsTable } from "@/db/schema";
+import { decrypt } from "@/lib/encryption";
+import { PlatformTheme } from "@/lib/analytics-themes";
+
+const REFRESH_THRESHOLD_MS = 10 * 60 * 1000; // 10 minutes
 export const publishPost = inngest.createFunction(
   {
     id: "publish-post",
@@ -49,20 +53,25 @@ export const publishPost = inngest.createFunction(
 
         try {
           const driver = getPlatform(platformName);
+          
+          // Decrypt tokens for the driver to use
+          const decryptedTokens = {
+            accessToken: decrypt(account.accessToken),
+            refreshToken: account.refreshToken ? decrypt(account.refreshToken) : undefined,
+            expiresAt: account.expiresAt || undefined
+          };
+          
           const response = await driver.publishPost(
-            {
-              accessToken: account.accessToken,
-              refreshToken: account.refreshToken || undefined,
-              expiresAt: account.expiresAt || undefined
-            },
+            decryptedTokens,
             post.content,
             post.mediaUrls || []
-          );
+          ) as any;
 
           publishResults.push({
             platform: platformName,
             status: "success",
             platformPostId: response.postId,
+            simulated: response.simulated
           });
         } catch (error: any) {
           console.error(`Failed to publish to ${platformName}:`, error.message);
@@ -75,7 +84,7 @@ export const publishPost = inngest.createFunction(
 
     // 3. Record results and update the post status
     await step.run("record-results-and-update-status", async () => {
-      const typedResults = results as { platform: string; status: string; platformPostId?: string; error?: string }[];
+      const typedResults = results as { platform: string; status: string; platformPostId?: string; error?: string; simulated?: boolean }[];
 
       // Record platform results
       if (typedResults.length > 0) {
@@ -85,13 +94,13 @@ export const publishPost = inngest.createFunction(
             platform: r.platform,
             platformPostId: r.platformPostId,
             status: r.status,
-            error: r.error,
+            error: r.simulated ? "SIMULATED_SUCCESS" : r.error,
           }))
         );
       }
 
-      const anySuccess = typedResults.some((r) => r.status === "success");
-      const allFailed = typedResults.length > 0 && typedResults.every((r) => r.status === "error");
+      const anySuccess = typedResults.some((r) => r.status === "success" || r.simulated);
+      const allFailed = typedResults.length > 0 && typedResults.every((r) => r.status === "error" && !r.simulated);
 
       await db
         .update(posts)

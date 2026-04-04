@@ -117,4 +117,9 @@ export class InstagramPlatform implements SocialPlatform {
     console.log(`[Instagram] Replying to comment ${commentId}: "${text}"`);
     return `ig-reply-${Math.random().toString(36).substring(7)}`;
   }
+
+  async fetchPostHistory(tokens: OAuthTokens, platformUserId: string): Promise<any[]> {
+    console.log(`[Instagram] Fetching history for user: ${platformUserId}`);
+    return [];
+  }
 }

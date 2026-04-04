@@ -1,20 +1,33 @@
 import { db } from "@/db";
 import { posts, socialAccounts } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
+import { inngest } from "@/lib/inngest/client";
 
 export async function composePosts(params: any, userId: string) {
   try {
-    const { content, platforms, mediaUrls = [], scheduledAt } = params;
+    const { content, platforms, mediaUrls = [], scheduledAt, publishNow } = params;
     
     // In a real app, we'd validate platforms against connected accounts here
+    const status = publishNow ? "published" : scheduledAt ? "scheduled" : "draft";
+
     const [newPost] = await db.insert(posts).values({
       userId,
       content,
       platforms,
       mediaUrls,
-      status: scheduledAt ? "scheduled" : "draft",
+      status,
       scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
     }).returning();
+
+    if (status === "scheduled" || status === "published") {
+      await inngest.send({
+        name: "post/created",
+        data: {
+          postId: newPost.id,
+          scheduledAt: newPost.scheduledAt,
+        }
+      });
+    }
 
     return { success: true, data: newPost };
   } catch (error: any) {

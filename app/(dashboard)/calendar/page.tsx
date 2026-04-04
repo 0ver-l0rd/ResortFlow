@@ -123,13 +123,12 @@ export default function CalendarPage() {
     },
   });
 
-  // Reschedule post (Drag and Drop)
-  const reschedulePostMutation = useMutation({
+    const reschedulePostMutation = useMutation({
     mutationFn: async ({ id, date }: { id: string; date: Date }) => {
       const res = await fetch(`/api/posts/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scheduledAt: date.toISOString() }),
+        body: JSON.stringify({ scheduledAt: date.toISOString(), status: "scheduled" }),
       });
       if (!res.ok) throw new Error("Failed to reschedule post");
       return res.json();
@@ -225,7 +224,7 @@ export default function CalendarPage() {
       <div className="flex-1 relative grid grid-cols-1 lg:grid-cols-4 gap-6">
         
         {/* Main Content Area (3 columns) */}
-        <div className="lg:col-span-3 flex flex-col h-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="lg:col-span-3 flex flex-col h-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-y-auto no-scrollbar">
           {isLoading && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-xl">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>

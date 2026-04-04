@@ -117,7 +117,12 @@ export class LinkedInPlatform implements SocialPlatform {
   }
 
   async postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string> {
-    console.log(`[LinkedIn] Replying to post/comment ${commentId}: "${text}"`);
-    return `li-reply-${Math.random().toString(36).substring(7)}`;
+    console.log(`[LinkedIn] Posting comment: "${text}"`);
+    return `li-comment-${Math.random().toString(36).substring(7)}`;
+  }
+
+  async fetchPostHistory(tokens: OAuthTokens, platformUserId: string): Promise<any[]> {
+    console.log(`[LinkedIn] Fetching history for user: ${platformUserId}`);
+    return [];
   }
 }

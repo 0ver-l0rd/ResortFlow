@@ -128,4 +128,9 @@ export class PinterestPlatform implements SocialPlatform {
     console.log(`[Pinterest] Replying to pin comment ${commentId}: "${text}"`);
     return `pin-reply-${Math.random().toString(36).substring(7)}`;
   }
+
+  async fetchPostHistory(tokens: OAuthTokens, platformUserId: string): Promise<any[]> {
+    console.log(`[Pinterest] Fetching history for user: ${platformUserId}`);
+    return [];
+  }
 }

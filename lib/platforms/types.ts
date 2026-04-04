@@ -23,5 +23,8 @@ export interface SocialPlatform {
   /**
    * Posts a reply to a specific comment.
    */
-  postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string>;
+  /**
+   * Fetches recent post history from the platform.
+   */
+  fetchPostHistory(tokens: OAuthTokens, platformUserId: string): Promise<any[]>;
 }

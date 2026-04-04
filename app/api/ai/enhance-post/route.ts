@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { geminiModel } from "@/lib/ai";
 import { auth } from "@clerk/nextjs/server";
+import { generateTextSafe } from "@/lib/ai";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -46,10 +48,9 @@ ${rule}
 ${content}
     `;
 
-    const result = await geminiModel.generateContent(prompt);
-    const text = result.response.text();
+    const enhancedText = await generateTextSafe(prompt);
 
-    return NextResponse.json({ enhancedContent: text.trim() });
+    return NextResponse.json({ enhancedContent: enhancedText.trim() });
   } catch (error) {
     console.error("AI Enhance Error:", error);
     return NextResponse.json(

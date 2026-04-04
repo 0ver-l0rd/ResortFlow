@@ -86,26 +86,26 @@ export function EngagementChart({ platform = "All Platforms" }: { platform?: str
   const theme = PLATFORM_THEMES[platform] || PLATFORM_THEMES["All Platforms"];
 
   return (
-    <div className="bg-white rounded-3xl border border-[#e3e8ef] shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden transition-all duration-700">
-      <div className="flex items-center justify-between px-8 py-6 border-b border-[#f0f3f7]">
+    <div className="bg-white rounded-[2rem] border border-[#e2e8f0] shadow-[0_1px_1px_rgba(0,0,0,0.05),0_12px_60px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-700">
+      <div className="flex items-center justify-between px-8 py-7 border-b border-[#f1f4f9] bg-gradient-to-r from-white to-[#f8fafc]">
         <div>
-          <h3 className="text-sm font-bold text-[#1a1f36]">
-            {platform === "All Platforms" ? "Global Reach" : `${platform} Performance`}
+          <h3 className="text-lg font-bold text-[#1a1f36] tracking-tight">
+            {platform === "All Platforms" ? "Global Performance" : `${platform} Metrics`}
           </h3>
-          <p className="text-[11px] font-medium text-[#8792a2] mt-0.5 uppercase tracking-wider">Metrics Depth & Engagement</p>
+          <p className="text-[10px] font-bold text-[#8792a2] mt-1 uppercase tracking-[0.2em]">Audience Flux & Interaction Matrix</p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-[#635bff]" />
-            <span className="text-[10px] font-semibold text-[#8792a2] uppercase">Engagement</span>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 group cursor-pointer">
+            <div className="w-2.5 h-2.5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: theme.primary }} />
+            <span className="text-[10px] font-bold text-[#3c4257]/60 uppercase tracking-widest group-hover:text-[#1a1f36] transition-colors">Engagement</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-[#09825d]" />
-            <span className="text-[10px] font-semibold text-[#8792a2] uppercase">Reach</span>
+          <div className="flex items-center gap-2 group cursor-pointer">
+            <div className="w-2.5 h-2.5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: theme.secondary || "#09825d" }} />
+            <span className="text-[10px] font-bold text-[#3c4257]/60 uppercase tracking-widest group-hover:text-[#1a1f36] transition-colors">Reach</span>
           </div>
         </div>
       </div>
-      <div className="px-4 py-6 h-[320px]">
+      <div className="px-6 py-8 h-[340px]">
         <ChartContainer config={chartConfig} className="h-full w-full">
           <AreaChart data={currentData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>

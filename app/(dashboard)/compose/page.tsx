@@ -370,21 +370,27 @@ function ImageEditorDialog({
 
 // ── Platform Preview ──────────────────────────────────────────────────────────
 
-function PlatformPreview({ platform, content, media }: { platform: PlatformDef; content: string; media: UploadedMedia[]; }) {
+function PlatformPreview({ platform, content, media, accounts = [] }: { platform: PlatformDef; content: string; media: UploadedMedia[]; accounts?: any[]; }) {
   const images = media.filter(m => m.type === "image").slice(0, 4);
   const video = media.find(m => m.type === "video");
   const noContent = <span className="text-[#c2c8d0] italic">Your post will appear here…</span>;
+
+  const currentAccount = accounts.find(a => a.platform.toLowerCase() === platform.id.toLowerCase() || (platform.id === 'twitter' && a.platform.toLowerCase() === 'twitter / x'));
 
   // TWITTER
   if (platform.id === "twitter") return (
     <div className="bg-white rounded-xl border border-[#e3e8ef] overflow-hidden w-full max-w-lg shadow-sm font-sans mx-auto">
       <div className="p-4 flex gap-3">
-        <div className="w-12 h-12 rounded-full bg-slate-200 shrink-0"></div>
+        {currentAccount?.avatarUrl ? (
+          <img src={currentAccount.avatarUrl} alt="" className="w-12 h-12 rounded-full shrink-0 object-cover" />
+        ) : (
+          <div className="w-12 h-12 rounded-full bg-slate-200 shrink-0"></div>
+        )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
-              <span className="font-bold text-[#0f1419] text-[15px]">Your Name</span>
-              <span className="text-[#536471] text-[15px]">@YourHandle</span>
+              <span className="font-bold text-[#0f1419] text-[15px]">{currentAccount?.username || "Your Name"}</span>
+              <span className="text-[#536471] text-[15px]">@{currentAccount?.username || "YourHandle"}</span>
               <span className="text-[#536471] text-[15px]">·</span>
               <span className="text-[#536471] text-[15px]">Now</span>
             </div>
@@ -394,7 +400,7 @@ function PlatformPreview({ platform, content, media }: { platform: PlatformDef; 
             {content || noContent}
           </div>
           {images.length > 0 && !video && (
-            <div className={`grid gap-0.5 rounded-2xl overflow-hidden border border-[#cfd9de] mt-3 ${images.length === 1 ? 'grid-cols-1' : images.length === 2 ? 'grid-cols-2 aspect-[8/4]' : images.length === 3 ? 'grid-cols-2 aspect-[8/4]' : 'grid-cols-2 aspect-[8/4]'}`}>
+            <div className={`grid gap-0.5 rounded-2xl overflow-hidden border border-[#cfd9de] mt-3 ${images.length === 1 ? 'grid-cols-1 aspect-[16/9]' : images.length === 2 ? 'grid-cols-2 aspect-[8/4]' : images.length === 3 ? 'grid-cols-2 aspect-[8/4]' : 'grid-cols-2 aspect-[8/4]'}`}>
               {images.map((img, i) => (
                 <div key={i} className={`relative bg-slate-100 ${images.length === 3 && i === 0 ? 'row-span-2' : ''}`}>
                   <img src={img.url} alt="" className="absolute inset-0 w-full h-full object-cover" />
@@ -659,6 +665,15 @@ export default function ComposePage() {
   const [showAI, setShowAI] = useState<"generate" | "enhance" | null>(null);
   const [isAiGenerated, setIsAiGenerated] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
+  const [accounts, setAccounts] = useState<any[]>([]);
+
+  // Fetch Connected Accounts
+  useEffect(() => {
+    fetch("/api/social/accounts")
+      .then(r => r.ok ? r.json() : [])
+      .then(acc => setAccounts(acc))
+      .catch(console.error);
+  }, []);
 
   // Media
   const [media, setMedia] = useState<UploadedMedia[]>([]);
@@ -1110,7 +1125,15 @@ export default function ComposePage() {
                           })}
                         </div>
                         {/* Preview card */}
-                        {(() => { const p = PLATFORMS.find(pl => pl.id === previewPlatform); return p ? <PlatformPreview platform={p} content={content} media={media} /> : null; })()}
+                        {PLATFORMS.filter(p => p.id === previewPlatform).map(p => (
+                          <PlatformPreview 
+                            key={p.id} 
+                            platform={p} 
+                            content={content} 
+                            media={media} 
+                            accounts={accounts} 
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
