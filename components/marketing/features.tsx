@@ -213,19 +213,19 @@ const featureCards = [
 
 export function Features() {
   return (
-    <section id="features" className="py-24 md:py-32 bg-[#f6f9fc] relative overflow-hidden">
+    <section id="features" className="py-16 md:py-24 bg-[#f6f9fc] relative overflow-hidden">
       <div className="container mx-auto px-6">
-        <div className="max-w-3xl mx-auto text-center mb-24">
-          <h2 className="text-[40px] md:text-[56px] font-black text-[#1a1f36] leading-[1.05] tracking-tight mb-6">
+        <div className="max-w-3xl mx-auto text-center mb-16 px-4">
+          <h2 className="text-[38px] md:text-[52px] font-black text-[#1a1f36] leading-[1.02] tracking-tight mb-5">
             The Intelligence Hub <br />
             <span className="text-[#635bff] italic">For Resort Growth.</span>
           </h2>
-          <p className="text-xl text-[#3c4257] font-medium leading-relaxed opacity-80">
-            From content creation to revenue tracking, every tool is designed to eliminate manual marketing and maximize your booking potential.
+          <p className="text-lg md:text-xl text-[#3c4257] font-medium leading-relaxed opacity-80 max-w-2xl mx-auto">
+            Every tool is designed to eliminate manual marketing and maximize your booking potential.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[280px] lg:auto-rows-[330px] gap-6 lg:gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[240px] lg:auto-rows-[280px] gap-6 lg:gap-7 max-w-7xl mx-auto">
            {featureCards.map((feat, i) => (
              <div 
                 key={feat.id} 
