@@ -7,7 +7,7 @@ import { SegmentsClient } from "./SegmentsClient";
 export const dynamic = "force-dynamic";
 
 export default async function SegmentsPage() {
-  const clerkId = getDemoUserId();
+  const authId = getDemoUserId();
 
   const [user] = await db.select().from(users).limit(1);
   if (!user) return <div>No user found</div>;

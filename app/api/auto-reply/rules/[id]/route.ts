@@ -7,10 +7,10 @@ import { eq, and } from "drizzle-orm";
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const userRecord = await db.query.users.findFirst({
-      where: eq(users.clerkId, clerkId),
+      where: eq(users.authId, authId),
     });
 
     if (!userRecord) {
@@ -50,10 +50,10 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const userRecord = await db.query.users.findFirst({
-      where: eq(users.clerkId, clerkId),
+      where: eq(users.authId, authId),
     });
 
     if (!userRecord) {

@@ -2,14 +2,14 @@ import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { agentPreferences } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import { getUserByClerkId } from "@/lib/db/queries/users";
+import { getUserByAuthId } from "@/lib/db/queries/users";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
-    const user = await getUserByClerkId(clerkId);
+    const user = await getUserByAuthId(authId);
     if (!user) return new NextResponse("User not found", { status: 404 });
 
     const prefs = await db.select().from(agentPreferences).where(eq(agentPreferences.userId, user.id));
@@ -26,9 +26,9 @@ export async function GET() {
 
 export async function PATCH(req: Request) {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
-    const user = await getUserByClerkId(clerkId);
+    const user = await getUserByAuthId(authId);
     if (!user) return new NextResponse("User not found", { status: 404 });
 
     const body = await req.json(); // Expected: { key: string, value: string } or Record<string, string>

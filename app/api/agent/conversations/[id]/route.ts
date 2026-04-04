@@ -2,14 +2,14 @@ import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { agentConversations } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import { getUserByClerkId } from "@/lib/db/queries/users";
+import { getUserByAuthId } from "@/lib/db/queries/users";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
-    const user = await getUserByClerkId(clerkId);
+    const user = await getUserByAuthId(authId);
     if (!user) return new NextResponse("User not found", { status: 404 });
 
     const { id } = await params;
@@ -28,9 +28,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
-    const user = await getUserByClerkId(clerkId);
+    const user = await getUserByAuthId(authId);
     if (!user) return new NextResponse("User not found", { status: 404 });
 
     const { id } = await params;

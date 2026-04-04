@@ -6,10 +6,10 @@ import { eq, desc } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const userRecord = await db.query.users.findFirst({
-      where: eq(users.clerkId, clerkId),
+      where: eq(users.authId, authId),
     });
 
     if (!userRecord) {
@@ -44,10 +44,10 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const userRecord = await db.query.users.findFirst({
-      where: eq(users.clerkId, clerkId),
+      where: eq(users.authId, authId),
     });
 
     if (!userRecord) {

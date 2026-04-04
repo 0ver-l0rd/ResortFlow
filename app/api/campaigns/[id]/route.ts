@@ -12,7 +12,7 @@ export async function GET(
     const userId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-      where: eq(users.clerkId, userId)
+      where: eq(users.authId, userId)
     });
     if (!user) return new NextResponse("User not found", { status: 404 });
     const resolvedParams = await params;
@@ -47,7 +47,7 @@ export async function PATCH(
     const userId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-      where: eq(users.clerkId, userId)
+      where: eq(users.authId, userId)
     });
     if (!user) return new NextResponse("User not found", { status: 404 });
 

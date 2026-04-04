@@ -2,17 +2,17 @@ import { getDemoUserId } from "@/lib/demo-auth";
 import { getPlatform } from "@/lib/platforms/factory";
 import { db } from "@/db";
 import { socialAccounts, posts, postPlatformResults } from "@/db/schema";
-import { getUserByClerkId } from "@/lib/db/queries/users";
+import { getUserByAuthId } from "@/lib/db/queries/users";
 import { decrypt } from "@/lib/encryption";
 import { and, eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const clerkId = getDemoUserId();
+  const authId = getDemoUserId();
 
   try {
     const { platform } = await request.json();
-    const user = await getUserByClerkId(clerkId);
+    const user = await getUserByAuthId(authId);
     if (!user) return new NextResponse("User not found", { status: 404 });
 
     // Fetch account details

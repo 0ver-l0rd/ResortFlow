@@ -2,16 +2,16 @@ import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { agentConversations } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
-import { getUserByClerkId } from "@/lib/db/queries/users";
+import { getUserByAuthId } from "@/lib/db/queries/users";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
-    const user = await getUserByClerkId(clerkId);
+    const user = await getUserByAuthId(authId);
     if (!user) return new NextResponse("User not found", { status: 404 });
 
     const conversations = await db

@@ -7,7 +7,7 @@ import { RevenueClient } from "./RevenueClient";
 export const dynamic = "force-dynamic";
 
 export default async function RevenuePage() {
-  const clerkId = getDemoUserId();
+  const authId = getDemoUserId();
 
   const [user] = await db.select().from(users).limit(1);
   if (!user) return <div>No user found</div>;

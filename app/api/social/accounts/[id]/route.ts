@@ -1,7 +1,7 @@
 import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { socialAccounts } from "@/db/schema";
-import { getUserByClerkId } from "@/lib/db/queries/users";
+import { getUserByAuthId } from "@/lib/db/queries/users";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -9,9 +9,9 @@ export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const clerkId = getDemoUserId();
+  const authId = getDemoUserId();
 
-  const user = await getUserByClerkId(clerkId);
+  const user = await getUserByAuthId(authId);
   if (!user) {
     return new NextResponse("User not found", { status: 404 });
   }

@@ -6,10 +6,10 @@ import { eq, desc, count } from "drizzle-orm";
 
 export async function GET(req: Request) {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const userRecord = await db.query.users.findFirst({
-      where: eq(users.clerkId, clerkId),
+      where: eq(users.authId, authId),
     });
 
     if (!userRecord) {

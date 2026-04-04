@@ -14,7 +14,7 @@ export async function PATCH(
     const { id } = await params;
 
     const dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.clerkId, userId),
+      where: (u, { eq }) => eq(u.authId, userId),
     });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
@@ -53,7 +53,7 @@ export async function DELETE(
     const { id } = await params;
 
     const dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.clerkId, userId),
+      where: (u, { eq }) => eq(u.authId, userId),
     });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 

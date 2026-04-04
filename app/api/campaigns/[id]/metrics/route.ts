@@ -9,10 +9,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-      where: eq(users.clerkId, clerkId)
+      where: eq(users.authId, authId)
     });
     if (!user) return new NextResponse("User not found", { status: 404 });
     const resolvedParams = await params;

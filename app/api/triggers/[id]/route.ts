@@ -9,10 +9,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.clerkId, clerkId),
+        where: (users, { eq }) => eq(users.authId, authId),
     });
     if (!user) return new NextResponse("User not found", { status: 404 });
 
@@ -45,10 +45,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.clerkId, clerkId),
+        where: (users, { eq }) => eq(users.authId, authId),
     });
     if (!user) return new NextResponse("User not found", { status: 404 });
 

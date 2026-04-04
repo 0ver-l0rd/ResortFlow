@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getDemoUserId } from "@/lib/demo-auth";
 import { db } from "@/db";
 import { posts, postPlatformResults } from "@/db/schema";
-import { getUserByClerkId } from "@/lib/db/queries/users";
+import { getUserByAuthId } from "@/lib/db/queries/users";
 import { eq, and, desc, sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +11,7 @@ export async function GET() {
   try {
     const userId = getDemoUserId();
 
-    const user = await getUserByClerkId(userId);
+    const user = await getUserByAuthId(userId);
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     // Fetch the 5 most recently published posts with their platform results

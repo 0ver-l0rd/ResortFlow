@@ -6,10 +6,10 @@ import { eq, desc } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-      where: eq(users.clerkId, clerkId)
+      where: eq(users.authId, authId)
     });
     if (!user) return new NextResponse("User not found", { status: 404 });
 

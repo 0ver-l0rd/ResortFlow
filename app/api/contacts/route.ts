@@ -6,10 +6,10 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const clerkId = getDemoUserId();
+    const authId = getDemoUserId();
 
     const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.clerkId, clerkId),
+        where: (users, { eq }) => eq(users.authId, authId),
     });
     if (!user) return new NextResponse("User not found", { status: 404 });
 

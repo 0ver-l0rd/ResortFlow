@@ -6,7 +6,7 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ platform: string }> }
 ) {
-  const clerkId = getDemoUserId();
+  const authId = getDemoUserId();
 
   const { platform } = await params;
   

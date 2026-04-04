@@ -9,7 +9,7 @@ import {
   segmentMembers,
   audienceSegments
 } from "@/db/schema";
-import { getUserByClerkId } from "@/lib/db/queries/users";
+import { getUserByAuthId } from "@/lib/db/queries/users";
 import { eq, and, sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
   try {
     const userId = getDemoUserId();
 
-    const user = await getUserByClerkId(userId);
+    const user = await getUserByAuthId(userId);
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     const { searchParams } = new URL(request.url);

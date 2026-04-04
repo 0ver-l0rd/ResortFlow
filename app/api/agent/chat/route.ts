@@ -5,7 +5,7 @@ import { executeAgentTool, openAIToolDeclarations } from "@/lib/agent/tool-regis
 import { db } from "@/db";
 import { agentConversations } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { getUserByClerkId } from "@/lib/db/queries/users";
+import { getUserByAuthId } from "@/lib/db/queries/users";
 import { ChatCompletionMessageParam } from "openai/resources/index";
 
 export const dynamic = "force-dynamic";
@@ -18,9 +18,9 @@ function deriveTitle(message: string): string {
 }
 
 export async function POST(req: Request) {
-  const clerkId = getDemoUserId();
+  const authId = getDemoUserId();
 
-  const user = await getUserByClerkId(clerkId);
+  const user = await getUserByAuthId(authId);
   if (!user) return new Response("User not found", { status: 404 });
 
   const { message, conversationId } = await req.json();

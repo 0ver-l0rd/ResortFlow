@@ -9,7 +9,7 @@ export async function GET() {
     const userId = getDemoUserId();
 
     const dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.clerkId, userId),
+      where: (u, { eq }) => eq(u.authId, userId),
     });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const userId = getDemoUserId();
 
     const dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.clerkId, userId),
+      where: (u, { eq }) => eq(u.authId, userId),
     });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
