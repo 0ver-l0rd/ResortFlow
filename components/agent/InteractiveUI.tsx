@@ -41,6 +41,8 @@ export function InteractiveUI({
   selectedValue,
   postData
 }: InteractiveUIProps) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   
   if (type === "post_preview") {
     return (
@@ -95,10 +97,10 @@ export function InteractiveUI({
               disabled={isCompleted}
               onClick={() => onAction(opt)}
               className={cn(
-                "rounded-full text-[11px] font-bold h-8 px-4 transition-all active:scale-95",
+                "rounded-full text-[11px] font-bold h-8 px-5 transition-all active:scale-95 border-2",
                 selectedValue === opt 
-                  ? "bg-[#635bff] text-white border-[#635bff] shadow-md shadow-[#635bff]/20" 
-                  : "bg-white border-[#e3e8ef] text-[#3c4257] hover:border-[#635bff] hover:text-[#635bff]"
+                  ? "bg-[#635bff] text-white border-[#635bff] shadow-lg shadow-[#635bff]/30" 
+                  : "bg-white border-[#e3e8ef] text-[#3c4257] hover:border-[#635bff]/40 hover:bg-[#f6f9fc] hover:text-[#635bff]"
               )}
             >
               {opt}
@@ -111,9 +113,6 @@ export function InteractiveUI({
   }
 
   if (type === "media_upload") {
-    const [isUploading, setIsUploading] = useState(false);
-    const fileInputRef = React.useRef<HTMLInputElement>(null);
-    
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
