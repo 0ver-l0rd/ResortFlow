@@ -95,4 +95,26 @@ export class InstagramPlatform implements SocialPlatform {
       avatarUrl: igAccount.profile_picture_url,
     };
   }
+
+  async publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<{ postId: string; platform: string }> {
+    console.log(`[Instagram] Publishing to IG Business: "${content.substring(0, 50)}..." with ${mediaUrls.length} media items.`);
+    
+    // Instagram requires at least one media item
+    if (mediaUrls.length === 0) {
+      throw new Error("Instagram requires at least one image or video for posting.");
+    }
+
+    // Simulate Instagram's Two-Step Publishing (Container Creation -> Publishing)
+    await new Promise(resolve => setTimeout(resolve, 1200));
+
+    return {
+      postId: `ig-${Math.random().toString(36).substring(7)}`,
+      platform: "instagram"
+    };
+  }
+
+  async postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string> {
+    console.log(`[Instagram] Replying to comment ${commentId}: "${text}"`);
+    return `ig-reply-${Math.random().toString(36).substring(7)}`;
+  }
 }

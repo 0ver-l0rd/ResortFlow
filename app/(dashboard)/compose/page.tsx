@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -11,6 +11,7 @@ import {
   ChevronRight, ChevronLeft, Check, X, AlertTriangle,
   Eye, Bot, Wand2, Loader2, Film, FileImage, ZapIcon,
   Heart, MessageCircle, Repeat2, Share, Bookmark, ThumbsUp, MoreHorizontal, BarChart2,
+  Crop, Sliders, Sun, Move, Maximize, Scissors, Eraser
 } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaInstagram, FaLinkedinIn, FaFacebookF, FaYoutube, FaPinterestP } from "react-icons/fa";
@@ -45,86 +46,321 @@ const DRAFT_KEY = "sc_compose_draft";
 
 // ── AI Dialog ────────────────────────────────────────────────────────────────
 
-function AIDialog({ onClose, onApply, platforms }: {
-  onClose: () => void; onApply: (c: string) => void; platforms: string[];
+function AIDialog({ onClose, onApply, platforms: selectedPlatforms, mode = "generate", initialContent = "" }: {
+  onClose: () => void; onApply: (c: string, p: string) => void; platforms: string[]; mode?: "generate" | "enhance"; initialContent?: string;
 }) {
-  const [topic, setTopic] = useState("");
+  const [topic, setTopic] = useState(mode === "enhance" ? "Refining existing draft..." : "");
   const [tone, setTone] = useState("engaging");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
+  const [primaryPlatform, setPrimaryPlatform] = useState(selectedPlatforms[0] || "twitter");
   const TONES = ["engaging", "professional", "humorous", "inspirational", "informative", "casual"];
 
   const generate = async () => {
-    if (!topic.trim()) { toast.error("Enter a topic first"); return; }
+    if (mode === "generate" && !topic.trim()) { toast.error("Enter a topic first"); return; }
     setLoading(true);
     try {
-      const r = await fetch("/api/ai/generate-post", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic, tone, platforms }) });
+      const endpoint = mode === "enhance" ? "/api/ai/enhance-post" : "/api/ai/generate-post";
+      const body = mode === "enhance" 
+        ? { content: initialContent, primaryPlatform }
+        : { topic, tone, platforms: selectedPlatforms, primaryPlatform };
+
+      const r = await fetch(endpoint, { 
+        method: "POST", 
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify(body) 
+      });
       const d = await r.json();
-      if (d.content) setResult(d.content); else toast.error("Try again");
-    } catch { toast.error("Generation failed"); }
+      const content = mode === "enhance" ? d.enhancedContent : d.content;
+      if (content) setResult(content); else toast.error("Try again");
+    } catch { toast.error("Processing failed"); }
     finally { setLoading(false); }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(26,31,54,0.45)", backdropFilter: "blur(6px)" }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 selection:bg-[#635bff44]" style={{ background: "rgba(26,31,54,0.45)", backdropFilter: "blur(8px)" }}>
       <motion.div initial={{ opacity: 0, y: 12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.97 }}
-        className="bg-white rounded-xl border border-[#e3e8ef] shadow-[0_20px_60px_rgba(60,66,87,0.15)] w-full max-w-md overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#f0f3f7] bg-[#f6f9fc]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#635bff,#7f78ff)" }}>
-              <Bot className="w-3.5 h-3.5 text-white" />
+        className="bg-white rounded-[24px] border border-[#e3e8ef] shadow-[0_32px_120px_-20px_rgba(60,66,87,0.25)] w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+        
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#f0f3f7] bg-[#fcfdfe]">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-lg shadow-[#635bff]/20" style={{ background: "linear-gradient(135deg,#635bff,#7f78ff)" }}>
+              <Bot className="w-4.5 h-4.5 text-white" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-[#1a1f36]">AI Post Generator</p>
-              <p className="text-[10px] text-[#8792a2]">Powered by Gemini</p>
+              <p className="text-[15px] font-black tracking-tight text-[#1a1f36]">{mode === "enhance" ? "Enhance with AI" : "Writer with AI"}</p>
+              <p className="text-[11px] font-bold text-[#8792a2] uppercase tracking-widest">Platform-Specific Engine</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-7 h-7 rounded-lg border border-[#e3e8ef] flex items-center justify-center text-[#8792a2] hover:bg-white transition-colors">
-            <X className="w-3.5 h-3.5" />
+          <button onClick={onClose} className="w-8 h-8 rounded-full border border-[#e3e8ef] flex items-center justify-center text-[#8792a2] hover:bg-white hover:text-[#635bff] hover:border-[#635bff]/20 transition-all active:scale-[0.95]">
+            <X className="w-4 h-4" />
           </button>
         </div>
-        <div className="p-5 space-y-4">
-          {/* Topic */}
-          <div>
-            <label className="block text-xs font-semibold text-[#3c4257] mb-1.5">Topic or idea *</label>
-            <textarea value={topic} onChange={e => setTopic(e.target.value)} rows={3}
-              placeholder="e.g. Summer sale, productivity tips, new product launch…"
-              className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-[#e3e8ef] bg-[#f6f9fc] text-[#1a1f36] placeholder:text-[#c2c8d0] resize-none focus:outline-none focus:border-[#635bff] focus:ring-2 focus:ring-[#635bff]/10 transition-all" />
-          </div>
-          {/* Tone */}
-          <div>
-            <label className="block text-xs font-semibold text-[#3c4257] mb-1.5">Tone</label>
-            <div className="flex flex-wrap gap-1.5">
-              {TONES.map(t => (
-                <button key={t} onClick={() => setTone(t)}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-all capitalize ${tone === t ? "border-[#635bff] bg-[#635bff]/8 text-[#635bff]" : "border-[#e3e8ef] text-[#697386] hover:border-[#635bff]/40 hover:text-[#635bff]"}`}>
-                  {t}
-                </button>
-              ))}
+
+        <div className="p-6 space-y-8 overflow-y-auto custom-scrollbar">
+          <div className="space-y-4">
+            <label className="block text-[11px] font-black uppercase tracking-[0.25em] text-[#8792a2]">Target Platform</label>
+            <div className="grid grid-cols-4 gap-2">
+              {PLATFORMS.slice(0, 4).map(p => {
+                const active = primaryPlatform === p.id;
+                return (
+                  <button key={p.id} onClick={() => setPrimaryPlatform(p.id)}
+                    className={`flex flex-col items-center gap-2.5 p-3 rounded-2xl border-2 transition-all ${active ? "border-[#635bff] bg-[#635bff]/4 shadow-sm" : "border-[#e3e8ef] hover:border-[#635bff]/20 bg-[#fcfdfe]"}`}>
+                    <p.Icon className={`w-4 h-4 ${active ? "text-[#635bff]" : "text-[#8792a2]"}`} />
+                    <span className={`text-[10px] font-bold tracking-tight ${active ? "text-[#1a1f36]" : "text-[#8792a2]"}`}>{p.name.split(' ')[0]}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
-          {/* Result */}
-          {result && (
-            <div className="rounded-lg border border-[#e3e8ef] bg-[#f6f9fc] p-3.5">
-              <p className="text-[10px] font-semibold text-[#8792a2] uppercase tracking-wide mb-1.5">Generated</p>
-              <p className="text-sm text-[#1a1f36] whitespace-pre-wrap leading-relaxed">{result}</p>
+
+          {mode === "generate" && (
+            <div className="space-y-4">
+              <label className="block text-[11px] font-black uppercase tracking-[0.25em] text-[#8792a2]">Topic or idea</label>
+              <textarea value={topic} onChange={e => setTopic(e.target.value)} rows={3}
+                placeholder="e.g. Summer sale, productivity tips, new product launch…"
+                className="w-full px-4 py-3 text-[14px] font-medium leading-relaxed rounded-2xl border border-[#e3e8ef] bg-[#fcfdfe] text-[#1a1f36] placeholder:text-[#c4cdd6] resize-none focus:outline-none focus:border-[#635bff] focus:ring-4 focus:ring-[#635bff]/10 transition-all" />
             </div>
           )}
-          {/* Actions */}
-          <div className="flex gap-2 pt-1">
-            <button onClick={generate} disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white disabled:opacity-60 transition-all active:scale-[0.98] shadow-[0_1px_3px_rgba(99,91,255,0.25)]"
-              style={{ background: "linear-gradient(135deg,#635bff,#7f78ff)" }}>
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              {loading ? "Generating…" : result ? "Regenerate" : "Generate Post"}
-            </button>
+
+          {mode === "generate" && (
+            <div className="space-y-4">
+              <label className="block text-[11px] font-black uppercase tracking-[0.25em] text-[#8792a2]">Tone & Style</label>
+              <div className="flex flex-wrap gap-2">
+                {TONES.map(t => (
+                  <button key={t} onClick={() => setTone(t)}
+                    className={`px-4 py-2 text-[12px] font-bold rounded-xl border transition-all capitalize ${tone === t ? "border-[#635bff] bg-[#635bff] text-white shadow-md shadow-[#635bff]/20" : "border-[#e3e8ef] text-[#697386] hover:border-[#635bff]/20 bg-white"}`}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <AnimatePresence>
             {result && (
-              <button onClick={() => { onApply(result); onClose(); }}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold border border-[#635bff] text-[#635bff] hover:bg-[#635bff]/5 transition-all active:scale-[0.98]">
-                <Check className="w-4 h-4" /> Use this
-              </button>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-[24px] border border-[#635bff]/15 bg-[#fcfdfe] p-5 shadow-sm relative group">
+                <div className="flex items-center justify-between mb-3">
+                   <p className="text-[10px] font-black text-[#635bff] uppercase tracking-[0.3em]">AI Output: {primaryPlatform.toUpperCase()}</p>
+                </div>
+                <p className="text-[14px] text-[#3c4257] font-medium whitespace-pre-wrap leading-relaxed">{result}</p>
+              </motion.div>
             )}
+          </AnimatePresence>
+        </div>
+
+        <div className="p-6 border-t border-[#f0f3f7] bg-[#fcfdfe] flex gap-3">
+          <button onClick={generate} disabled={loading}
+            className="flex-1 flex items-center justify-center gap-2.5 px-6 py-3 rounded-2xl text-[13px] font-extrabold text-white disabled:opacity-60 transition-all active:scale-[0.98] shadow-lg shadow-[#635bff]/25"
+            style={{ background: "linear-gradient(135deg,#635bff,#7f78ff)" }}>
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+            {loading ? "Tailoring..." : result ? "Regenerate" : mode === "enhance" ? "Enhance for Platform" : "Generate Post"}
+          </button>
+          
+          {result && (
+            <button onClick={() => { onApply(result, topic); onClose(); }}
+              className="flex items-center gap-2 px-6 py-3 rounded-2xl text-[13px] font-extrabold border-2 border-[#635bff] text-[#635bff] hover:bg-[#635bff]/5 transition-all active:scale-[0.98]">
+              <Check className="w-4 h-4" /> Use This
+            </button>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+// ── Image Editor Dialog ──────────────────────────────────────────────────────
+
+function ImageEditorDialog({ 
+  url, 
+  onClose, 
+  onSave 
+}: { 
+  url: string; 
+  onClose: () => void; 
+  onSave: (newUrl: string) => void; 
+}) {
+  // Extract base URL if it already has transformations
+  const baseUrl = url.split("?")[0];
+  const [aspect, setAspect] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string | null>(null);
+  const [bgRemove, setBgRemove] = useState(false);
+  const [smartFocus, setSmartFocus] = useState(true);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [appliedAiPrompt, setAppliedAiPrompt] = useState("");
+  const [optimizing, setOptimizing] = useState(false);
+
+  const ASPECT_RATIOS = [
+    { name: "Original", value: null, icon: Maximize },
+    { name: "Square", value: "1-1", icon: Crop, desc: "Instagram" },
+    { name: "Portrait", value: "4-5", icon: ChevronLeft, desc: "IG / FB" },
+    { name: "Story", value: "9-16", icon: Move, desc: "Reels / TikTok" },
+    { name: "Landscape", value: "16-9", icon: ChevronRight, desc: "YouTube / X" },
+  ];
+
+  const FILTERS = [
+    { name: "None", value: null },
+    { name: "Grayscale", value: "e-grayscale" },
+    { name: "Blur", value: "bl-10" },
+    { name: "Sharpen", value: "e-sharpen" },
+    { name: "Warm", value: "e-tint-red" },
+  ];
+
+  const optimizePrompt = async () => {
+    if (!aiPrompt.trim()) return;
+    setOptimizing(true);
+    try {
+      const r = await fetch("/api/ai/optimize-edit-prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rawPrompt: aiPrompt })
+      });
+      const d = await r.json();
+      if (d.optimizedPrompt) {
+        setAiPrompt(d.optimizedPrompt);
+        toast.success("Prompt optimized ✨");
+      }
+    } catch { toast.error("Failed to optimize"); }
+    finally { setOptimizing(false); }
+  };
+
+  const previewUrl = useMemo(() => {
+    const tr = [];
+    if (aspect) tr.push(`ar-${aspect},cm-extract`);
+    if (smartFocus) tr.push("fo-auto");
+    if (bgRemove) tr.push("bg-remove");
+    if (filter) tr.push(filter);
+    
+    // AI Generative Edit - Only apply if manually triggered
+    if (appliedAiPrompt.trim()) {
+      const b64 = btoa(appliedAiPrompt.trim()).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      tr.push(`e-edit-prompte-${b64}`);
+    }
+    
+    if (tr.length === 0) return baseUrl;
+    return `${baseUrl}?tr=${tr.join(",")}`;
+  }, [aspect, filter, bgRemove, smartFocus, appliedAiPrompt, baseUrl, filter]);
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: "rgba(26,31,54,0.6)", backdropFilter: "blur(12px)" }}>
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+        className="bg-white rounded-[32px] border border-[#e3e8ef] shadow-[0_32px_128px_-20px_rgba(60,66,87,0.3)] w-full max-w-4xl overflow-hidden flex flex-col md:flex-row h-[85vh]">
+        
+        {/* Left: Preview */}
+        <div className="flex-1 bg-[#f6f9fc] flex items-center justify-center p-8 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(#635bff 1px, transparent 0)", backgroundSize: "16px 16px" }} />
+          <div className="relative group">
+             <img src={previewUrl} alt="Preview" className="max-w-full max-h-full rounded-xl shadow-2xl transition-all duration-500" style={{ transform: "translateZ(0)" }} />
+             <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-black/5" />
+          </div>
+        </div>
+
+        {/* Right: Controls */}
+        <div className="w-full md:w-80 border-l border-[#f0f3f7] flex flex-col bg-white">
+          <div className="p-6 border-b border-[#f0f3f7] flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-black tracking-tight text-[#1a1f36]">Edit Image</h3>
+              <p className="text-[11px] font-bold text-[#8792a2] uppercase tracking-widest">ImageKit Engine</p>
+            </div>
+            <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-[#f6f9fc] flex items-center justify-center text-[#8792a2] transition-colors"><X className="w-4 h-4" /></button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+            {/* Aspect Ratio */}
+            <div className="space-y-4">
+              <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#8792a2]">
+                <Crop className="w-3 h-3" /> Aspect Ratio
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {ASPECT_RATIOS.map(a => (
+                  <button key={a.name} onClick={() => setAspect(a.value)}
+                    className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left ${aspect === a.value ? "border-[#635bff] bg-[#635bff]/4 shadow-sm" : "border-[#e3e8ef] hover:border-[#635bff]/20"}`}>
+                    <a.icon className={`w-4 h-4 ${aspect === a.value ? "text-[#635bff]" : "text-[#8792a2]"}`} />
+                    <div>
+                      <p className={`text-[12px] font-bold ${aspect === a.value ? "text-[#1a1f36]" : "text-[#8792a2]"}`}>{a.name}</p>
+                      {a.desc && <p className="text-[10px] text-[#c2c8d0] font-medium">{a.desc}</p>}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Smart Features */}
+            <div className="space-y-4">
+               <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#8792a2]">
+                <Wand2 className="w-3 h-3" /> AI Enhancements
+              </label>
+              <div className="space-y-2">
+                <button onClick={() => setSmartFocus(!smartFocus)}
+                  className={`w-full flex items-center justify-between p-3 rounded-xl border-2 transition-all ${smartFocus ? "border-[#635bff] bg-[#635bff]/4" : "border-[#e3e8ef]"}`}>
+                  <span className="text-xs font-bold text-[#3c4257]">Smart Object Focus</span>
+                  <div className={`w-8 h-4 rounded-full relative transition-colors ${smartFocus ? "bg-[#635bff]" : "bg-[#e3e8ef]"}`}>
+                    <div className={`absolute top-1 w-2 h-2 rounded-full bg-white transition-all ${smartFocus ? "right-1" : "left-1"}`} />
+                  </div>
+                </button>
+                <button onClick={() => setBgRemove(!bgRemove)}
+                  className={`w-full flex items-center justify-between p-3 rounded-xl border-2 transition-all ${bgRemove ? "border-[#635bff] bg-[#635bff]/4" : "border-[#e3e8ef]"}`}>
+                  <span className="text-xs font-bold text-[#3c4257]">Remove Background</span>
+                  <Eraser className={`w-4 h-4 ${bgRemove ? "text-[#635bff]" : "text-[#8792a2]"}`} />
+                </button>
+              </div>
+            </div>
+
+            {/* Filters */}
+            <div className="space-y-4">
+              <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#8792a2]">
+                <Sliders className="w-3 h-3" /> Filters
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {FILTERS.map(f => (
+                  <button key={f.name} onClick={() => setFilter(f.value)}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold border transition-all ${filter === f.value ? "border-[#635bff] bg-[#635bff] text-white shadow-md shadow-[#635bff]/20" : "border-[#e3e8ef] text-[#697386] hover:border-[#635bff]/20"}`}>
+                    {f.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Magic AI Edit */}
+            <div className="space-y-4">
+               <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#635bff]">
+                <Sparkles className="w-3 h-3" /> Magic AI Edit
+              </label>
+              <div className="relative group">
+                <textarea 
+                  value={aiPrompt} 
+                  onChange={e => setAiPrompt(e.target.value)} 
+                  placeholder="e.g. Change posture to sitting, add a sunset background..."
+                  rows={2}
+                  className="w-full px-4 py-3 text-[12px] font-medium leading-relaxed rounded-xl border-2 border-[#635bff]/10 bg-[#fcfdfe] text-[#1a1f36] placeholder:text-[#c4cdd6] focus:border-[#635bff]/40 focus:outline-none transition-all pr-20"
+                />
+                <div className="absolute bottom-3 right-3 flex items-center gap-1.5">
+                  <button onClick={optimizePrompt} disabled={optimizing || !aiPrompt}
+                    title="Optimize with AI"
+                    className="text-[#635bff] hover:text-[#7f78ff] disabled:opacity-30 transition-all p-1.5 rounded-lg hover:bg-[#635bff]/10">
+                    {optimizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                  </button>
+                  <button onClick={() => { setAppliedAiPrompt(aiPrompt); toast.success("AI Edit Applied! ✨"); }} 
+                    disabled={!aiPrompt || aiPrompt === appliedAiPrompt}
+                    title="Apply Magic Edit"
+                    className="bg-[#635bff] text-white p-1.5 rounded-lg hover:bg-[#7f78ff] disabled:opacity-30 transition-all shadow-sm">
+                    <Send className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+              <p className="text-[10px] text-[#8792a2] font-semibold flex items-center gap-1.5 leading-tight">
+                <AlertTriangle className="w-3 h-3 text-amber-500" />
+                Wait 5-8s for generative processing.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-6 border-t border-[#f0f3f7] bg-[#fcfdfe] flex gap-3">
+             <button onClick={onClose} className="flex-1 px-6 py-3 rounded-2xl text-[13px] font-extrabold text-[#697386] hover:bg-[#f6f9fc] transition-all active:scale-[0.98]">Cancel</button>
+             <button onClick={() => onSave(previewUrl)}
+              className="flex-[2] flex items-center justify-center gap-2 px-6 py-3 rounded-2xl text-[13px] font-extrabold text-white transition-all active:scale-[0.98] shadow-lg shadow-[#635bff]/25"
+              style={{ background: "linear-gradient(135deg,#635bff,#7f78ff)" }}>
+               <Check className="w-4 h-4" /> Save Changes
+             </button>
           </div>
         </div>
       </motion.div>
@@ -420,7 +656,9 @@ export default function ComposePage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [enhancing, setEnhancing] = useState(false);
   const [hashtagging, setHashtagging] = useState(false);
-  const [showAI, setShowAI] = useState(false);
+  const [showAI, setShowAI] = useState<"generate" | "enhance" | null>(null);
+  const [isAiGenerated, setIsAiGenerated] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
 
   // Media
   const [media, setMedia] = useState<UploadedMedia[]>([]);
@@ -428,6 +666,7 @@ export default function ComposePage() {
   const [uploading, setUploading] = useState(false);
   const [loadingLib, setLoadingLib] = useState(false);
   const [mediaTab, setMediaTab] = useState<"upload" | "library">("upload");
+  const [editingMediaIndex, setEditingMediaIndex] = useState<number | null>(null);
 
   // Platforms
   const [selected, setSelected] = useState<string[]>([]);
@@ -470,12 +709,7 @@ export default function ComposePage() {
   // AI Enhance
   const enhance = async () => {
     if (!content.trim()) { toast.error("Write something first"); return; }
-    setEnhancing(true);
-    try {
-      const r = await fetch("/api/ai/enhance-post", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content }) });
-      const d = await r.json();
-      if (d.enhancedContent) { setContent(d.enhancedContent); toast.success("Enhanced! ✨"); }
-    } catch { toast.error("Failed"); } finally { setEnhancing(false); }
+    setShowAI("enhance");
   };
 
   // Hashtags
@@ -493,32 +727,47 @@ export default function ComposePage() {
   const uploadFile = async (file: File) => {
     setUploading(true);
     try {
-      const authR = await fetch("/api/imagekit/auth");
-      if (!authR.ok) throw new Error("Auth failed");
-      const { token, expire, signature } = await authR.json();
-      const pk = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || "";
-      const ep = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || "";
-      if (!pk || !ep) {
-        // Demo mode
-        const objectUrl = URL.createObjectURL(file);
-        setMedia(p => [...p, { url: objectUrl, fileId: `demo-${Date.now()}`, type: file.type.startsWith("video") ? "video" : "image", name: file.name, size: file.size }]);
-        toast.success("Media added (demo mode)"); return;
-      }
       const fd = new FormData();
-      fd.append("file", file); fd.append("fileName", file.name);
-      fd.append("publicKey", pk); fd.append("signature", signature);
-      fd.append("expire", String(expire)); fd.append("token", token);
-      fd.append("folder", "/social-copilot");
-      const up = await fetch(`${ep}/api/v1/files/upload`, { method: "POST", body: fd });
-      if (!up.ok) throw new Error("Upload failed");
-      const u = await up.json();
+      fd.append("file", file);
+
+      const r = await fetch("/api/media/upload", {
+        method: "POST",
+        body: fd
+      });
+
+      if (!r.ok) {
+        const errData = await r.json();
+        throw new Error(errData.error || "Upload failed");
+      }
+
+      const u = await r.json();
       const isVid = file.type.startsWith("video");
-      setMedia(p => [...p, { url: u.url, fileId: u.fileId, type: isVid ? "video" : "image", name: file.name, size: file.size }]);
-      await fetch("/api/media", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageKitFileId: u.fileId, url: u.url, type: isVid ? "video" : "image", size: file.size }) });
+      
+      setMedia(p => [...p, { 
+        url: u.url, 
+        fileId: u.fileId, 
+        type: u.type || (isVid ? "video" : "image"), 
+        name: u.name || file.name, 
+        size: file.size 
+      }]);
+      
       fetchLibrary();
-      toast.success("Uploaded! 🖼️");
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Upload failed"); }
-    finally { setUploading(false); }
+      toast.success("Uploaded & Saved! 🖼️");
+    } catch (e: unknown) {
+      console.error("Upload fail:", e);
+      // Fallback for missing backend/config
+      const objectUrl = URL.createObjectURL(file);
+      setMedia(p => [...p, { 
+        url: objectUrl, 
+        fileId: `fallback-${Date.now()}`, 
+        type: file.type.startsWith("video") ? "video" : "image", 
+        name: file.name, 
+        size: file.size 
+      }]);
+      toast.error(e instanceof Error ? e.message : "Upload failed - using proxy");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -545,7 +794,19 @@ export default function ComposePage() {
     setSubmitting(true);
     try {
       const scheduledAt = mode === "scheduled" && date ? `${date}T${time}:00` : null;
-      const r = await fetch("/api/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content, mediaUrls: media.map(m => m.url), platforms: selected, status: scheduledAt ? "scheduled" : "published", scheduledAt }) });
+      const r = await fetch("/api/posts", { 
+        method: "POST", 
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify({ 
+          content, 
+          mediaUrls: media.map(m => m.url), 
+          platforms: selected, 
+          status: scheduledAt ? "scheduled" : "published", 
+          scheduledAt,
+          isAiGenerated,
+          aiPrompt
+        }) 
+      });
       if (!r.ok) throw new Error((await r.json()).error || "Failed");
       localStorage.removeItem(DRAFT_KEY);
       toast.success(scheduledAt ? "Post scheduled! 📅" : "Post published! 🎉");
@@ -582,7 +843,7 @@ export default function ComposePage() {
           <p className="text-sm text-[#8792a2] mt-1">Compose and schedule across all your connected platforms.</p>
         </div>
         {/* AI Generate CTA */}
-        <button onClick={() => setShowAI(true)}
+        <button onClick={() => setShowAI("generate")}
           className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#3c4257] bg-white border border-[#e3e8ef] hover:bg-[#f6f9fc] hover:border-[#c9d0ef] transition-all shadow-[0_1px_2px_rgba(60,66,87,0.07)] active:scale-[0.98]">
           <Bot className="w-3.5 h-3.5 text-[#635bff]" />
           Write with AI
@@ -628,7 +889,7 @@ export default function ComposePage() {
                   <p className="text-sm font-semibold text-[#1a1f36]">Write your post</p>
                   <p className="text-xs text-[#8792a2] mt-0.5">Draft auto-saves every 30 seconds</p>
                 </div>
-                <button onClick={() => setShowAI(true)}
+                <button onClick={() => setShowAI("generate")}
                   className="sm:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#635bff] border border-[#635bff]/30 bg-[#635bff]/5 hover:bg-[#635bff]/10 transition-all">
                   <Bot className="w-3.5 h-3.5" /> AI
                 </button>
@@ -732,11 +993,22 @@ export default function ComposePage() {
                 <Card title={`Selected files (${media.length})`}>
                   <div className="flex flex-wrap gap-3">
                     {media.map((m, i) => (
-                      <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden border border-[#e3e8ef] group shadow-[0_1px_2px_rgba(60,66,87,0.06)]">
-                        {m.type === "video" ? <div className="w-full h-full bg-[#1a1f36] flex items-center justify-center"><Film className="w-5 h-5 text-white/50" /></div> : <img src={m.url} alt="" className="w-full h-full object-cover" />}
+                      <div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-[#e3e8ef] group shadow-[0_4px_12px_rgba(60,66,87,0.08)] transition-all hover:border-[#635bff]/30">
+                        {m.type === "video" ? (
+                          <div className="w-full h-full bg-[#1a1f36] flex items-center justify-center"><Film className="w-6 h-6 text-white/50" /></div>
+                        ) : (
+                          <>
+                            <img src={m.url} alt="" className="w-full h-full object-cover cursor-pointer" onClick={() => setEditingMediaIndex(i)} />
+                            <button onClick={() => setEditingMediaIndex(i)}
+                              className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+                              <Scissors className="w-5 h-5 text-white mb-1" />
+                              <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Edit Image</span>
+                            </button>
+                          </>
+                        )}
                         <button onClick={() => setMedia(p => p.filter((_, j) => j !== i))}
-                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm">
-                          <X className="w-3 h-3" />
+                          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-[#ff4d4d] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:scale-110 active:scale-95 z-10">
+                          <X className="w-3.5 h-3.5 font-bold" />
                         </button>
                       </div>
                     ))}
@@ -973,7 +1245,37 @@ export default function ComposePage() {
 
       {/* AI Dialog */}
       <AnimatePresence>
-        {showAI && <AIDialog onClose={() => setShowAI(false)} onApply={c => { setContent(c); toast.success("Content applied ✨"); }} platforms={selected} />}
+        {showAI && (
+          <AIDialog 
+            onClose={() => setShowAI(null)} 
+            onApply={(c, p) => { 
+              setContent(c); 
+              setIsAiGenerated(true);
+              setAiPrompt(p);
+              toast.success("AI Content applied ✨"); 
+            }} 
+            platforms={selected} 
+            mode={showAI}
+            initialContent={content}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Image Editor */}
+      <AnimatePresence>
+        {editingMediaIndex !== null && media[editingMediaIndex] && (
+          <ImageEditorDialog 
+            url={media[editingMediaIndex].url}
+            onClose={() => setEditingMediaIndex(null)}
+            onSave={(newUrl: string) => {
+              const updated = [...media];
+              updated[editingMediaIndex] = { ...updated[editingMediaIndex], url: newUrl };
+              setMedia(updated);
+              setEditingMediaIndex(null);
+              toast.success("Image updated ✨");
+            }}
+          />
+        )}
       </AnimatePresence>
     </div>
   );

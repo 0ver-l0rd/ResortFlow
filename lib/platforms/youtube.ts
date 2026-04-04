@@ -123,4 +123,20 @@ export class YouTubePlatform implements SocialPlatform {
       avatarUrl: channel.snippet.thumbnails?.default?.url,
     };
   }
+
+  async publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<{ postId: string; platform: string }> {
+    console.log(`[YouTube] Publishing video to channel: "${content.substring(0, 50)}..."`);
+    
+    if (mediaUrls.length === 0) {
+      throw new Error("YouTube requires at least one video to upload.");
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    return { postId: `yt-${Math.random().toString(36).substring(7)}`, platform: "youtube" };
+  }
+
+  async postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string> {
+    console.log(`[YouTube] Replying to comment ${commentId}: "${text}"`);
+    return `yt-reply-${Math.random().toString(36).substring(7)}`;
+  }
 }

@@ -104,4 +104,26 @@ export class TwitterPlatform implements SocialPlatform {
       avatarUrl: data.profile_image_url,
     };
   }
+
+  async publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<{ postId: string; platform: string }> {
+    console.log(`[Twitter] Publishing tweet: "${content.substring(0, 50)}..." with ${mediaUrls.length} media items.`);
+    
+    // Simulate Twitter API behavior
+    if (content.length > 280) {
+      throw new Error("Twitter content exceeds 280 characters.");
+    }
+
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    return {
+      postId: `tw-${Math.random().toString(36).substring(7)}`,
+      platform: "twitter"
+    };
+  }
+
+  async postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string> {
+    console.log(`[Twitter] Replying to ${commentId}: "${text}"`);
+    return `tw-reply-${Math.random().toString(36).substring(7)}`;
+  }
 }

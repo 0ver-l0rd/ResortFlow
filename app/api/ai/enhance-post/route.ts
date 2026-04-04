@@ -9,20 +9,40 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { content } = await request.json();
+    const { content, primaryPlatform } = await request.json();
 
     if (!content || typeof content !== "string") {
       return NextResponse.json({ error: "Invalid content format" }, { status: 400 });
     }
 
-    const prompt = `
-You are an elite, top-tier social media marketer and copywriter.
-Take the following draft post and drastically enhance it to drive maximum engagement, virality, and conversion.
-Apply expert copywriting psychology, format it with modern spacing, and seamlessly integrate proper, modern emojis, standard symbols, and well-researched, highly relevant hashtags.
-Ensure the grammatical structure is flawless and the tone deeply resonates with a modern audience.
-Do not wrap your response in quotes, just provide the expertly crafted, ready-to-publish text directly.
+    const platformRules: Record<string, string> = {
+      twitter: "- Rewrite for extreme brevity and 'X' punchiness.\n- Max 280 characters.\n- Use curiosity-driven hooks.\n- Max 2 hashtags at the end.",
+      instagram: "- Enhance for visual storytelling and community engagement.\n- Use frequent emojis to guide the eye.\n- Add a strategic block of 10-15 hashtags at the bottom.\n- Use a personable, lifestyle-friendly tone.",
+      linkedin: "- Refactor for a professional, thought-leadership status.\n- Maximize whitespace (line breaks between every 1-2 sentences).\n- Use 3-5 professional hashtags.\n- Ensure the tone is authoritative yet approachable.",
+      facebook: "- Enhance for community discussion and high shareability.\n- Use accessible, warm language.\n- Moderate emoji usage.",
+      tiktok: "- Refactor as a trending video description.\n- Focus on the 'HOOK' in the first 5 words.\n- Use TikTok-inspired slang and formatting.",
+      youtube: "- Refactor as a search-optimized video description.\n- Use relevant keywords and a professional yet high-energy CTA.",
+      general: "- Refine for standard social media excellence.\n- Improve flow, grammar, and engagement psychology."
+    };
 
-Draft:
+    const targetPlatform = primaryPlatform || "general";
+    const rule = platformRules[targetPlatform] || platformRules.general;
+
+    const prompt = `
+You are a master-level social media copywriter and growth hacker.
+Take the following draft and drastically enhance it specifically for the ${targetPlatform.toUpperCase()} platform.
+
+### PLATFORM SPECIFIC RULES:
+${rule}
+
+### GLOBAL ENHANCEMENT RULES:
+- Apply high-conversion copywriting frameworks (AIDA/PAS).
+- Use intentional line breaks and modern spacing for readability.
+- Integrate modern emojis and symbols naturally and strategically.
+- Ensure the tone matches the ${targetPlatform || "general"} audience.
+- Do NOT include any meta-text, quotes, or markdown wrappers. Return ONLY the enhanced post text.
+
+### DRAFT TO ENHANCE:
 ${content}
     `;
 

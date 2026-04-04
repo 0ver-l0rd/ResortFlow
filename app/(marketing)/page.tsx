@@ -6,8 +6,6 @@ import { Solution } from "@/components/marketing/solution";
 import { Features } from "@/components/marketing/features";
 import { Autopilot } from "@/components/marketing/autopilot";
 import { HowItWorks } from "@/components/marketing/how-it-works";
-import { Results } from "@/components/marketing/results";
-import { Pricing } from "@/components/marketing/pricing";
 import { FinalCTA } from "@/components/marketing/cta-final";
 import { Footer } from "@/components/marketing/footer";
 
@@ -22,10 +20,7 @@ export default function LandingPage() {
       <Features />
       <Autopilot />
       <HowItWorks />
-      <Results />
-      <Pricing />
       <FinalCTA />
-      <Footer />
     </div>
   );
 }

@@ -93,4 +93,15 @@ export class FacebookPlatform implements SocialPlatform {
       avatarUrl: data.picture?.data?.url,
     };
   }
+
+  async publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<{ postId: string; platform: string }> {
+    console.log(`[Facebook] Publishing to Page: "${content.substring(0, 50)}..."`);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return { postId: `fb-${Math.random().toString(36).substring(7)}`, platform: "facebook" };
+  }
+
+  async postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string> {
+    console.log(`[Facebook] Replying to post: "${text}"`);
+    return `fb-reply-${Math.random().toString(36).substring(7)}`;
+  }
 }

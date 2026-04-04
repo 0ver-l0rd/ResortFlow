@@ -54,7 +54,14 @@ const LiveActionStudio = () => {
        <div className="w-full h-full relative flex flex-col items-center">
           
           <AnimatePresence mode="wait">
-             {step === 0 && (
+            <motion.div 
+               key={step} 
+               className="w-full h-full flex flex-col items-center"
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               exit={{ opacity: 0 }}
+            >
+              {step === 0 && (
                <motion.div 
                  key="typing"
                  initial={{ opacity: 0, y: 20 }}
@@ -64,7 +71,7 @@ const LiveActionStudio = () => {
                >
                   <div className="flex items-center gap-2">
                      <Brain className="w-3 h-3 text-[#635bff]" />
-                     <span className="text-[8px] font-black text-[#635bff] uppercase tracking-widest">AI Prompting</span>
+                     <span className="text-[8px] font-black text-[#635bff] uppercase tracking-widest">AI Assistant</span>
                   </div>
                   <div className="p-3 bg-slate-50 border border-black/5 rounded-xl min-h-[50px] flex items-center">
                      <p className="text-[10px] font-bold text-[#1a1f36] leading-relaxed">
@@ -94,7 +101,7 @@ const LiveActionStudio = () => {
                         className="absolute inset-0 rounded-full border-2 border-[#635bff]/20" 
                      />
                   </div>
-                  <p className="text-[9px] font-black text-[#635bff] uppercase tracking-widest animate-pulse">Orchestrating Asset...</p>
+                  <p className="text-[9px] font-black text-[#635bff] uppercase tracking-widest animate-pulse">Making Your Post...</p>
                </motion.div>
              )}
 
@@ -145,12 +152,13 @@ const LiveActionStudio = () => {
                      <div className="pt-2 flex items-center gap-2">
                         <div className="px-2 py-0.5 rounded-full bg-[#efffee] border border-[#09825d]/10 flex items-center gap-1">
                            <CheckCircle2 className="w-2.5 h-2.5 text-[#09825d]" />
-                           <span className="text-[7px] font-black text-[#09825d] uppercase">AI OPTIMIZED</span>
+                           <span className="text-[7px] font-black text-[#09825d] uppercase">BETTER WITH AI</span>
                         </div>
                      </div>
                   </div>
                </motion.div>
              )}
+            </motion.div>
           </AnimatePresence>
 
        </div>
@@ -161,53 +169,53 @@ const LiveActionStudio = () => {
 const featureCards = [
   {
     id: "content-studio",
-    title: "AI Content Studio",
-    desc: "Generate resort-ready posts for Instagram, Facebook, and TikTok in seconds. Our AI understands your brand voice and visual aesthetic completely.",
+    title: "AI Photo & Post Maker",
+    desc: "Create perfect posts for social media in seconds. Our AI knows exactly how your hotel should look and sound.",
     icon: Sparkles,
     color: "text-[#635bff]",
     bg: "bg-[#635bff]/10",
     span: "md:col-span-2 md:row-span-2",
-    stat: "5x Production Speed"
+    stat: "5x Faster"
   },
   {
     id: "auto-reply",
-    title: "Omni-Channel Reply",
-    desc: "AI handles guest comments across all 10+ platforms, ensuring no inquiry goes unanswered.",
+    title: "Reply to Everyone",
+    desc: "Our AI replies to guests on every website, so you never miss a message.",
     icon: MessageSquare,
     color: "text-[#09825d]",
     bg: "bg-[#efffee]",
     span: "md:col-span-1 md:row-span-1",
-    stat: "98% Response Rate"
+    stat: "98% Reply Rate"
   },
   {
     id: "segmentation",
-    title: "Guest Segmentation",
-    desc: "Target luxury suite guests vs family travelers with AI precision for resort offers.",
+    title: "Know Your Guests",
+    desc: "Send the right deals to the right guests automatically.",
     icon: Users,
     color: "text-[#f5a623]",
     bg: "bg-[#fef3c7]",
     span: "md:col-span-1 md:row-span-1",
-    stat: "22% Conversion Lift"
+    stat: "22% More Deals"
   },
   {
     id: "analytics",
-    title: "Growth Intelligence",
-    desc: "Real-time RevPAR and engagement tracking in one unified view. Data-driven decisions for your resort property.",
+    title: "Track Your Growth",
+    desc: "See how much money you make and who is talking about you in one simple view.",
     icon: BarChart3,
     color: "text-[#1a1f36]",
     bg: "bg-slate-100",
     span: "md:col-span-2 md:row-span-1",
-    stat: "Real-time Metrics"
+    stat: "Live Numbers"
   },
   {
     id: "scheduler",
-    title: "Smart Scheduler",
-    desc: "Autonomous resort campaign planning and execution based on booking trends.",
+    title: "Easy Calendar",
+    desc: "Let the AI plan and post for you based on when guests are booking.",
     icon: Calendar,
     color: "text-[#635bff]",
     bg: "bg-[#635bff]/5",
     span: "md:col-span-1 md:row-span-1",
-    stat: "Hands-free Planning"
+    stat: "No Work Needed"
   }
 ];
 
@@ -217,11 +225,11 @@ export function Features() {
       <div className="container mx-auto px-6">
         <div className="max-w-3xl mx-auto text-center mb-16 px-4">
           <h2 className="text-[38px] md:text-[52px] font-black text-[#1a1f36] leading-[1.02] tracking-tight mb-5">
-            The Intelligence Hub <br />
-            <span className="text-[#635bff] italic">For Resort Growth.</span>
+            Everything You Need <br />
+            <span className="text-[#635bff] italic">For Your Hotel.</span>
           </h2>
           <p className="text-lg md:text-xl text-[#3c4257] font-medium leading-relaxed opacity-80 max-w-2xl mx-auto">
-            Every tool is designed to eliminate manual marketing and maximize your booking potential.
+            From making posts to tracking money, every tool is built to save you time and get you more bookings.
           </p>
         </div>
 

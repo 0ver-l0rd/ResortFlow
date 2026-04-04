@@ -113,4 +113,20 @@ export class TikTokPlatform implements SocialPlatform {
       avatarUrl: user.avatar_url,
     };
   }
+
+  async publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<{ postId: string; platform: string }> {
+    console.log(`[TikTok] Publishing video: "${content.substring(0, 50)}..."`);
+    
+    if (mediaUrls.length === 0) {
+      throw new Error("TikTok requires at least one video to publish.");
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    return { postId: `tt-${Math.random().toString(36).substring(7)}`, platform: "tiktok" };
+  }
+
+  async postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string> {
+    console.log(`[TikTok] Replying to comment: "${text}"`);
+    return `tt-reply-${Math.random().toString(36).substring(7)}`;
+  }
 }

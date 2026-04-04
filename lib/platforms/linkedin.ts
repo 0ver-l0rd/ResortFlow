@@ -103,4 +103,21 @@ export class LinkedInPlatform implements SocialPlatform {
       avatarUrl: data.picture,
     };
   }
+
+  async publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<{ postId: string; platform: string }> {
+    console.log(`[LinkedIn] Publishing post to profile: "${content.substring(0, 50)}..."`);
+    
+    // Simulate LinkedIn's UGC Post API
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    return {
+      postId: `li-${Math.random().toString(36).substring(7)}`,
+      platform: "linkedin"
+    };
+  }
+
+  async postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string> {
+    console.log(`[LinkedIn] Replying to post/comment ${commentId}: "${text}"`);
+    return `li-reply-${Math.random().toString(36).substring(7)}`;
+  }
 }

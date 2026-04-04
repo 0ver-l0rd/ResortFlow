@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 
 const problems = [
   {
-    title: "Low Booking Rates",
-    description: "Resorts often struggle with seasonal dips and unoptimized booking funnels that bleed potential revenue.",
+    title: "Not Enough Bookings",
+    description: "Hotels often lose money because it's hard to find new guests at the right time.",
     icon: TrendingDown,
     color: "text-[#ff3b30]",
     bg: "bg-[#ff3b30]/5",
@@ -16,8 +16,8 @@ const problems = [
     animation: "trend"
   },
   {
-    title: "Manual Marketing Grind",
-    description: "Teams spend hours manually posting, replying, and managing campaigns across fragmented platforms.",
+    title: "Too Much Busy Work",
+    description: "Staff spend all day posting to social media and replying to messages one by one.",
     icon: Clock,
     color: "text-[#f5a623]",
     bg: "bg-[#f5a623]/5",
@@ -25,8 +25,8 @@ const problems = [
     animation: "clock"
   },
   {
-    title: "Disconnected Tools",
-    description: "Marketing tools are complex, expensive, and rarely talk to each other, leading to poor guest targeting.",
+    title: "Software That Doesn't Talk",
+    description: "Most tools are hard to use and don't work together, making it hard to find the right guests.",
     icon: Layers,
     color: "text-[#635bff]",
     bg: "bg-[#635bff]/5",
@@ -37,14 +37,14 @@ const problems = [
 
 export function Problem() {
   return (
-    <section id="problem" className="pt-32 pb-12 md:pt-48 md:pb-20 bg-white relative overflow-hidden">
+    <section id="problem" className="py-16 md:py-24 bg-white relative overflow-hidden">
       {/* Stripe-Level Texture & Accents */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#e3e8ef] to-transparent" />
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.015] mix-blend-overlay pointer-events-none" />
       
       <div className="container mx-auto px-6 relative z-10">
         {/* Modern Centered Header */}
-        <div className="max-w-4xl mx-auto text-center mb-24 md:mb-32">
+        <div className="max-w-4xl mx-auto text-center mb-16 md:mb-20">
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -52,17 +52,17 @@ export function Problem() {
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#fff5f5] border border-[#feb2b2]/30 mb-8"
           >
             <AlertCircle className="w-3.5 h-3.5 text-[#ff3b30]" />
-            <span className="text-[10px] font-black text-[#ff3b30] uppercase tracking-[0.2em]">The Innovation Gap</span>
+            <span className="text-[10px] font-black text-[#ff3b30] uppercase tracking-[0.2em]">Common Problems</span>
           </motion.div>
           
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-[42px] md:text-[60px] font-black tracking-[-0.035em] text-[#1a1f36] leading-[1.05] mb-8"
+            className="text-[40px] md:text-[60px] font-black tracking-[-0.04em] text-[#1a1f36] leading-[1.05] mb-8"
           >
-            Resort marketing is <br />
-            <span className="text-[#635bff]">broken and disconnected.</span>
+            Hotel marketing is <br />
+            <span className="text-[#635bff]">hard and takes too much time.</span>
           </motion.h2>
           
           <motion.p 
@@ -70,9 +70,9 @@ export function Problem() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-lg md:text-[21px] text-[#424770] font-medium max-w-2xl mx-auto leading-relaxed opacity-90"
+            className="text-lg md:text-xl text-[#3c4257] font-semibold max-w-2xl mx-auto leading-relaxed opacity-90 tracking-tight"
           >
-            Traditional methods are too slow, too manual, and fail to capture the modern guest's attention.
+            Old ways of working are too slow and don't help you get new guests.
           </motion.p>
         </div>
 
@@ -140,7 +140,7 @@ export function Problem() {
                         className={cn("h-full", i === 0 ? "bg-[#ff3b30]" : i === 1 ? "bg-[#f5a623]" : "bg-[#635bff]")}
                     />
                  </div>
-                 <span className="text-[9px] font-black uppercase tracking-widest text-[#8792a2]">Inefficiency Level</span>
+                 <span className="text-[9px] font-black uppercase tracking-widest text-[#8792a2]">Work Level</span>
               </div>
             </motion.div>
           ))}

@@ -17,6 +17,7 @@ interface MonthViewProps {
   posts: any[];
   onDayClick: (date: Date) => void;
   onEventClick: (post: any) => void;
+  onEventDrop?: (postId: string, newDate: Date) => void;
 }
 
 const getPlatformColor = (platforms: string[]) => {
@@ -43,7 +44,7 @@ const getPlatformEmoji = (platforms: string[]) => {
   }
 };
 
-export function MonthView({ currentDate, posts, onDayClick, onEventClick }: MonthViewProps) {
+export function MonthView({ currentDate, posts, onDayClick, onEventClick, onEventDrop }: MonthViewProps) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart);
@@ -75,6 +76,14 @@ export function MonthView({ currentDate, posts, onDayClick, onEventClick }: Mont
             <div
               key={day.toString()}
               onClick={() => onDayClick(day)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const postId = e.dataTransfer.getData("postId");
+                if (postId && onEventDrop) {
+                  onEventDrop(postId, day);
+                }
+              }}
               className={`
                 min-h-[120px] p-2 border-b border-r border-gray-100 relative group cursor-pointer transition-colors
                 ${!isCurrentMonth ? "bg-gray-50/50" : "bg-white hover:bg-gray-50/30"}
@@ -103,12 +112,16 @@ export function MonthView({ currentDate, posts, onDayClick, onEventClick }: Mont
                 {dayPosts.map((post) => (
                   <div
                     key={post.id}
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("postId", post.id);
+                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                       onEventClick(post);
                     }}
                     className={`
-                      text-xs px-2 py-1.5 rounded-md border truncate shadow-sm transition-all
+                      text-xs px-2 py-1.5 rounded-md border truncate shadow-sm transition-all cursor-move hover:shadow-md
                       ${getPlatformColor(post.platforms)}
                     `}
                     title={post.content || "Media Post"}

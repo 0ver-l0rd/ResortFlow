@@ -14,7 +14,14 @@ export interface SocialPlatform {
   getAuthUrl(state: string): string;
   exchangeCode(code: string): Promise<{ tokens: OAuthTokens; profile: SocialUserProfile }>;
   refreshToken(refreshToken: string): Promise<OAuthTokens>;
-  // For later phases
-  // publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<string>;
-  // postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string>;
+  
+  /**
+   * Publishes a post to the platform.
+   */
+  publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<{ postId: string; platform: string }>;
+  
+  /**
+   * Posts a reply to a specific comment.
+   */
+  postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string>;
 }

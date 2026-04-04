@@ -18,6 +18,8 @@ interface CalendarHeaderProps {
   onPlatformChange: (val: string | null) => void;
   selectedStatus: string | null;
   onStatusChange: (val: string | null) => void;
+  mainView: "calendar" | "all-posts";
+  onMainViewChange: (view: "calendar" | "all-posts") => void;
 }
 
 export function CalendarHeader({
@@ -31,6 +33,8 @@ export function CalendarHeader({
   onPlatformChange,
   selectedStatus,
   onStatusChange,
+  mainView,
+  onMainViewChange,
 }: CalendarHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
@@ -52,8 +56,31 @@ export function CalendarHeader({
         </div>
       </div>
 
-      {/* Controls */}
       <div className="flex items-center gap-3">
+        {/* Main View Toggle */}
+        <div className="p-1 bg-gray-100/80 rounded-lg flex items-center border border-gray-200 mr-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onMainViewChange("calendar")}
+            className={`h-8 px-4 text-sm rounded-md transition-all ${
+              mainView === "calendar" ? "bg-white shadow-sm font-semibold text-gray-900" : "text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            Calendar
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onMainViewChange("all-posts")}
+            className={`h-8 px-4 text-sm rounded-md transition-all ${
+              mainView === "all-posts" ? "bg-white shadow-sm font-semibold text-gray-900" : "text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            All Posts
+          </Button>
+        </div>
+
         {/* Filters */}
         <Popover>
           <PopoverTrigger
@@ -106,38 +133,40 @@ export function CalendarHeader({
         </Popover>
 
         {/* View Mode */}
-        <div className="p-1 bg-gray-100/80 rounded-lg flex items-center border border-gray-200">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onViewModeChange("month")}
-            className={`h-7 px-3 text-sm rounded-md transition-all ${
-              viewMode === "month" ? "bg-white shadow-sm font-semibold text-gray-900" : "text-gray-500 hover:text-gray-900"
-            }`}
-          >
-            Month
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onViewModeChange("week")}
-            className={`h-7 px-3 text-sm rounded-md transition-all ${
-              viewMode === "week" ? "bg-white shadow-sm font-semibold text-gray-900" : "text-gray-500 hover:text-gray-900"
-            }`}
-          >
-            Week
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onViewModeChange("day")}
-            className={`h-7 px-3 text-sm rounded-md transition-all ${
-              viewMode === "day" ? "bg-white shadow-sm font-semibold text-gray-900" : "text-gray-500 hover:text-gray-900"
-            }`}
-          >
-            Day
-          </Button>
-        </div>
+        {mainView === "calendar" && (
+          <div className="p-1 bg-gray-100/80 rounded-lg flex items-center border border-gray-200">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onViewModeChange("month")}
+              className={`h-7 px-3 text-sm rounded-md transition-all ${
+                viewMode === "month" ? "bg-white shadow-sm font-semibold text-gray-900" : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              Month
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onViewModeChange("week")}
+              className={`h-7 px-3 text-sm rounded-md transition-all ${
+                viewMode === "week" ? "bg-white shadow-sm font-semibold text-gray-900" : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              Week
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onViewModeChange("day")}
+              className={`h-7 px-3 text-sm rounded-md transition-all ${
+                viewMode === "day" ? "bg-white shadow-sm font-semibold text-gray-900" : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              Day
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

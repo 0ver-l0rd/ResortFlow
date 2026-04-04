@@ -6,32 +6,31 @@ import { motion } from "framer-motion";
 
 export function Footer() {
   return (
-    <footer className="py-32 bg-background border-t border-slate-100 dark:border-white/5 relative overflow-hidden">
-      <div className="container mx-auto px-6 relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
+    <footer className="py-16 md:py-24 bg-white border-t border-[#e3e8ef] relative overflow-hidden">
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 mb-16">
           {/* Logo Section */}
           <div className="space-y-8">
-            <Link href="/" className="flex items-center gap-2 group w-fit">
-              <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center transition-transform group-hover:scale-110 shadow-lg">
-                <span className="text-white dark:text-slate-900 font-black text-xl leading-none">S</span>
+            <Link href="/" className="flex items-center gap-2.5 group w-fit">
+              <div className="w-9 h-9 rounded-xl bg-[#635bff] flex items-center justify-center transition-transform group-hover:scale-110 shadow-lg shadow-[#635bff]/20">
+                <span className="text-white font-black text-xl leading-none">✦</span>
               </div>
-              <span className="font-black text-2xl tracking-tighter text-slate-900 dark:text-white">
+              <span className="font-black text-xl tracking-tight text-[#1a1f36]">
                 SocialCopilot
               </span>
             </Link>
-            <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-              Empowering creators and brands with AI-powered tools. 
-              Schedule, track, and engage with total confidence.
+            <p className="text-[15px] font-semibold text-[#8792a2] leading-relaxed max-w-xs">
+              The AI assistant for modern hotels. Grow your social media without the hard work.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               {[
                 { icon: FaTwitter, href: "#" },
                 { icon: FaLinkedin, href: "#" },
                 { icon: FaInstagram, href: "#" },
                 { icon: FaGithub, href: "#" }
               ].map((social, i) => (
-                <Link key={i} href={social.href} className="w-12 h-12 rounded-2xl bg-white dark:bg-card border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white hover:border-slate-400 dark:hover:border-white/30 transition-all duration-300">
-                  <social.icon className="w-5 h-5" />
+                <Link key={i} href={social.href} className="w-10 h-10 rounded-xl bg-slate-50 border border-[#e3e8ef] flex items-center justify-center text-[#8792a2] hover:text-[#635bff] hover:border-[#635bff]/30 transition-all duration-300">
+                  <social.icon className="w-4 h-4" />
                 </Link>
               ))}
             </div>
@@ -39,11 +38,11 @@ export function Footer() {
  
           {/* Product Links */}
           <div>
-            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-slate-900 dark:text-white mb-10">Product</h5>
-            <ul className="space-y-5">
-              {["Features", "Pricing", "Testimonials", "API Docs", "Changelog"].map((link) => (
+            <h5 className="font-black text-[10px] uppercase tracking-[0.25em] text-[#1a1f36] mb-8">What We Do</h5>
+            <ul className="space-y-4">
+              {["Features", "Steps", "Autopilot", "Intelligence", "Security"].map((link) => (
                 <li key={link}>
-                  <Link href={`#${link.toLowerCase()}`} className="text-base font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors duration-300">
+                  <Link href={`#${link.toLowerCase().replace(" ", "-")}`} className="text-[14px] font-bold text-[#8792a2] hover:text-[#1a1f36] transition-colors duration-300">
                     {link}
                   </Link>
                 </li>
@@ -53,11 +52,11 @@ export function Footer() {
  
           {/* Resources */}
           <div>
-            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-slate-900 dark:text-white mb-10">Resources</h5>
-            <ul className="space-y-5">
-              {["Blog", "Guides", "Support Center", "Community", "Brand Assets"].map((link) => (
+            <h5 className="font-black text-[10px] uppercase tracking-[0.25em] text-[#1a1f36] mb-8">More Info</h5>
+            <ul className="space-y-4">
+              {["Case Studies", "Hotel Guides", "Help Center", "System Status", "Brand Assets"].map((link) => (
                 <li key={link}>
-                  <Link href="#" className="text-base font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors duration-300">
+                  <Link href="#" className="text-[14px] font-bold text-[#8792a2] hover:text-[#1a1f36] transition-colors duration-300">
                     {link}
                   </Link>
                 </li>
@@ -65,34 +64,31 @@ export function Footer() {
             </ul>
           </div>
  
-          {/* Newsletter */}
+          {/* Contact / Newsletter */}
           <div className="space-y-8">
-            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-slate-900 dark:text-white mb-10">Stay Updated</h5>
-            <p className="text-base font-medium text-slate-600 dark:text-slate-400 leading-relaxed">
-              Subscribe for the latest social media tips and feature updates.
-            </p>
+            <h5 className="font-black text-[10px] uppercase tracking-[0.25em] text-[#1a1f36] mb-8">Stay Updated</h5>
             <div className="flex flex-col gap-3">
               <input 
                 type="email" 
-                placeholder="you@email.com" 
-                className="flex-1 bg-white dark:bg-card border border-slate-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:border-slate-400 dark:focus:border-white/30 placeholder:text-slate-400 dark:placeholder:text-slate-600 transition-all shadow-sm"
+                placeholder="hotel@email.com" 
+                className="w-full bg-[#f8fafc] border border-[#e3e8ef] rounded-xl px-5 py-3 text-sm font-bold focus:outline-none focus:border-[#635bff]/30 placeholder:text-[#8792a2] transition-all"
               />
-              <button className="bg-slate-900 dark:bg-white hover:opacity-90 text-white dark:text-slate-900 font-black py-4 px-8 rounded-2xl text-sm transition-all shadow-xl active:scale-95">
-                Join our newsletter
+              <button className="w-full bg-[#1a1f36] hover:bg-[#1a1f36]/90 text-white font-black py-3 px-6 rounded-xl text-[11px] uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-[#1a1f36]/10">
+                Join Now
               </button>
             </div>
           </div>
         </div>
  
-        <div className="pt-12 border-t border-slate-100 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
-          <div className="flex flex-col md:flex-row items-center gap-4 text-sm font-bold text-slate-400 dark:text-slate-600">
-            <span>© 2025 SocialCopilot</span>
-            <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800" />
-            <span>Built for modern creators</span>
+        <div className="pt-10 border-t border-[#e3e8ef] flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex items-center gap-4 text-[13px] font-bold text-[#8792a2]">
+            <span>© 2026 SocialCopilot</span>
+            <span className="hidden md:block w-1 h-1 rounded-full bg-slate-200" />
+            <span>Smart Hotel Assistant</span>
           </div>
-          <div className="flex gap-10">
-            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((link) => (
-              <Link key={link} href="#" className="text-sm font-bold text-slate-400 dark:text-slate-600 hover:text-slate-900 dark:hover:text-white transition-colors duration-300">
+          <div className="flex gap-8">
+            {["Privacy", "Terms", "Cookie Policy"].map((link) => (
+              <Link key={link} href="#" className="text-[13px] font-bold text-[#8792a2] hover:text-[#1a1f36] transition-colors duration-300">
                 {link}
               </Link>
             ))}

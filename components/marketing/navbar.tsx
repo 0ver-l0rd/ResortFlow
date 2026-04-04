@@ -28,7 +28,7 @@ export function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         isScrolled
-          ? "py-3 bg-white/80 backdrop-blur-xl border-b border-black/5 shadow-[0_2px_20px_rgba(0,0,0,0.02)]"
+          ? "py-3 bg-white/70 backdrop-blur-2xl border-b border-[#e3e8ef]/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)]"
           : "py-6 bg-transparent"
       )}
     >
@@ -38,21 +38,21 @@ export function Navbar() {
           <div className="w-9 h-9 rounded-xl bg-[#635bff] flex items-center justify-center shadow-lg shadow-[#635bff]/20 group-hover:scale-110 transition-all duration-500">
             <span className="text-white font-black text-xl">✦</span>
           </div>
-          <span className="font-bold text-xl tracking-tight text-[#1a1f36] transition-colors">
+          <span className="font-black text-xl tracking-tight text-[#1a1f36] transition-colors">
             SocialCopilot
           </span>
         </Link>
 
-        {/* Centered Navigation */}
-        <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 bg-white/40 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/50 shadow-sm">
-          <Link href="#features" className="px-5 py-2 text-[13px] font-bold text-[#3c4257] hover:text-[#635bff] transition-colors">
+        {/* Centered Navigation (Floating Island) */}
+        <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 bg-white/60 backdrop-blur-xl px-1.5 py-1 rounded-full border border-white/80 shadow-premium-subtle">
+          <Link href="#features" className="px-5 py-2 text-[13px] font-black text-[#3c4257] hover:text-[#635bff] transition-colors uppercase tracking-widest">
             Features
           </Link>
-          <Link href="#how-it-works" className="px-5 py-2 text-[13px] font-bold text-[#3c4257] hover:text-[#635bff] transition-colors">
-            Our Strategy
+          <Link href="#workflow" className="px-5 py-2 text-[13px] font-black text-[#3c4257] hover:text-[#635bff] transition-colors uppercase tracking-widest">
+            Workflow
           </Link>
-          <Link href="/blog" className="px-5 py-2 text-[13px] font-bold text-[#3c4257] hover:text-[#635bff] transition-colors">
-            Updates
+          <Link href="#autopilot" className="px-5 py-2 text-[13px] font-black text-[#3c4257] hover:text-[#635bff] transition-colors uppercase tracking-widest">
+             Autopilot
           </Link>
         </div>
 
@@ -61,33 +61,17 @@ export function Navbar() {
           {!isLoaded ? (
             <div className="w-20 h-8 animate-pulse bg-muted rounded-full" />
           ) : !isSignedIn ? (
-            <>
-              <SignInButton mode="modal">
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex font-bold text-[13px] text-[#3c4257] hover:text-[#1a1f36] hover:bg-transparent">
-                  Sign In
-                </Button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <Button size="sm" className="bg-[#635bff] hover:bg-[#4f46e5] text-white font-bold px-6 h-10 rounded-full transition-all active:scale-95 shadow-md shadow-[#635bff]/10 border-none">
-                  Get Started
-                </Button>
-              </SignUpButton>
-            </>
+            <SignUpButton mode="modal">
+              <Button size="sm" className="bg-[#635bff] hover:bg-[#4f46e5] text-white font-black px-6 h-10 rounded-full transition-all active:scale-95 shadow-md shadow-[#635bff]/10 border-none text-[11px] uppercase tracking-widest">
+                Start Here
+              </Button>
+            </SignUpButton>
           ) : (
-            <>
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm" className="font-bold text-[13px] text-[#3c4257] hover:text-[#1a1f36] hover:bg-muted/50 rounded-full px-5">
-                  Dashboard
-                </Button>
-              </Link>
-              <UserButton
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: "w-9 h-9 border border-black/5 shadow-sm hover:scale-105 transition-transform",
-                  },
-                }}
-              />
-            </>
+            <Link href="/dashboard">
+              <Button size="sm" className="bg-[#635bff] hover:bg-[#4f46e5] text-white font-black px-6 h-10 rounded-full transition-all active:scale-95 shadow-md shadow-[#635bff]/10 border-none text-[11px] uppercase tracking-widest">
+                Dashboard
+              </Button>
+            </Link>
           )}
         </div>
       </div>

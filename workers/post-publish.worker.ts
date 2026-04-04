@@ -5,7 +5,7 @@ import { posts, postPlatformResults } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
 const redisUrl = process.env.REDIS_URL;
-const connection = redisUrl ? new Redis(redisUrl, { maxRetriesPerRequest: null }) : new Redis({ maxRetriesPerRequest: null });
+const connection = redisUrl ? new Redis(redisUrl, { maxRetriesPerRequest: null, lazyConnect: true }) : new Redis({ maxRetriesPerRequest: null, lazyConnect: true });
 
 export const postPublishWorker = new Worker('post-publish', async (job: Job) => {
   const { postId } = job.data;

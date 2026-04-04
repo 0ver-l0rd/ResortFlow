@@ -831,42 +831,49 @@ const AutoReplyView = () => {
 
                            {/* AI Reply */}
                            <div className="relative min-h-[60px]">
-                              <AnimatePresence mode="wait">
-                                 {replyStep === 'thinking' && (
-                                    <motion.div 
-                                       initial={{ opacity: 0, scale: 0.95 }} 
-                                       animate={{ opacity: 1, scale: 1 }} 
-                                       exit={{ opacity: 0, scale: 0.95 }}
-                                       className="flex items-center gap-3 py-2"
-                                    >
-                                       <div className="w-8 h-8 rounded-full bg-[#635bff]/10 flex items-center justify-center">
-                                          <Bot className="w-4 h-4 text-[#635bff] animate-pulse" />
-                                       </div>
-                                       <span className="text-[10px] font-black text-[#635bff] uppercase tracking-widest">AI Agent is thinking...</span>
-                                    </motion.div>
-                                 )}
-
-                                 {replyStep === 'reply' && (
-                                    <motion.div 
-                                       initial={{ opacity: 0, y: 10 }}
-                                       animate={{ opacity: 1, y: 0 }}
-                                       className="space-y-1"
-                                    >
-                                       <div className="flex items-center gap-2">
-                                          <div className="w-5 h-5 rounded-full bg-[#635bff] flex items-center justify-center text-white">
-                                             <Bot className="w-3 h-3" />
+                               <AnimatePresence mode="wait">
+                                  <motion.div 
+                                     key={replyStep} 
+                                     initial={{ opacity: 0 }} 
+                                     animate={{ opacity: 1 }} 
+                                     exit={{ opacity: 0 }}
+                                  >
+                                    {replyStep === 'thinking' && (
+                                       <motion.div 
+                                          initial={{ opacity: 0, scale: 0.95 }} 
+                                          animate={{ opacity: 1, scale: 1 }} 
+                                          exit={{ opacity: 0, scale: 0.95 }}
+                                          className="flex items-center gap-3 py-2"
+                                       >
+                                          <div className="w-8 h-8 rounded-full bg-[#635bff]/10 flex items-center justify-center">
+                                             <Bot className="w-4 h-4 text-[#635bff] animate-pulse" />
                                           </div>
-                                          <span className="text-[10px] font-black text-[#635bff] uppercase tracking-widest">Resort Assistant</span>
-                                          <div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
-                                       </div>
-                                       <div className="p-4 bg-[#635bff] text-white border border-[#635bff]/20 rounded-2xl rounded-tl-none shadow-lg shadow-[#635bff]/20 max-w-[90%]">
-                                          <p className="text-[13px] font-bold leading-relaxed italic">
-                                             "{current.reply}"
-                                          </p>
-                                       </div>
-                                    </motion.div>
-                                 )}
-                              </AnimatePresence>
+                                          <span className="text-[10px] font-black text-[#635bff] uppercase tracking-widest">AI Agent is thinking...</span>
+                                       </motion.div>
+                                    )}
+
+                                    {replyStep === 'reply' && (
+                                       <motion.div 
+                                          initial={{ opacity: 0, y: 10 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          className="space-y-1"
+                                       >
+                                          <div className="flex items-center gap-2">
+                                             <div className="w-5 h-5 rounded-full bg-[#635bff] flex items-center justify-center text-white">
+                                                <Bot className="w-3 h-3" />
+                                             </div>
+                                             <span className="text-[10px] font-black text-[#635bff] uppercase tracking-widest">Resort Assistant</span>
+                                             <div className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
+                                          </div>
+                                          <div className="p-4 bg-[#635bff] text-white border border-[#635bff]/20 rounded-2xl rounded-tl-none shadow-lg shadow-[#635bff]/20 max-w-[90%]">
+                                             <p className="text-[13px] font-bold leading-relaxed italic">
+                                                "{current.reply}"
+                                             </p>
+                                          </div>
+                                       </motion.div>
+                                    )}
+                                  </motion.div>
+                               </AnimatePresence>
                            </div>
                         </div>
                     </motion.div>

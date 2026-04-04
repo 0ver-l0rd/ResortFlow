@@ -7,7 +7,7 @@ import { getPlatform } from '@/lib/platforms/factory';
 import { decrypt, encrypt } from '@/lib/encryption';
 
 const redisUrl = process.env.REDIS_URL;
-const connection = redisUrl ? new Redis(redisUrl, { maxRetriesPerRequest: null }) : new Redis({ maxRetriesPerRequest: null });
+const connection = redisUrl ? new Redis(redisUrl, { maxRetriesPerRequest: null, lazyConnect: true }) : new Redis({ maxRetriesPerRequest: null, lazyConnect: true });
 
 export const tokenRefreshWorker = new Worker('token-refresh', async (job) => {
   console.log('Starting token-refresh job');

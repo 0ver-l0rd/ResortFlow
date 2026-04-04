@@ -32,28 +32,28 @@ export function Hero() {
       case "Overview":
       case "Analytics":
         return [
-          { id: 1, label: "RevPAR Velocity", value: "+24.8%", icon: TrendingUp, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "-top-10 -right-12" },
-          { id: 2, label: "Direct Share", value: "84%", icon: Target, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-bottom-12 -left-12" }
+          { id: 1, label: "Room Income", value: "+24.8%", icon: TrendingUp, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "-top-10 -right-12" },
+          { id: 2, label: "Direct Bookings", value: "84%", icon: Target, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-bottom-12 -left-12" }
         ];
       case "Compose":
         return [
-          { id: 1, label: "Drafting Score", value: "98.4%", icon: PenSquare, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-top-16 -left-14" },
-          { id: 2, label: "Media Match", value: "Perfect", icon: Sparkles, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "-bottom-10 -right-14" }
+          { id: 1, label: "Post Quality", value: "98.4%", icon: PenSquare, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-top-16 -left-14" },
+          { id: 2, label: "Correct Photo", value: "Perfect", icon: Sparkles, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "-bottom-10 -right-14" }
         ];
       case "Calendar":
         return [
-          { id: 1, label: "Campaign Load", value: "Balanced", icon: Calendar, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "-top-12 -right-16" },
-          { id: 2, label: "Optimized Slots", value: "14/14", icon: Sparkles, color: "text-[#635bff]", bg: "bg-[#efffee]", position: "-bottom-12 -left-16" }
+          { id: 1, label: "Social Media Posts", value: "Balanced", icon: Calendar, color: "text-[#f5a623]", bg: "bg-[#fff9f0]", position: "-top-12 -right-16" },
+          { id: 2, label: "Best Times", value: "14/14", icon: Sparkles, color: "text-[#635bff]", bg: "bg-[#efffee]", position: "-bottom-12 -left-16" }
         ];
       case "Connections":
         return [
-          { id: 1, label: "API Integrity", value: "100%", icon: Link2, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "-top-8 -left-20" },
-          { id: 2, label: "Platform Sync", value: "Active", icon: Zap, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-bottom-14 -right-20" }
+          { id: 1, label: "System Health", value: "100%", icon: Link2, color: "text-[#09825d]", bg: "bg-[#efffee]", position: "-top-8 -left-20" },
+          { id: 2, label: "Apps Connected", value: "Active", icon: Zap, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-bottom-14 -right-20" }
         ];
       case "Replies":
         return [
-          { id: 1, label: "Sentiment Lift", value: "High", icon: MessageSquare, color: "text-[#09825d]", bg: "bg-[#ecfdf5]", position: "-top-14 -right-20" },
-          { id: 2, label: "Auto-Response", value: "Active", icon: Brain, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-bottom-12 -left-20" }
+          { id: 1, label: "Guest Happiness", value: "High", icon: MessageSquare, color: "text-[#09825d]", bg: "bg-[#ecfdf5]", position: "-top-14 -right-20" },
+          { id: 2, label: "Auto-Reply", value: "Active", icon: Brain, color: "text-[#635bff]", bg: "bg-[#635bff]/5", position: "-bottom-12 -left-20" }
         ];
       default:
         return [
@@ -84,16 +84,16 @@ export function Hero() {
             className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#f6f9fc] border border-[#e3e8ef] mb-10 group cursor-default shadow-sm transition-all hover:bg-white"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#635bff]" />
-            <span className="text-[11px] font-black text-[#1a1f36] uppercase tracking-[0.25em]">Resort AI Marketing Agent v2.0</span>
+            <span className="text-[11px] font-black text-[#1a1f36] uppercase tracking-[0.25em]">Your Hotel's AI Assistant</span>
             <div className="w-[1px] h-3 bg-[#e3e8ef] mx-1" />
-            <span className="text-[10px] font-bold text-[#635bff] uppercase tracking-widest animate-pulse">Live Demo</span>
+            <span className="text-[10px] font-bold text-[#635bff] uppercase tracking-widest animate-pulse">Try Out</span>
           </motion.div>
           
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[44px] md:text-[68px] xl:text-[84px] font-black tracking-[-0.035em] text-[#1a1f36] leading-[1.02] mb-10"
+            className="text-[44px] md:text-[68px] xl:text-[84px] font-black tracking-[-0.04em] text-[#1a1f36] leading-[1.02] mb-10"
           >
             Your AI <span className="text-[#635bff]">Marketing Team</span> <br />
             for Resorts.
@@ -103,9 +103,9 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-xl md:text-2xl text-[#424770] font-medium mb-14 max-w-3xl mx-auto leading-relaxed opacity-90"
+            className="text-xl md:text-2xl text-[#3c4257] font-semibold mb-14 max-w-2xl mx-auto leading-relaxed opacity-90 tracking-tight"
           >
-            Automate campaigns, personalize guest experiences, and increase bookings — all with one AI agent.
+            Handle your social media, help your guests, and get more bookings—all in one place.
           </motion.p>
           
           <motion.div 
@@ -142,7 +142,7 @@ export function Hero() {
              </div>
            </motion.div>
            {/* Floating State-Synced Intelligence Cards */}
-           <AnimatePresence mode="wait">
+           <AnimatePresence mode="popLayout">
             {floatingCards.map((card) => (
               <motion.div 
                 key={`${activeTab}-${card.id}`}

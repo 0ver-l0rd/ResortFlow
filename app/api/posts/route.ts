@@ -3,20 +3,22 @@ import { db } from "@/db";
 import { posts, mediaAssets, users } from "@/db/schema";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { eq, desc, and, gte, lte } from "drizzle-orm";
-// import { publishQueue } from "@/lib/queue";
+import { inngest } from "@/lib/inngest/client";
 
 export async function GET(request: Request) {
   try {
-    const clerkUser = await currentUser();
-    if (!clerkUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const userId = clerkUser.id;
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     let dbUser = await db.query.users.findFirst({
       where: (u, { eq }) => eq(u.clerkId, userId),
     });
     
-    // Auto-sync user if they don't exist yet but are authenticated in Clerk
+    // Auto-sync user if they don't exist yet
     if (!dbUser) {
+      const clerkUser = await currentUser();
+      if (!clerkUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
       const email = clerkUser.emailAddresses[0]?.emailAddress || "no-email@example.com";
       const [newUser] = await db.insert(users).values({
         clerkId: userId,
@@ -26,7 +28,7 @@ export async function GET(request: Request) {
     }
 
     if (!dbUser) {
-      return NextResponse.json({ error: "Failed to create user" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to load user" }, { status: 500 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -67,11 +69,8 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const clerkUser = await currentUser();
-    if (!clerkUser) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const userId = clerkUser.id;
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     let dbUser = await db.query.users.findFirst({
       where: (u, { eq }) => eq(u.clerkId, userId),
@@ -79,6 +78,9 @@ export async function POST(request: Request) {
 
     // Auto-sync user if they don't exist yet but are authenticated in Clerk
     if (!dbUser) {
+      const clerkUser = await currentUser();
+      if (!clerkUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      
       const email = clerkUser.emailAddresses[0]?.emailAddress || "no-email@example.com";
       const [newUser] = await db.insert(users).values({
         clerkId: userId,
@@ -91,7 +93,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found in database" }, { status: 404 });
     }
 
-    const { content, mediaUrls, platforms, scheduledAt, status } = await request.json();
+    const { content, mediaUrls, platforms, scheduledAt, status, isAiGenerated, aiPrompt } = await request.json();
 
     if (!content && (!mediaUrls || mediaUrls.length === 0)) {
       return NextResponse.json({ error: "Content or media is required" }, { status: 400 });
@@ -109,13 +111,20 @@ export async function POST(request: Request) {
       platforms: platforms,
       status: status || "draft",
       scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+      isAiGenerated: !!isAiGenerated,
+      aiPrompt: aiPrompt || null,
     }).returning();
 
-    // If it's scheduled to publish, add to BullMQ queue
-    // if (status === "scheduled" && scheduledAt) {
-    //   const delay = new Date(scheduledAt).getTime() - Date.now();
-    //   await publishQueue.add("publish-post", { postId: newPost.id }, { delay });
-    // }
+    // If it's scheduled to publish, trigger Inngest
+    if (status === "scheduled" || status === "published") {
+      await inngest.send({
+        name: "post/created",
+        data: {
+          postId: newPost.id,
+          scheduledAt: newPost.scheduledAt,
+        }
+      });
+    }
 
     return NextResponse.json({ post: newPost });
   } catch (error) {

@@ -20,34 +20,34 @@ import { cn } from "@/lib/utils";
 
 const features = [
   {
-    title: "PMS Real-time Sync",
-    desc: "Direct integration with your Property Management System for instant occupancy updates.",
+    title: "Connect to Your Hotel System",
+    desc: "We connect directly to your hotel software so you always know which rooms are free.",
     icon: Globe,
-    roi: "+22% RevPAR",
+    roi: "+22% Income",
     color: "text-[#635bff]",
     bg: "bg-[#635bff]/10",
   },
   {
-    title: "Guest Sentiment AI",
-    desc: "Autonomous monitoring of mentions and reviews to maintain your resort's elite reputation.",
+    title: "Happy Guest Tracker",
+    desc: "Our AI watches what guests say about you online to make sure your hotel looks great.",
     icon: MessageSquare,
     roi: "98% Positive",
     color: "text-[#09825d]",
     bg: "bg-[#efffee]",
   },
   {
-    title: "RevPAR Shield",
-    desc: "Automatically launches recovery campaigns when booking velocity dips below targets.",
+    title: "Profit Guard",
+    desc: "We automatically start new ads if you have too many empty rooms.",
     icon: ShieldCheck,
-    roi: "-15% Vacancy",
+    roi: "-15% Empty Rooms",
     color: "text-[#f5a623]",
     bg: "bg-[#fef3c7]",
   },
   {
-    title: "Predictive Analytics",
-    desc: "Forecasts future demand and adjusts marketing spend across 9+ global platforms.",
+    title: "Smart Future Planning",
+    desc: "We guess how many guests are coming and put your ads on the best websites.",
     icon: BarChart3,
-    roi: "5.2x ROAS",
+    roi: "5x Ad Return",
     color: "text-[#e1306c]",
     bg: "bg-[#fdf0f5]",
   }
@@ -64,7 +64,7 @@ export function Solution() {
   }, []);
 
   return (
-    <section id="solution" className="pt-12 pb-32 md:pt-20 md:pb-48 bg-white relative overflow-hidden">
+    <section id="solution" className="py-16 md:py-24 bg-white relative overflow-hidden">
       {/* Stripe-Level Background Accents */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#e3e8ef] to-transparent" />
       <div className="absolute top-[10%] left-[-5%] w-[800px] h-[800px] bg-[#635bff05] blur-[180px] -z-10 rounded-full" />
@@ -72,7 +72,7 @@ export function Solution() {
       <div className="container mx-auto px-6">
         <div className="max-w-7xl mx-auto">
           {/* Modern 2-Column Header Alignment (Stripe Style) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 mb-32 items-end">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 mb-16 md:mb-20 items-end">
             <div className="lg:col-span-7">
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
@@ -81,27 +81,28 @@ export function Solution() {
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#f6f9fc] border border-[#e3e8ef] mb-8"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#635bff]" />
-                <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.2em]">Efficiency Protocol</span>
+                <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.2em]">Save Time & Work</span>
               </motion.div>
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-[44px] md:text-[62px] font-black text-[#1a1f36] leading-[1.02] tracking-[-0.035em]"
+                className="text-[40px] md:text-[62px] font-black text-[#1a1f36] leading-[1.02] tracking-[-0.04em]"
               >
-                One Agent for Your <br />
-                <span className="text-[#635bff]">Entire Resort Growth.</span>
+                One Simple Tool for Your <br />
+                <span className="text-[#635bff]">Whole Hotel.</span>
               </motion.h2>
             </div>
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-1" /> {/* Spacer */}
+            <div className="lg:col-span-4">
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-[19px] text-[#424770] font-medium leading-relaxed opacity-90 max-w-lg"
+                className="text-lg md:text-xl text-[#3c4257] font-semibold leading-relaxed opacity-90 max-w-lg tracking-tight"
               >
-                Replace fragmented legacy stacks with a single autonomous controller that synchronizes revenue management, marketing, and guest engagement in real-time.
+                Replace all your old tools with one smart assistant that handles your bookings, guests, and social media at once.
               </motion.p>
             </div>
           </div>
@@ -130,7 +131,7 @@ export function Solution() {
                          {feat.desc}
                       </p>
                       <div className="mt-8 flex items-center gap-1.5 text-[11px] font-black text-[#635bff] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-y-1 group-hover:translate-y-0">
-                         Integration Protocol <ArrowRight className="w-3.5 h-3.5" />
+                         See How it Works <ArrowRight className="w-3.5 h-3.5" />
                       </div>
                    </motion.div>
                  ))}
@@ -157,7 +158,7 @@ export function Solution() {
                                     <div className="w-8 h-8 rounded-lg bg-[#635bff]/10 flex items-center justify-center">
                                         <TrendingUp className="w-4.5 h-4.5 text-[#635bff]" />
                                     </div>
-                                    <span className="text-[11px] font-black text-[#1a1f36] uppercase tracking-[0.2em]">RevPAR Engine v4.0</span>
+                                    <span className="text-[11px] font-black text-[#1a1f36] uppercase tracking-[0.2em]">Income Manager</span>
                                 </div>
                                 <div className="flex gap-2.5">
                                     <div className="h-2 w-12 bg-[#f0f3f7] rounded-full" />
@@ -178,8 +179,8 @@ export function Solution() {
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-1">
-                                            <p className="text-[10px] font-black text-[#8792a2] uppercase tracking-[0.2em] leading-none">Yield Velocity</p>
-                                            <h3 className="text-2xl font-black text-[#1a1f36] tracking-tighter">Accelerating ADR</h3>
+                                            <p className="text-[10px] font-black text-[#8792a2] uppercase tracking-[0.2em] leading-none">Price per Night</p>
+                                            <h3 className="text-2xl font-black text-[#1a1f36] tracking-tighter">Higher Room Prices</h3>
                                         </div>
                                         <motion.div 
                                             animate={{ scale: [1, 1.05, 1] }} 
@@ -234,7 +235,7 @@ export function Solution() {
                                             <Zap className="absolute inset-0 m-auto w-3 h-3 text-[#635bff]" />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.2em] leading-none mb-1">Autonomous Logic</span>
+                                            <span className="text-[10px] font-black text-[#1a1f36] uppercase tracking-[0.2em] leading-none mb-1">Smart Assistant</span>
                                             <AnimatePresence mode="wait">
                                                 <motion.span 
                                                     key={activeMetric}
@@ -243,7 +244,7 @@ export function Solution() {
                                                     exit={{ opacity: 0, y: -5 }}
                                                     className="text-[11px] text-[#8792a2] font-semibold"
                                                 >
-                                                    {activeMetric % 2 === 0 ? "Executing ADR acceleration protocol..." : "Optimizing booking velocity corridors..."}
+                                                    {activeMetric % 2 === 0 ? "Increasing room prices for you..." : "Finding more guests for your rooms..."}
                                                 </motion.span>
                                             </AnimatePresence>
                                         </div>

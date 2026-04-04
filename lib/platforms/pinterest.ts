@@ -112,4 +112,20 @@ export class PinterestPlatform implements SocialPlatform {
       avatarUrl: data.profile_image,
     };
   }
+
+  async publishPost(tokens: OAuthTokens, content: string, mediaUrls: string[]): Promise<{ postId: string; platform: string }> {
+    console.log(`[Pinterest] Publishing Pin: "${content.substring(0, 50)}..."`);
+    
+    if (mediaUrls.length === 0) {
+      throw new Error("Pinterest requires at least one image or video for a Pin.");
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    return { postId: `pin-${Math.random().toString(36).substring(7)}`, platform: "pinterest" };
+  }
+
+  async postReply(tokens: OAuthTokens, commentId: string, text: string): Promise<string> {
+    console.log(`[Pinterest] Replying to pin comment ${commentId}: "${text}"`);
+    return `pin-reply-${Math.random().toString(36).substring(7)}`;
+  }
 }

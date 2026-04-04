@@ -1,7 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
 import { UserButton } from "@clerk/nextjs";
-import { LayoutDashboard, PenSquare, Calendar, Link2, MessageSquare, BarChart3, CreditCard, Bell, Settings, Plus, Zap } from "lucide-react";
+import { LayoutDashboard, PenSquare, Calendar, Link2, MessageSquare, BarChart3, Bell, Plus, Zap, Sparkles, Target, Users, DollarSign, Contact } from "lucide-react";
 import Link from "next/link";
+import { AgentSidebar } from "@/components/agent/AgentSidebar";
+import { NotificationBell } from "@/components/layout/NotificationBell";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navGroups = [
   {
@@ -10,6 +16,16 @@ const navGroups = [
       { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
       { icon: PenSquare, label: "Compose", href: "/compose" },
       { icon: Calendar, label: "Calendar", href: "/calendar" },
+      { icon: Sparkles, label: "AI Agent", href: "/agent", isAgent: true },
+    ],
+  },
+  {
+    label: "Autopilot",
+    items: [
+      { icon: Zap, label: "Campaigns", href: "/campaigns" },
+      { icon: Target, label: "Triggers", href: "/triggers" },
+      { icon: Users, label: "Segments", href: "/segments" },
+      { icon: DollarSign, label: "Revenue", href: "/revenue" },
     ],
   },
   {
@@ -17,13 +33,8 @@ const navGroups = [
     items: [
       { icon: Link2, label: "Connections", href: "/connections" },
       { icon: MessageSquare, label: "Auto-Reply", href: "/auto-reply" },
+      { icon: Contact, label: "Contacts", href: "/contacts" },
       { icon: BarChart3, label: "Analytics", href: "/analytics" },
-    ],
-  },
-  {
-    label: "Account",
-    items: [
-      { icon: CreditCard, label: "Billing", href: "/billing" },
     ],
   },
 ];
@@ -33,9 +44,11 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [isAgentOpen, setIsAgentOpen] = useState(false);
+
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full" style={{ backgroundColor: "#f6f9fc" }}>
+      <div className="flex min-h-screen w-full relative overflow-hidden" style={{ backgroundColor: "#f6f9fc" }}>
         {/* ── Sidebar ── */}
         <Sidebar
           className="border-r border-[#e3e8ef] shadow-none"
@@ -64,10 +77,16 @@ export default function DashboardLayout({
                   {group.label}
                 </p>
                 <SidebarMenu>
-                  {group.items.map((item) => (
+                  {group.items.map((item: any) => (
                     <SidebarMenuItem key={item.href}>
                       <SidebarMenuButton
-                        render={<Link href={item.href} />}
+                        onClick={(e) => {
+                          if (item.isAgent) {
+                            e.preventDefault();
+                            setIsAgentOpen(!isAgentOpen);
+                          }
+                        }}
+                        render={item.isAgent ? <button /> : <Link href={item.href} />}
                         className="
                           flex items-center gap-2.5 px-3 py-2 rounded-lg w-full
                           text-sm font-medium text-[#697386]
@@ -101,39 +120,36 @@ export default function DashboardLayout({
               New Post
             </Link>
 
-            {/* User */}
-            <div className="flex items-center gap-3 px-3 py-2">
-              <UserButton
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: "w-7 h-7",
-                    userButtonPopoverCard: "shadow-xl rounded-xl border border-[#e3e8ef]",
-                  },
-                }}
-              />
-              <div>
-                <p className="text-xs font-semibold text-[#1a1f36] leading-tight">Pro Account</p>
-                <p className="text-[10px] text-[#635bff] font-semibold leading-tight">Pro Plan</p>
-              </div>
-            </div>
           </SidebarFooter>
         </Sidebar>
 
-        {/* ── Main ── */}
-        <main className="flex-1 flex flex-col min-h-screen overflow-hidden">
+        {/* ── Main content area with motion stretching ── */}
+        <motion.main 
+          animate={{ marginRight: isAgentOpen ? 400 : 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          className="flex-1 flex flex-col min-h-screen overflow-hidden"
+        >
           {/* Top bar */}
           <header
             className="h-14 border-b border-[#e3e8ef] flex items-center justify-between px-8 shrink-0 sticky top-0 z-10"
             style={{ backgroundColor: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}
           >
             <div />
-            <div className="flex items-center gap-2">
-              <button className="w-8 h-8 rounded-lg border border-[#e3e8ef] bg-white flex items-center justify-center text-[#697386] hover:bg-[#f6f9fc] hover:text-[#3c4257] transition-colors shadow-[0_1px_2px_rgba(60,66,87,0.06)]">
-                <Bell className="w-4 h-4" />
-              </button>
-              <button className="w-8 h-8 rounded-lg border border-[#e3e8ef] bg-white flex items-center justify-center text-[#697386] hover:bg-[#f6f9fc] hover:text-[#3c4257] transition-colors shadow-[0_1px_2px_rgba(60,66,87,0.06)]">
-                <Settings className="w-4 h-4" />
-              </button>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <NotificationBell />
+              </div>
+              <div className="h-6 w-px bg-[#e3e8ef]" />
+              <div className="flex items-center gap-3">
+                <UserButton
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: "w-8 h-8 border border-black/5 shadow-sm hover:scale-105 transition-transform",
+                      userButtonPopoverCard: "shadow-xl rounded-xl border border-[#e3e8ef]",
+                    },
+                  }}
+                />
+              </div>
             </div>
           </header>
 
@@ -141,7 +157,13 @@ export default function DashboardLayout({
           <div className="flex-1 overflow-y-auto px-8 py-8">
             {children}
           </div>
-        </main>
+        </motion.main>
+
+        {/* ── AI Agent Sidebar ── */}
+        <AgentSidebar 
+          isOpen={isAgentOpen} 
+          onClose={() => setIsAgentOpen(false)} 
+        />
       </div>
     </SidebarProvider>
   );

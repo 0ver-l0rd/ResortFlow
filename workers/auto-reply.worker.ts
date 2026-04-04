@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 import { generateAutoReply } from '../lib/ai';
 
 const redisUrl = process.env.REDIS_URL;
-const connection = redisUrl ? new Redis(redisUrl, { maxRetriesPerRequest: null }) : new Redis({ maxRetriesPerRequest: null });
+const connection = redisUrl ? new Redis(redisUrl, { maxRetriesPerRequest: null, lazyConnect: true }) : new Redis({ maxRetriesPerRequest: null, lazyConnect: true });
 
 
 
