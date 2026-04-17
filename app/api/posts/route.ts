@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { posts, mediaAssets, users } from "@/db/schema";
+import { posts, postPlatformResults, users } from "@/db/schema";
 import { getDemoUserId } from "@/lib/demo-auth";
 import { eq, desc, and, gte, lte, or } from "drizzle-orm";
-import { inngest } from "@/lib/inngest/client";
+import {
+  createZernioPost,
+  getZernioAccountId,
+  ZernioPlatformTarget,
+  ZernioMediaItem,
+} from "@/lib/zernio";
 
 export async function GET(request: Request) {
   try {
@@ -81,7 +86,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "At least one platform is required" }, { status: 400 });
     }
 
-    // Insert post into database
+    // Insert post into local database
     const [newPost] = await db.insert(posts).values({
       userId: dbUser.id,
       content: content || "",
@@ -93,15 +98,96 @@ export async function POST(request: Request) {
       aiPrompt: aiPrompt || null,
     }).returning();
 
-    // If it's scheduled to publish, trigger Inngest
-    if (status === "scheduled" || status === "published") {
-      await inngest.send({
-        name: "post/created",
-        data: {
-          postId: newPost.id,
-          scheduledAt: newPost.scheduledAt,
+    // ── Publish via Zernio ──────────────────────────────────────────────────
+    if (status === "published" || status === "scheduled") {
+      try {
+        // Map app platform names → Zernio account IDs
+        const zernioPlatforms: ZernioPlatformTarget[] = [];
+        const skippedPlatforms: string[] = [];
+
+        for (const p of platforms) {
+          const accountId = getZernioAccountId(p);
+          if (accountId) {
+            zernioPlatforms.push({ platform: p, accountId });
+          } else {
+            skippedPlatforms.push(p);
+          }
         }
-      });
+
+        if (skippedPlatforms.length > 0) {
+          console.warn(`Zernio: skipped platforms without account IDs: ${skippedPlatforms.join(", ")}`);
+        }
+
+        if (zernioPlatforms.length > 0) {
+          // Build media items from uploaded URLs
+          const zernioMedia: ZernioMediaItem[] = (mediaUrls || []).map((url: string) => {
+            const isVideo = /\.(mp4|mov|avi|webm)$/i.test(url);
+            return { url, type: isVideo ? "video" : "image" } as ZernioMediaItem;
+          });
+
+          const zernioPost = await createZernioPost({
+            content: content || "",
+            platforms: zernioPlatforms,
+            mediaItems: zernioMedia.length > 0 ? zernioMedia : undefined,
+            publishNow: status === "published",
+            scheduledFor: status === "scheduled" && scheduledAt ? scheduledAt : undefined,
+            timezone: "Asia/Dubai", // GMT+4 matching user's locale
+          });
+
+          console.log(`✅ Zernio post created: ${zernioPost._id}`);
+
+          // Store results per platform
+          for (const p of zernioPlatforms) {
+            await db.insert(postPlatformResults).values({
+              postId: newPost.id,
+              platform: p.platform,
+              status: "success",
+              platformPostId: zernioPost._id,
+            });
+          }
+
+          // Update local post status
+          await db.update(posts)
+            .set({
+              status: status === "published" ? "published" : "scheduled",
+              publishedAt: status === "published" ? new Date() : undefined,
+              updatedAt: new Date(),
+            })
+            .where(eq(posts.id, newPost.id));
+        }
+
+        // Record mock results for skipped platforms
+        for (const p of skippedPlatforms) {
+          await db.insert(postPlatformResults).values({
+            postId: newPost.id,
+            platform: p,
+            status: "error",
+            error: `Platform "${p}" is not connected on Zernio. Connect it at https://zernio.com/dashboard.`,
+          });
+        }
+      } catch (zernioErr: any) {
+        console.error("Zernio publish error:", zernioErr);
+
+        // Still save the post locally, but mark as failed
+        await db.update(posts)
+          .set({ status: "failed", updatedAt: new Date() })
+          .where(eq(posts.id, newPost.id));
+
+        // Record failure for each platform
+        for (const p of platforms) {
+          await db.insert(postPlatformResults).values({
+            postId: newPost.id,
+            platform: p,
+            status: "error",
+            error: zernioErr.message || "Zernio API error",
+          });
+        }
+
+        return NextResponse.json({
+          post: { ...newPost, status: "failed" },
+          error: `Post saved locally but failed to publish via Zernio: ${zernioErr.message}`,
+        }, { status: 207 });
+      }
     }
 
     return NextResponse.json({ post: newPost });

@@ -10,10 +10,12 @@ import { WeekView, DayView } from "@/components/calendar/week-day-views";
 import { PostEventSheet } from "@/components/calendar/post-event-sheet";
 import { QuickComposeModal } from "@/components/calendar/quick-compose-modal";
 import { Inbox, CheckCircle2, Clock, Edit3, BarChart3, LayoutList, Sparkles } from "lucide-react";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 
 export default function CalendarPage() {
   const [mainView, setMainView] = useState<"calendar" | "all-posts">("calendar");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const isMounted = useIsMounted();
   
   useEffect(() => {
     if (typeof window !== "undefined") {

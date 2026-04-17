@@ -12,6 +12,7 @@ import {
 } from "date-fns";
 import { FaXTwitter, FaInstagram, FaFacebookF, FaLinkedinIn } from "react-icons/fa6";
 import { Badge } from "@/components/ui/badge";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 
 interface MonthViewProps {
   currentDate: Date;
@@ -47,6 +48,7 @@ const PlatformIcon = ({ platforms }: { platforms?: string[] }) => {
 };
 
 export function MonthView({ currentDate, posts, onDayClick, onEventClick, onEventDrop }: MonthViewProps) {
+  const isMounted = useIsMounted();
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart);
@@ -56,18 +58,18 @@ export function MonthView({ currentDate, posts, onDayClick, onEventClick, onEven
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <div className="flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-      <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50/50">
+    <div className="flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm" suppressHydrationWarning>
+      <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50/50" suppressHydrationWarning>
         {weekDays.map((day) => (
-          <div key={day} className="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <div key={day} className="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider" suppressHydrationWarning>
             {day}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 flex-1 auto-rows-[minmax(120px,auto)]">
+      <div className="grid grid-cols-7 flex-1 auto-rows-[minmax(120px,auto)]" suppressHydrationWarning>
         {days.map((day, dayIdx) => {
           const isCurrentMonth = isSameMonth(day, monthStart);
-          const isToday = isSameDay(day, new Date());
+          const isToday = isMounted ? isSameDay(day, new Date()) : false;
           
           // Get posts for this day
           const dayPosts = posts.filter(post => 

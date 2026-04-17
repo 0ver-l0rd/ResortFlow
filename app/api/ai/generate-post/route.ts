@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { generateTextSafe } from "@/lib/ai";
 import { getDemoUserId } from "@/lib/demo-auth";
+import { generateAndStoreImage, getOptimizedDimensions } from "@/lib/pollinations";
 
 export const dynamic = "force-dynamic";
 
@@ -43,15 +44,39 @@ ${rule}
 - Format smartly with modern spacing and intentional line breaks for readability.
 - Integrate modern, relevant emojis and symbols naturally.
 - Ensure the post is highly shareable and features a compelling call-to-action (CTA).
-- Do NOT include any meta-text, explanations, or quotes. Return only the raw post text.
+- Also provide a descriptive "IMAGE_PROMPT" for an AI image generator that would perfectly complement this post.
 
 ### TOPIC:
 ${topic}
+
+### OUTPUT FORMAT:
+Return exactly in this format:
+POST_CONTENT: [Your generated post]
+IMAGE_PROMPT: [Your descriptive image prompt]
     `;
 
-    const generatedContent = await generateTextSafe(prompt);
+    const rawOutput = await generateTextSafe(prompt);
+    
+    // Parse the custom format
+    const postContent = rawOutput.split("IMAGE_PROMPT:")[0]?.replace("POST_CONTENT:", "").trim() || "";
+    const imagePrompt = rawOutput.split("IMAGE_PROMPT:")[1]?.trim() || "";
 
-    return NextResponse.json({ content: generatedContent.trim() });
+    // Generate the image
+    let generatedImageUrl = null;
+    if (imagePrompt) {
+        const dims = getOptimizedDimensions(targetPlatform);
+        generatedImageUrl = await generateAndStoreImage(imagePrompt, {
+            width: dims.width,
+            height: dims.height,
+            enhance: true
+        });
+    }
+
+    return NextResponse.json({ 
+        content: postContent,
+        imagePrompt: imagePrompt,
+        generatedImageUrl: generatedImageUrl
+    });
   } catch (error) {
     console.error("AI Generate Post Error:", error);
     return NextResponse.json({ error: "Failed to generate post" }, { status: 500 });

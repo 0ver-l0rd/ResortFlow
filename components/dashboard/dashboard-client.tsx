@@ -138,7 +138,7 @@ export default function DashboardClient({
                   <p className="text-[12px] text-[#8792a2] font-medium">{activity.detail}</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-[11px] font-semibold text-[#8792a2] tracking-tight">{activity.time}</span>
+                  <span suppressHydrationWarning className="text-[11px] font-semibold text-[#8792a2] tracking-tight">{activity.time}</span>
                   <div className="w-7 h-7 rounded-lg flex items-center justify-center transition-all group-hover:bg-white group-hover:shadow-sm">
                     <ChevronRight className="w-4 h-4 text-[#c4cdd6] group-hover:text-[#8792a2] transition-colors" />
                   </div>

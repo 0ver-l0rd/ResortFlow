@@ -45,17 +45,36 @@ export async function POST(req: NextRequest) {
           }
 
           const prompt = `You are an expert marketing AI.
-Goal: ${goal}
-Platforms: ${platforms.join(', ')}
+Goal: "${goal}"
+Platforms: instagram, twitter, linkedin (Generate for ALL of these).
 Budget: ${budget || 'Not specified'}
 Deadline: ${deadline || 'Not specified'}
 
-Generate a JSON plan for a social media campaign with an array of "posts". Each post should have:
-- "platform" (must be one of: instagram, twitter, linkedin)
-- "content" (highly engaging, platform-specific text)
-- "scheduledAt" (ISO date string in the future, staggered)
+Tasks:
+1. Create a 3-5 post campaign to achieve this goal.
+2. Ensure at least one post for EACH of these platforms: instagram, twitter, linkedin.
+3. Use highly engaging, platform-specific tones.
 
-Return ONLY valid JSON data directly. No markdown code blocks.`;
+IMPORTANT: Return a JSON object with a SINGLE root key strictly named "posts" containing an array of post objects.
+Each post object MUST have exactly these keys:
+- "platform": (one of: instagram, twitter, linkedin)
+- "content": (string, engaging text)
+- "imagePrompt": (string, highly descriptive prompt for an AI image generator, e.g. "Luxury hotel room with mountain view, cinematic lighting")
+- "scheduledAt": (ISO date string starting tomorrow, staggered by 6 hours)
+
+Example:
+{
+  "posts": [
+    { 
+      "platform": "twitter", 
+      "content": "Deal alert!", 
+      "imagePrompt": "A person relaxing by a crystal clear resort pool, tropical sunset",
+      "scheduledAt": "${new Date(Date.now() + 86400000).toISOString()}" 
+    }
+  ]
+}
+
+Return ONLY valid JSON. No markdown blocks.`;
 
           const response = await openai.chat.completions.create({
             model: "gpt-4o",
@@ -69,16 +88,23 @@ Return ONLY valid JSON data directly. No markdown code blocks.`;
           try {
              parsedPlan = JSON.parse(content);
           } catch (e) {
-             parsedPlan = {
-               posts: [
-                  { platform: "instagram", content: "Exciting news! " + goal, scheduledAt: new Date(Date.now() + 86400000).toISOString() }
-               ]
-             };
+             console.error("Failed to parse AI plan:", content);
+             parsedPlan = { posts: [] };
+          }
+
+          // Validation & Fallback for "empty stack" issues
+          const posts = Array.isArray(parsedPlan.posts) ? parsedPlan.posts : [];
+          if (posts.length === 0) {
+            posts.push(
+              { platform: "instagram", content: `🌟 New Deal: ${goal}! Check our bio for details. #Hospitality #Offers`, imagePrompt: `Luxury hotel lobby with elegant decor, high quality photography`, scheduledAt: new Date(Date.now() + 86400000).toISOString() },
+              { platform: "twitter", content: `Don't miss out: ${goal}. Limited availability! 🏨✨`, imagePrompt: `Stunning swimming pool at a resort during golden hour`, scheduledAt: new Date(Date.now() + 108000000).toISOString() },
+              { platform: "linkedin", content: `We are excited to announce our newest initiative: ${goal}. Read more on our site.`, imagePrompt: `Modern hotel meeting room, professional atmosphere`, scheduledAt: new Date(Date.now() + 129600000).toISOString() }
+            );
           }
 
           const finalPlan = {
             predictedRevenue: revenue,
-            posts: parsedPlan.posts || []
+            posts: posts
           };
           
           sendEvent("plan", finalPlan);

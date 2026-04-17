@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { SocialCard, PlatformConfig, SocialAccount } from "@/components/dashboard/social-card";
-import { Loader2, Info, Link2 } from "lucide-react";
+import { Loader2, Info, Link2, ExternalLink, Zap } from "lucide-react";
 
 // Brand icons from react-icons
 import { FaXTwitter } from "react-icons/fa6";
@@ -121,7 +121,9 @@ function ConnectionsContent() {
   };
 
   const handleConnect = (platformId: string) => {
-    window.location.href = `/api/social/${platformId}/auth`;
+    // For platforms connected via Zernio, redirect to Zernio dashboard
+    window.open("https://zernio.com/dashboard/connections", "_blank");
+    toast.info("Connect your account on the Zernio dashboard, then refresh this page.");
   };
 
   const handleDisconnect = async (accountId: string) => {
@@ -155,24 +157,46 @@ function ConnectionsContent() {
             Connected Accounts
           </h1>
           <p className="text-sm text-[#8792a2] mt-1">
-            Manage your social media integrations for publishing and analytics.
+            Manage your social media integrations — powered by{" "}
+            <a
+              href="https://zernio.com/dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-[#2d6a4f] hover:underline inline-flex items-center gap-1"
+            >
+              Zernio <ExternalLink className="w-3 h-3" />
+            </a>
           </p>
         </div>
 
-        {/* Stats badge — Stripe-style */}
-        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-[#e3e8ef] shadow-[0_1px_3px_rgba(60,66,87,0.06)] self-start sm:self-auto shrink-0">
-          <span className="text-sm font-semibold text-[#1a1f36]">{connectedCount}</span>
-          <span className="text-sm text-[#8792a2]">/ {PLATFORMS.length} connected</span>
-          {connectedCount > 0 && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#09825d] shrink-0 ml-1" />
-          )}
+        {/* Stats badge */}
+        <div className="flex items-center gap-3 self-start sm:self-auto shrink-0">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-[#e3e8ef] shadow-[0_1px_3px_rgba(60,66,87,0.06)]">
+            <span className="text-sm font-semibold text-[#1a1f36]">{connectedCount}</span>
+            <span className="text-sm text-[#8792a2]">/ {PLATFORMS.length} connected</span>
+            {connectedCount > 0 && (
+              <span className="w-1.5 h-1.5 rounded-full bg-[#09825d] shrink-0 ml-1" />
+            )}
+          </div>
+          <a
+            href="https://zernio.com/dashboard/connections"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#245a42] transition-all shadow-[0_1px_3px_rgba(45,106,79,0.3)] active:scale-[0.98]"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            Manage on Zernio
+          </a>
         </div>
       </div>
 
       {/* ── Platform Grid ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {PLATFORMS.map((platform) => {
-          const account = accounts.find((a) => a.platform === platform.id);
+          const account = accounts.find(
+            (a) => a.platform === platform.id || 
+                   (platform.id === "twitter" && a.platform === "twitter")
+          );
           return (
             <SocialCard
               key={platform.id}
@@ -185,62 +209,62 @@ function ConnectionsContent() {
         })}
       </div>
 
-      {/* ── Info callout — Stripe-style banner ── */}
+      {/* ── Info callout — Zernio-powered ── */}
       <div className="flex gap-4 p-5 rounded-xl bg-[#f6f9fc] border border-[#e3e8ef]">
         <div className="mt-0.5 shrink-0">
           <Info className="w-4 h-4 text-[#8792a2]" />
         </div>
         <div className="space-y-1.5">
-          <p className="text-sm font-semibold text-[#3c4257]">Platform requirements</p>
+          <p className="text-sm font-semibold text-[#3c4257]">Powered by Zernio</p>
           <ul className="text-sm text-[#697386] space-y-1 leading-relaxed">
             <li>
-              <span className="font-medium text-[#3c4257]">Instagram</span> — Requires a
-              Business/Creator account linked to a Facebook Page.
+              All social accounts are connected and managed through the{" "}
+              <a
+                href="https://zernio.com/dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-[#2d6a4f] hover:underline"
+              >
+                Zernio Dashboard
+              </a>
+              . Zernio handles OAuth, token refresh, and platform-specific requirements.
             </li>
             <li>
-              <span className="font-medium text-[#3c4257]">Twitter / X</span> — Enable{" "}
-              <code className="font-mono text-xs bg-white border border-[#e3e8ef] px-1 py-0.5 rounded">
-                tweet.write
-              </code>{" "}
-              and{" "}
-              <code className="font-mono text-xs bg-white border border-[#e3e8ef] px-1 py-0.5 rounded">
-                offline.access
-              </code>{" "}
-              in your Twitter app settings.
+              <span className="font-medium text-[#3c4257]">Currently connected:</span>{" "}
+              Twitter/X (@EZolomon) and Instagram (@noloman395).
             </li>
             <li>
-              <span className="font-medium text-[#3c4257]">YouTube</span> — Enable YouTube
-              Data API v3 in Google Cloud Console before connecting.
+              To add more platforms (LinkedIn, TikTok, YouTube, etc.), click{" "}
+              <span className="font-medium text-[#3c4257]">"Manage on Zernio"</span>{" "}
+              above and connect them from the Zernio dashboard.
             </li>
             <li>
-              If a token expires, click <span className="font-medium text-[#3c4257]">Reconnect</span> on
-              the affected card to re-authorize.
+              After connecting a new account on Zernio, <span className="font-medium text-[#3c4257]">refresh this page</span>{" "}
+              to see it appear here automatically.
             </li>
           </ul>
         </div>
       </div>
 
-      {/* ── Callback URLs reference ── */}
+      {/* ── API Integration badge ── */}
       <div className="rounded-xl border border-[#e3e8ef] bg-white overflow-hidden">
         <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[#f0f3f7] bg-[#f6f9fc]">
           <Link2 className="w-3.5 h-3.5 text-[#8792a2]" />
           <p className="text-xs font-semibold text-[#697386] uppercase tracking-wide">
-            OAuth Callback URLs — register these in your developer portals
+            Publishing integration
           </p>
         </div>
-        <div className="divide-y divide-[#f0f3f7]">
-          {PLATFORMS.filter((p) => !["discord", "slack"].includes(p.id)).map((p) => (
-            <div
-              key={p.id}
-              className="flex items-center gap-3 px-5 py-3 hover:bg-[#f6f9fc] transition-colors"
-            >
-              <p.Icon className="w-3.5 h-3.5 shrink-0" style={{ color: p.brandColor }} />
-              <span className="text-xs font-medium text-[#697386] w-24 shrink-0">{p.name}</span>
-              <code className="text-xs font-mono text-[#3c4257] truncate">
-                http://localhost:3000/api/social/{p.id}/callback
-              </code>
-            </div>
-          ))}
+        <div className="px-5 py-4 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold text-[#1a1f36]">Zernio Unified API</p>
+            <p className="text-xs text-[#8792a2] mt-0.5">
+              Posts are published directly via Zernio's API — no per-platform OAuth required.
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ecfdf5] border border-[#a7f3d0]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#09825d]" />
+            <span className="text-xs font-semibold text-[#065f46]">Active</span>
+          </div>
         </div>
       </div>
     </div>

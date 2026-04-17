@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Bell, Zap, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 
 interface Notification {
   id: string;
@@ -18,6 +19,7 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const isMounted = useIsMounted();
 
   const fetchNotifications = async () => {
     try {
@@ -125,7 +127,7 @@ export function NotificationBell() {
                           {n.message}
                         </p>
                         <p className="text-[10px] text-[#8792a2] mt-1">
-                          {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {isMounted ? new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "--:--"}
                         </p>
                       </div>
                     </button>

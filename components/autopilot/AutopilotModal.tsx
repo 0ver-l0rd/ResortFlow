@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Sparkles, ArrowRight, Zap, Target, Loader2, CheckCircle2, MessageSquare, ChevronRight, X, Brain, Globe, CreditCard, Calendar, ArrowUpRight } from "lucide-react";
+import { Sparkles, ArrowRight, Zap, Target, Loader2, CheckCircle2, MessageSquare, ChevronRight, X, Brain, Globe, CreditCard, Calendar, ArrowUpRight, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,6 +30,7 @@ type PlanResponse = {
     platform: string;
     content: string;
     scheduledAt: string;
+    imagePrompt?: string;
   }>;
   whatsappMessage?: {
     text: string;
@@ -340,7 +341,19 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
                                 <ArrowUpRight className="w-3 h-3 text-[#c4cdd6]" />
                              </div>
                           </div>
-                          <p className="text-[14px] text-[#1a1f36] font-medium leading-relaxed">{post.content}</p>
+                          <p className="text-[14px] text-[#1a1f36] font-medium leading-relaxed mb-3">{post.content}</p>
+                          
+                          {post.imagePrompt && (
+                            <div className="bg-[#f8fafc] rounded-xl p-3 border border-[#e2e8f0] flex items-start gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-white border border-[#e2e8f0] flex items-center justify-center flex-shrink-0">
+                                <ImageIcon className="w-4 h-4 text-[#64748b]" />
+                              </div>
+                              <div>
+                                <p className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-0.5">Automated Visual</p>
+                                <p className="text-[11px] text-[#1e293b] leading-relaxed italic line-clamp-2">"{post.imagePrompt}"</p>
+                              </div>
+                            </div>
+                          )}
                         </motion.div>
                       ))}
 
@@ -386,6 +399,16 @@ export function AutopilotModal({ isOpen, onClose, initialGoal }: AutopilotModalP
                   Edit strategy
                 </button>
                 <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 px-4">
+                     <input type="checkbox" id="publishNow" defaultChecked className="w-4 h-4 rounded border-[#e3e8ef] text-[#2d6a4f] focus:ring-[#2d6a4f]/20 cursor-pointer" onChange={(e) => {
+                       if (plan && plan.posts) {
+                          // Mutate the plan locally before launching
+                          const updatedPosts = plan.posts.map(p => ({...p, publishNow: e.target.checked}));
+                          setPlan({...plan, posts: updatedPosts});
+                       }
+                     }} />
+                     <label htmlFor="publishNow" className="text-[13px] font-semibold text-[#3c4257] cursor-pointer">Publish Now vs Schedule</label>
+                  </div>
                   <button
                     onClick={handleLaunchCampaign}
                     className="flex items-center gap-3 px-10 py-4 rounded-2xl text-[16px] font-bold text-white shadow-[0_20px_40px_-12px_rgba(99,91,255,0.4)] hover:shadow-[0_25px_50px_-12px_rgba(99,91,255,0.5)] active:scale-[0.98] transition-all duration-300"

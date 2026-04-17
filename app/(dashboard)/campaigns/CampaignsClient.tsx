@@ -73,7 +73,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
                        }`}>
                          {camp.status}
                        </span>
-                       <span className="text-xs text-[#8792a2]">Started {new Date(camp.createdAt).toLocaleDateString()}</span>
+                       <span suppressHydrationWarning className="text-xs text-[#8792a2]">Started {new Date(camp.createdAt).toLocaleDateString()}</span>
                      </div>
                      <h3 className="text-[#1a1f36] font-bold text-lg max-w-2xl">{camp.goal}</h3>
                    </div>

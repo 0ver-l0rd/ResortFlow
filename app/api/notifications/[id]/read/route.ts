@@ -11,9 +11,7 @@ export async function PATCH(
   try {
     const userId = getDemoUserId();
 
-    const user = await db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.id, userId),
-    });
+    const user = await db.query.users.findFirst();
 
     if (!user) return new NextResponse("User not found", { status: 404 });
 

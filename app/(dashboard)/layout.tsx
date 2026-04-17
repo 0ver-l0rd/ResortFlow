@@ -7,6 +7,7 @@ import Link from "next/link";
 import { AgentSidebar } from "@/components/agent/AgentSidebar";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { motion, AnimatePresence } from "framer-motion";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 
 const navGroups = [
   {
@@ -44,12 +45,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [isAgentOpen, setIsAgentOpen] = useState(false);
+  const isMounted = useIsMounted();
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full relative overflow-hidden" style={{ backgroundColor: "#f6f9fc" }}>
+      <div suppressHydrationWarning className="flex min-h-screen w-full relative overflow-hidden" style={{ backgroundColor: "#f6f9fc" }}>
         {/* ── Sidebar ── */}
         <Sidebar
+          suppressHydrationWarning
           className="border-r border-[#e3e8ef] shadow-none"
           style={{ backgroundColor: "#ffffff" }}
         >
@@ -127,11 +130,13 @@ export default function DashboardLayout({
           animate={{ marginRight: isAgentOpen ? 400 : 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
           className="flex-1 flex flex-col min-h-screen overflow-hidden"
+          suppressHydrationWarning
         >
           {/* Top bar */}
           <header
             className="h-14 border-b border-[#e3e8ef] flex items-center justify-between px-8 shrink-0 sticky top-0 z-10"
             style={{ backgroundColor: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}
+            suppressHydrationWarning
           >
             <div />
             <div className="flex items-center gap-4">
@@ -141,14 +146,14 @@ export default function DashboardLayout({
               <div className="h-6 w-px bg-[#e3e8ef]" />
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-slate-200 border border-black/5 shadow-sm overflow-hidden flex items-center justify-center font-bold text-slate-500 text-xs transition-transform hover:scale-105 cursor-pointer">
-                  U
+                  {isMounted ? "U" : ""}
                 </div>
               </div>
             </div>
           </header>
 
           {/* Page content */}
-          <div className="flex-1 overflow-y-auto px-8 py-8">
+          <div suppressHydrationWarning className="flex-1 overflow-y-auto px-8 py-8">
             {children}
           </div>
         </motion.main>

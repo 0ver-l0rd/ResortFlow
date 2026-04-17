@@ -1,13 +1,12 @@
 import { db } from "@/db";
-import { posts, socialAccounts } from "@/db/schema";
+import { posts, postPlatformResults } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
-import { inngest } from "@/lib/inngest/client";
+import { createZernioPost, getZernioAccountId, ZernioPlatformTarget, ZernioMediaItem } from "@/lib/zernio";
 
 export async function composePosts(params: any, userId: string) {
   try {
     const { content, platforms, mediaUrls = [], scheduledAt, publishNow } = params;
     
-    // In a real app, we'd validate platforms against connected accounts here
     const status = publishNow ? "published" : scheduledAt ? "scheduled" : "draft";
 
     const [newPost] = await db.insert(posts).values({
@@ -19,14 +18,52 @@ export async function composePosts(params: any, userId: string) {
       scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
     }).returning();
 
-    if (status === "scheduled" || status === "published") {
-      await inngest.send({
-        name: "post/created",
-        data: {
-          postId: newPost.id,
-          scheduledAt: newPost.scheduledAt,
+    if (status === "published" || status === "scheduled") {
+      const zernioPlatforms: ZernioPlatformTarget[] = [];
+      const skippedPlatforms: string[] = [];
+
+      for (const p of platforms) {
+        const accountId = getZernioAccountId(p);
+        if (accountId) {
+          zernioPlatforms.push({ platform: p, accountId });
+        } else {
+          skippedPlatforms.push(p);
         }
-      });
+      }
+
+      if (zernioPlatforms.length > 0) {
+        const zernioMedia: ZernioMediaItem[] = (mediaUrls || []).map((url: string) => {
+          const isVideo = /\.(mp4|mov|avi|webm)$/i.test(url);
+          return { url, type: isVideo ? "video" : "image" } as ZernioMediaItem;
+        });
+
+        const zernioPost = await createZernioPost({
+          content,
+          platforms: zernioPlatforms,
+          mediaItems: zernioMedia.length > 0 ? zernioMedia : undefined,
+          publishNow,
+          scheduledFor: status === "scheduled" && scheduledAt ? scheduledAt : undefined,
+          timezone: "Asia/Dubai",
+        });
+
+        for (const p of zernioPlatforms) {
+          await db.insert(postPlatformResults).values({
+            postId: newPost.id,
+            platform: p.platform,
+            status: "success",
+            platformPostId: zernioPost._id,
+          });
+        }
+      }
+
+      for (const p of skippedPlatforms) {
+        await db.insert(postPlatformResults).values({
+          postId: newPost.id,
+          platform: p,
+          status: "error",
+          error: `Platform "${p}" is not connected on Zernio.`,
+        });
+      }
     }
 
     return { success: true, data: newPost };
