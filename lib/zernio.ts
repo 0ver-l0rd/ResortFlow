@@ -183,7 +183,7 @@ export async function uploadToZernioPresigned(
   const res = await fetch(uploadUrl, {
     method: "PUT",
     headers: { "Content-Type": contentType },
-    body: fileBuffer,
+    body: new Uint8Array(fileBuffer),
   });
 
   if (!res.ok) {
