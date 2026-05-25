@@ -1,24 +1,20 @@
-import { eq, inArray } from "drizzle-orm";
-import { getPlatform } from "@/lib/platforms/factory";
-import { postPlatformResults, socialAccounts } from "@/db/schema";
-
+import { eq } from "drizzle-orm";
+import { postPlatformResults } from "@/db/schema";
 import { inngest } from "./client";
 import { db } from "@/db";
-import { posts, socialAccounts as socialAccountsTable } from "@/db/schema";
-import { decrypt } from "@/lib/encryption";
-import { PlatformTheme } from "@/lib/analytics-themes";
+import { posts } from "@/db/schema";
+import { createZernioPost, getZernioAccountId } from "@/lib/zernio";
 
-const REFRESH_THRESHOLD_MS = 10 * 60 * 1000; // 10 minutes
 export const publishPost = inngest.createFunction(
   {
     id: "publish-post",
     name: "Publish Social Post",
     triggers: [{ event: "post/created" }]
   },
-  async ({ event, step }: { event: any; step: any }) => {
+  async ({ event, step }) => {
     const { postId, scheduledAt } = event.data;
 
-    // 1. If it's scheduled for the future, sleep until then
+    // 1. Sleep until scheduled time if in the future
     if (scheduledAt) {
       const scheduledDate = new Date(scheduledAt);
       if (scheduledDate > new Date()) {
@@ -26,7 +22,7 @@ export const publishPost = inngest.createFunction(
       }
     }
 
-    // 2. Perform the actual multi-platform publishing
+    // 2. Perform publishing through Zernio
     const results = await step.run("publish-to-social-media", async () => {
       const post = await db.query.posts.findFirst({
         where: eq(posts.id, postId),
@@ -34,59 +30,68 @@ export const publishPost = inngest.createFunction(
 
       if (!post) throw new Error(`Post ${postId} not found`);
 
-      // Get appropriate social accounts for this user
-      const accounts = await db
-        .select()
-        .from(socialAccounts)
-        .where(eq(socialAccounts.userId, post.userId));
+      const zernioPlatforms = [];
+      const skippedPlatforms = [];
+
+      for (const platformName of post.platforms) {
+        const accountId = getZernioAccountId(platformName);
+        if (accountId) {
+          zernioPlatforms.push({ platform: platformName, accountId });
+        } else {
+          skippedPlatforms.push(platformName);
+        }
+      }
 
       const publishResults = [];
 
-      for (const platformName of post.platforms) {
-        const account = accounts.find((a) => a.platform.toLowerCase() === platformName.toLowerCase());
-
-        if (!account) {
-          console.warn(`No connected account found for platform ${platformName}`);
-          publishResults.push({ platform: platformName, status: "error", error: "Account not connected" });
-          continue;
-        }
-
+      if (zernioPlatforms.length > 0) {
         try {
-          const driver = getPlatform(platformName);
-          
-          // Decrypt tokens for the driver to use
-          const decryptedTokens = {
-            accessToken: decrypt(account.accessToken),
-            refreshToken: account.refreshToken ? decrypt(account.refreshToken) : undefined,
-            expiresAt: account.expiresAt || undefined
-          };
-          
-          const response = await driver.publishPost(
-            decryptedTokens,
-            post.content,
-            post.mediaUrls || []
-          ) as any;
-
-          publishResults.push({
-            platform: platformName,
-            status: "success",
-            platformPostId: response.postId,
-            simulated: response.simulated
+          const zernioMedia = (post.mediaUrls || []).map((url: string) => {
+            const isVideo = /\.(mp4|mov|avi|webm)$/i.test(url);
+            return { url, type: isVideo ? "video" : "image" } as const;
           });
+
+          const zernioPost = await createZernioPost({
+            content: post.content,
+            platforms: zernioPlatforms,
+            mediaItems: zernioMedia.length > 0 ? zernioMedia : undefined,
+            publishNow: true,
+          });
+
+          for (const p of zernioPlatforms) {
+            publishResults.push({
+              platform: p.platform,
+              status: "success",
+              platformPostId: zernioPost._id,
+            });
+          }
         } catch (error: any) {
-          console.error(`Failed to publish to ${platformName}:`, error.message);
-          publishResults.push({ platform: platformName, status: "error", error: error.message });
+          console.error("Zernio publish error in Inngest:", error.message);
+          for (const p of zernioPlatforms) {
+            publishResults.push({
+              platform: p.platform,
+              status: "error",
+              error: error.message,
+            });
+          }
         }
+      }
+
+      for (const platformName of skippedPlatforms) {
+        publishResults.push({
+          platform: platformName,
+          status: "error",
+          error: "Account not connected on Zernio",
+        });
       }
 
       return publishResults;
     });
 
-    // 3. Record results and update the post status
+    // 3. Record results and update local post status
     await step.run("record-results-and-update-status", async () => {
-      const typedResults = results as { platform: string; status: string; platformPostId?: string; error?: string; simulated?: boolean }[];
+      const typedResults = results as { platform: string; status: string; platformPostId?: string; error?: string }[];
 
-      // Record platform results
       if (typedResults.length > 0) {
         await db.insert(postPlatformResults).values(
           typedResults.map((r) => ({
@@ -94,13 +99,13 @@ export const publishPost = inngest.createFunction(
             platform: r.platform,
             platformPostId: r.platformPostId,
             status: r.status,
-            error: r.simulated ? "SIMULATED_SUCCESS" : r.error,
+            error: r.error,
           }))
         );
       }
 
-      const anySuccess = typedResults.some((r) => r.status === "success" || r.simulated);
-      const allFailed = typedResults.length > 0 && typedResults.every((r) => r.status === "error" && !r.simulated);
+      const anySuccess = typedResults.some((r) => r.status === "success");
+      const allFailed = typedResults.length > 0 && typedResults.every((r) => r.status === "error");
 
       await db
         .update(posts)

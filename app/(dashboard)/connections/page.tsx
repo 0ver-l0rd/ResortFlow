@@ -121,9 +121,9 @@ function ConnectionsContent() {
   };
 
   const handleConnect = (platformId: string) => {
-    // For platforms connected via Zernio, redirect to Zernio dashboard
+    // Social account connection is managed centrally on Zernio dashboard
     window.open("https://zernio.com/dashboard/connections", "_blank");
-    toast.info("Connect your account on the Zernio dashboard, then refresh this page.");
+    toast.info("Connect your account on the Zernio dashboard, then refresh this page to sync.");
   };
 
   const handleDisconnect = async (accountId: string) => {

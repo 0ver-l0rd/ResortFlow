@@ -1,9 +1,9 @@
 import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { socialAccounts } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { listZernioAccounts, ZernioAccount } from "@/lib/zernio";
+import { syncPlatformHistoryForUser } from "@/lib/platforms/sync";
 
 export async function GET() {
   const user = await getDbUser();
@@ -11,22 +11,21 @@ export async function GET() {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  // 1. Try local DB first
+  // 1. Automatically run synchronization with Zernio on-demand
+  try {
+    await syncPlatformHistoryForUser(user.id);
+  } catch (err: any) {
+    console.error("Auto sync connected accounts failed:", err.message);
+  }
+
+  // 2. Fetch whitelisted connected accounts synced to this user locally
   const localAccounts = await db.query.socialAccounts.findMany({
     where: eq(socialAccounts.userId, user.id),
     orderBy: (socialAccounts, { desc }) => [desc(socialAccounts.createdAt)],
   });
 
-  // 2. Also fetch from Zernio to merge connected accounts
-  let zernioAccounts: ZernioAccount[] = [];
-  try {
-    zernioAccounts = await listZernioAccounts();
-  } catch (err: any) {
-    console.warn("Could not fetch Zernio accounts:", err.message);
-  }
-
-  // Map local accounts (don't return tokens)
-  const safeLocal = localAccounts.map(acc => ({
+  // Map to safe public representation
+  const safeAccounts = localAccounts.map(acc => ({
     id: acc.id,
     platform: acc.platform,
     username: acc.username,
@@ -36,20 +35,5 @@ export async function GET() {
     source: "local" as const,
   }));
 
-  // Map Zernio accounts and merge (avoid duplicating platforms already in local)
-  const localPlatforms = new Set(safeLocal.map(a => a.platform.toLowerCase()));
-  
-  const zernioMapped = zernioAccounts
-    .filter(za => !localPlatforms.has(za.platform.toLowerCase()))
-    .map(za => ({
-      id: za._id,
-      platform: za.platform.toLowerCase(),
-      username: za.username || za.displayName || za.platform,
-      avatarUrl: za.avatarUrl || null,
-      expiresAt: null,
-      createdAt: za.createdAt || new Date().toISOString(),
-      source: "zernio" as const,
-    }));
-
-  return NextResponse.json([...safeLocal, ...zernioMapped]);
+  return NextResponse.json(safeAccounts);
 }
