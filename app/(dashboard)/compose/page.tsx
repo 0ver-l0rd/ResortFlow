@@ -431,9 +431,13 @@ function PlatformPreview({ platform, content, media, accounts = [] }: { platform
       <div className="flex items-center justify-between p-3">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 to-pink-600 p-[2px]">
-            <div className="w-full h-full bg-white rounded-full border-2 border-white overflow-hidden bg-slate-200"></div>
+            <div className="w-full h-full bg-white rounded-full border-2 border-white overflow-hidden bg-slate-200 flex items-center justify-center">
+              {currentAccount?.avatarUrl && (
+                <img src={currentAccount.avatarUrl} alt="" className="w-full h-full object-cover" />
+              )}
+            </div>
           </div>
-          <span className="font-semibold text-sm text-black">your_handle</span>
+          <span className="font-semibold text-sm text-black">{currentAccount?.username || "your_handle"}</span>
         </div>
         <MoreHorizontal className="w-5 h-5 text-black" />
       </div>
@@ -457,7 +461,7 @@ function PlatformPreview({ platform, content, media, accounts = [] }: { platform
         </div>
         <div className="font-semibold text-[14px] leading-none mb-2 text-black">1,337 likes</div>
         <div className="text-[14px] text-black">
-          <span className="font-semibold mr-1.5">your_handle</span>
+          <span className="font-semibold mr-1.5">{currentAccount?.username || "your_handle"}</span>
           <span className="whitespace-pre-wrap">{content || noContent}</span>
         </div>
       </div>
@@ -468,10 +472,14 @@ function PlatformPreview({ platform, content, media, accounts = [] }: { platform
   if (platform.id === "linkedin") return (
     <div className="bg-white rounded-xl border border-[#e3e8ef] overflow-hidden w-full max-w-lg shadow-sm font-sans mx-auto">
       <div className="p-4 flex gap-3 pb-3">
-        <div className="w-12 h-12 rounded-full bg-slate-200 shrink-0"></div>
+        {currentAccount?.avatarUrl ? (
+          <img src={currentAccount.avatarUrl} alt="" className="w-12 h-12 rounded-full shrink-0 object-cover" />
+        ) : (
+          <div className="w-12 h-12 rounded-full bg-slate-200 shrink-0"></div>
+        )}
         <div className="flex-1">
-          <div className="font-semibold text-[14px] text-black/90">Your Name</div>
-          <div className="text-[12px] text-black/60">Your Professional Title</div>
+          <div className="font-semibold text-[14px] text-black/90">{currentAccount?.username || "Your Name"}</div>
+          <div className="text-[12px] text-black/60">{currentAccount?.username ? "Connected Member" : "Your Professional Title"}</div>
           <div className="text-[12px] text-black/60 flex items-center gap-1">Just now • 🌐</div>
         </div>
         <MoreHorizontal className="w-5 h-5 text-black/60" />
@@ -504,9 +512,13 @@ function PlatformPreview({ platform, content, media, accounts = [] }: { platform
   if (platform.id === "facebook") return (
     <div className="bg-white rounded-xl border border-[#e3e8ef] overflow-hidden w-full max-w-lg shadow-sm font-sans mx-auto pb-2">
       <div className="p-4 pb-2 flex gap-2">
-        <div className="w-10 h-10 rounded-full bg-slate-200 shrink-0"></div>
+        {currentAccount?.avatarUrl ? (
+          <img src={currentAccount.avatarUrl} alt="" className="w-10 h-10 rounded-full shrink-0 object-cover" />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-slate-200 shrink-0"></div>
+        )}
         <div className="flex-1">
-          <div className="font-semibold text-[15px] text-[#050505]">Your Page</div>
+          <div className="font-semibold text-[15px] text-[#050505]">{currentAccount?.username || "Your Page"}</div>
           <div className="text-[13px] text-[#65676B] flex items-center gap-1">Just now • 🌍</div>
         </div>
         <MoreHorizontal className="w-5 h-5 text-[#65676B]" />
@@ -547,14 +559,18 @@ function PlatformPreview({ platform, content, media, accounts = [] }: { platform
         <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 border border-zinc-800"><p className="text-white/50 text-sm">Video Required</p></div>
       )}
       <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 pt-10">
-        <div className="font-semibold text-white mb-2">@your_account</div>
+        <div className="font-semibold text-white mb-2">@{currentAccount?.username || "your_account"}</div>
         <div className="text-white text-sm line-clamp-3 mb-2">{content || noContent}</div>
         <div className="flex items-center gap-2 text-white text-xs font-semibold">
           <span className="bg-white/20 px-2 py-1 rounded">♫ original sound</span>
         </div>
       </div>
       <div className="absolute right-3 bottom-24 flex flex-col gap-5 items-center">
-        <div className="w-10 h-10 bg-white rounded-full border-2 border-white mb-2"></div>
+        {currentAccount?.avatarUrl ? (
+          <img src={currentAccount.avatarUrl} alt="" className="w-10 h-10 rounded-full border-2 border-white object-cover mb-2" />
+        ) : (
+          <div className="w-10 h-10 bg-white rounded-full border-2 border-white mb-2"></div>
+        )}
         {[
           { icon: Heart, val: "0" },
           { icon: MessageCircle, val: "0" },

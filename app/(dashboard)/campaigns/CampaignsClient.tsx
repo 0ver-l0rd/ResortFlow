@@ -122,9 +122,9 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
                          <p className="text-[10px] uppercase font-bold text-[#8792a2] mb-1">Messages</p>
                          <p className="text-xl font-bold text-[#1a1f36]">{camp.metrics?.messagesSent ?? 0}</p>
                        </div>
-                       <div className="bg-white p-4 rounded-lg border border-[#e3e8ef]">
+                       <div className="bg-white p-4 rounded-lg border border-[#e3e8ef]" title="Booking manager integrations are pending setup.">
                          <p className="text-[10px] uppercase font-bold text-[#8792a2] mb-1">Bookings</p>
-                         <p className="text-xl font-bold text-[#1a1f36]">{Math.floor(actualRevenue / 250)}</p>
+                         <p className="text-xl font-bold text-[#1a1f36]">N/A</p>
                        </div>
                     </div>
                   </div>

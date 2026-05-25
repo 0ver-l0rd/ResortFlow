@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { posts, socialAccounts, autoReplyLogs } from "@/db/schema";
-import { eq, desc, isNotNull, and, count } from "drizzle-orm";
+import { posts, socialAccounts, autoReplyLogs, audienceSegments, segmentMembers } from "@/db/schema";
+import { eq, desc, isNotNull, and, count, sql } from "drizzle-orm";
 import { getDbUser } from "@/lib/auth";
 import { formatDistanceToNow } from "date-fns";
 import DashboardClient from "@/components/dashboard/dashboard-client";
@@ -27,6 +27,14 @@ export default async function DashboardPage() {
   const accounts = await db.query.socialAccounts.findMany({
     where: eq(socialAccounts.userId, dbUser.id),
   });
+
+  const avgEngagementRes = await db
+    .select({ avg: sql<number>`avg(engagement_score)` })
+    .from(segmentMembers)
+    .innerJoin(audienceSegments, eq(segmentMembers.segmentId, audienceSegments.id))
+    .where(eq(audienceSegments.userId, dbUser.id));
+  
+  const avgEngagement = avgEngagementRes[0]?.avg ? (avgEngagementRes[0].avg / 10).toFixed(1) + "%" : "N/A";
 
   const stats = [
     {
@@ -55,11 +63,11 @@ export default async function DashboardPage() {
     },
     {
       label: "Avg. engagement",
-      value: "4.2%", // Engagement would need platform API data, leaving as 4.2% for now
-      change: "+0.5%",
-      trend: "up",
+      value: avgEngagement,
+      change: avgEngagement !== "N/A" ? "Live" : "N/A",
+      trend: avgEngagement !== "N/A" ? "up" : "neutral",
       icon: "TrendingUp",
-      note: "highly active",
+      note: avgEngagement !== "N/A" ? "highly active" : "no data yet",
     },
   ];
 

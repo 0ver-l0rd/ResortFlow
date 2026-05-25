@@ -48,24 +48,18 @@ export async function GET() {
     });
 
     const formattedPosts = Array.from(postMap.values()).map((post: any) => {
-      // Deterministic "mock" metrics based on ID for consistency if not real
-      const seed = post.id.charCodeAt(0) + post.id.charCodeAt(1);
-      const likes = Math.floor((seed * 7) % 50) + 10;
-      const shares = Math.floor((seed * 3) % 15) + 2;
-      const engagement = ((likes + shares) / 100).toFixed(1) + "%";
-
       return {
         id: post.id,
         content: post.content,
         platform: post.platform.charAt(0).toUpperCase() + post.platform.slice(1),
         isSimulated: post.isSimulated,
-        likes: likes.toString(),
-        comments: Math.floor((seed * 2) % 10).toString(),
-        shares: shares.toString(),
+        likes: "N/A",
+        comments: "N/A",
+        shares: "N/A",
         date: post.publishedAt 
           ? new Date(post.publishedAt).toLocaleDateString() 
           : "Recently",
-        engagement: engagement,
+        engagement: "N/A",
         mediaUrls: post.mediaUrls,
       };
     });

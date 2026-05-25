@@ -61,6 +61,33 @@ const ATTRIBUTION_DATA = [
 export function RevenueClient({ campaigns }: { campaigns: any[] }) {
   const [activeRange, setActiveRange] = useState("Last 30 days");
 
+  const totalActualRevenue = campaigns.reduce((acc, c) => acc + (c.actualRevenue || 0), 0);
+  const totalPredictedRevenue = campaigns.reduce((acc, c) => acc + (c.predictedRevenue || 0), 0);
+  const yieldROI = totalPredictedRevenue > 0
+    ? `${((totalActualRevenue / totalPredictedRevenue) * 100).toFixed(0)}% ROI`
+    : "N/A";
+
+  const stats = [
+    { label: "Net Revenue", value: `$${totalActualRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, trend: totalActualRevenue > 0 ? "Active" : "—", up: totalActualRevenue > 0, sub: "Total campaign earnings" },
+    { label: "Predicted Velocity", value: `$${totalPredictedRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: Sparkles, trend: totalPredictedRevenue > 0 ? "Forecast" : "—", up: true, sub: "Combined AI prediction" },
+    { label: "Yield Performance", value: yieldROI, icon: Award, trend: yieldROI !== "N/A" ? "Live" : "—", up: yieldROI !== "N/A", sub: "Actual vs Predicted yield" },
+    { label: "Conversion Match", value: "N/A", icon: Target, trend: "—", up: false, sub: "UTM integration pending" },
+  ];
+
+  const campaignROI = campaigns.map(c => {
+    const revenue = c.actualRevenue || 0;
+    const predicted = c.predictedRevenue || 0;
+    const roi = predicted > 0 ? `${((revenue / predicted) * 100).toFixed(0)}%` : "N/A";
+    
+    return {
+      campaign: c.goal,
+      reach: "N/A",
+      bookings: "N/A",
+      revenue: revenue,
+      roi: roi,
+    };
+  });
+
   return (
     <div className="bg-[#f6f9fc] min-h-screen flex flex-col font-sans selection:bg-[#2d6a4f44]">
       {/* ── Extreme Stripe Sticky Header ── */}
@@ -103,33 +130,28 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
       <div className="flex-1 overflow-y-auto min-h-0 bg-white shadow-inner custom-scrollbar">
         <div className="max-w-7xl mx-auto px-6 sm:px-10 py-16 space-y-24 pb-64">
             
-            {/* ── Unified Metric Rail ── */}
-            <div className="bg-white border border-[#e3e8ef] rounded-[28px] divide-x divide-[#e3e8ef] flex flex-col md:flex-row overflow-hidden shadow-[0_1px_1px_rgba(31,41,55,0.08)]">
-                {[
-                  { label: "Net Revenue", value: "$4,280.00", icon: DollarSign, trend: "+34%", up: true, sub: "Synchronized active" },
-                  { label: "Predicted Velocity", value: "$1,800.00", icon: Sparkles, trend: "+12%", up: true, sub: "7-day AI horizon" },
-                  { label: "Yield Performance", value: "420% ROI", icon: Award, trend: "+7%", up: true, sub: "Loyalty campaign peak" },
-                  { label: "Conversion Match", value: "94.2%", icon: Target, trend: "+2%", up: true, sub: "Matched UTM signals" },
-                ].map((stat) => (
-                  <div key={stat.label} className="p-10 flex-1 hover:bg-[#fcfdfe] transition-colors group">
-                      <div className="flex items-center justify-between mb-8">
-                         <p className="text-[11px] font-black uppercase tracking-[0.3em] text-[#8792a2] group-hover:text-[#2d6a4f]">{stat.label}</p>
-                         <stat.icon size={16} strokeWidth={1.2} className="text-[#8792a2] group-hover:text-[#2d6a4f] transition-colors" />
-                      </div>
-                      <div className="flex items-baseline gap-4 mb-3">
-                          <p className="text-[32px] font-black text-[#1a1f36] tracking-[-0.04em] leading-tight">{stat.value}</p>
-                          <span className={`text-[11px] font-black ${stat.up ? "text-[#09825d]" : "text-[#e11d48]"}`}>{stat.trend}</span>
-                      </div>
-                      <p className="text-[12px] font-bold text-[#697386]">{stat.sub}</p>
-                  </div>
-                ))}
-            </div>
-
-            {/* ── Integrated Trend View ── */}
-            <div className="space-y-12">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h3 className="text-xl font-black text-[#1a1f36] tracking-tight">Growth Projection</h3>
+             {/* ── Unified Metric Rail ── */}
+             <div className="bg-white border border-[#e3e8ef] rounded-[28px] divide-x divide-[#e3e8ef] flex flex-col md:flex-row overflow-hidden shadow-[0_1px_1px_rgba(31,41,55,0.08)]">
+                 {stats.map((stat) => (
+                   <div key={stat.label} className="p-10 flex-1 hover:bg-[#fcfdfe] transition-colors group">
+                       <div className="flex items-center justify-between mb-8">
+                          <p className="text-[11px] font-black uppercase tracking-[0.3em] text-[#8792a2] group-hover:text-[#2d6a4f]">{stat.label}</p>
+                          <stat.icon size={16} strokeWidth={1.2} className="text-[#8792a2] group-hover:text-[#2d6a4f] transition-colors" />
+                       </div>
+                       <div className="flex items-baseline gap-4 mb-3">
+                           <p className="text-[32px] font-black text-[#1a1f36] tracking-[-0.04em] leading-tight">{stat.value}</p>
+                           <span className={`text-[11px] font-black ${stat.up ? "text-[#09825d]" : "text-[#e11d48]"}`}>{stat.trend}</span>
+                       </div>
+                       <p className="text-[12px] font-bold text-[#697386]">{stat.sub}</p>
+                   </div>
+                 ))}
+             </div>
+ 
+             {/* ── Integrated Trend View ── */}
+             <div className="space-y-12">
+                 <div className="flex items-center justify-between">
+                     <div>
+                         <h3 className="text-xl font-black text-[#1a1f36] tracking-tight">Growth Projection (Demo Data)</h3>
                         <p className="text-[13px] text-[#8792a2] font-semibold mt-1">Real-time velocity vs model-generated benchmarks.</p>
                     </div>
                     <div className="flex items-center gap-10">
@@ -197,7 +219,7 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                     </div>
 
                     <div className="divide-y divide-[#f0f3f7] border-t border-b border-[#f0f3f7]">
-                        {CAMPAIGN_ROI_DATA.map((row) => (
+                        {campaignROI.length > 0 ? campaignROI.map((row) => (
                             <div key={row.campaign} className="py-10 flex items-center justify-between group hover:bg-[#fcfdfe] transition-all px-6 rounded-2xl">
                                 <div className="flex items-center gap-6">
                                     <div className="w-10 h-10 rounded-2xl bg-[#f6f9fc] flex items-center justify-center border border-[#e3e8ef] group-hover:bg-[#2d6a4f]/5 group-hover:border-[#2d6a4f]/20 transition-all">
@@ -206,7 +228,7 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                                     <div className="space-y-1">
                                         <p className="text-[16px] font-black text-[#1a1f36] tracking-tight">{row.campaign}</p>
                                         <div className="flex items-center gap-4 text-[11px] font-bold text-[#697386] uppercase tracking-wider">
-                                              <span className="text-[#2d6a4f]">{row.reach.toLocaleString()} Reached</span>
+                                              <span className="text-[#2d6a4f]">{row.reach} Reached</span>
                                               <span className="text-[#09825d]">{row.roi} ROI</span>
                                         </div>
                                     </div>
@@ -219,7 +241,11 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                                      <ArrowRight className="w-4 h-4 text-[#c4cdd6] group-hover:text-[#2d6a4f] group-hover:translate-x-1 transition-all" />
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <div className="py-16 text-center text-[#8792a2] font-semibold">
+                                No campaigns launched yet.
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -227,7 +253,7 @@ export function RevenueClient({ campaigns }: { campaigns: any[] }) {
                     <div className="space-y-8">
                         <div className="flex items-center gap-3">
                              <PieChart size={18} strokeWidth={1.2} className="text-[#8792a2]" />
-                             <h3 className="text-[11px] font-black text-[#1a1f36] uppercase tracking-[0.25em]">Attribution Score</h3>
+                             <h3 className="text-[11px] font-black text-[#1a1f36] uppercase tracking-[0.25em]">Attribution Score (Demo Data)</h3>
                         </div>
                         <div className="space-y-12">
                             {ATTRIBUTION_DATA.map((item) => (

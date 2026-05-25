@@ -72,7 +72,7 @@ export default function DashboardClient({
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8792a2] mb-2 px-1">Overview</p>
           <h1 className="text-4xl font-black tracking-[-0.05em] text-[#1a1f36]">Today's Snapshot</h1>
           <p className="text-[15px] text-[#697386] font-medium mt-1 leading-relaxed">
-            Your social presence is <span className="text-[#09825d] font-bold">up 12%</span> this week. Here's the latest on your channels.
+            Here is the latest snapshot of your connected channels and automated marketing campaigns.
           </p>
         </div>
 

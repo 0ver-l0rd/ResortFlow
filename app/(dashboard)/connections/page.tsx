@@ -231,7 +231,9 @@ function ConnectionsContent() {
             </li>
             <li>
               <span className="font-medium text-[#3c4257]">Currently connected:</span>{" "}
-              Twitter/X (@EZolomon) and Instagram (@noloman395).
+              {accounts.length > 0
+                ? accounts.map((a) => `${a.platform === "twitter" ? "Twitter/X" : a.platform.charAt(0).toUpperCase() + a.platform.slice(1)} (@${a.username || "connected"})`).join(", ")
+                : "No accounts connected yet."}
             </li>
             <li>
               To add more platforms (LinkedIn, TikTok, YouTube, etc.), click{" "}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { 
   Users, 
   TrendingUp, 
@@ -156,7 +156,42 @@ const DEFAULT_SEGMENTS = [
 ];
 
 export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) {
-    const [segments, setSegments] = useState(DEFAULT_SEGMENTS);
+    const mappedSegments = useMemo(() => {
+        return initialSegments.map((s) => {
+            const nameLower = s.name.toLowerCase();
+            let icon = Target;
+            if (nameLower.includes("spend") || nameLower.includes("vip") || nameLower.includes("high")) icon = Gem;
+            else if (nameLower.includes("churn") || nameLower.includes("inactive")) icon = AlertCircle;
+            else if (nameLower.includes("new") || nameLower.includes("visitor")) icon = UserPlus;
+            else if (nameLower.includes("loyal") || nameLower.includes("fan") || nameLower.includes("advocate")) icon = Heart;
+            else if (nameLower.includes("deal") || nameLower.includes("discount") || nameLower.includes("promo")) icon = Percent;
+
+            return {
+                id: s.id,
+                name: s.name,
+                type: "ai",
+                icon,
+                description: s.description || "Audience segment based on platform behavior.",
+                memberCount: s.memberCount || 0,
+                trend: "—",
+                trendUp: true,
+                avgRevenue: 0,
+                bestContent: "N/A",
+                color: "#2d6a4f",
+                bg: "#fcfdfe",
+                borderColor: "#e3e8ef",
+                useCase: `${s.name} target campaign`,
+                engagementScore: 50,
+            };
+        });
+    }, [initialSegments]);
+
+    const [segments, setSegments] = useState(mappedSegments);
+
+    useEffect(() => {
+        setSegments(mappedSegments);
+    }, [mappedSegments]);
+
     const [selectedSegment, setSelectedSegment] = useState<any>(null);
     const [isAutopilotOpen, setIsAutopilotOpen] = useState(false);
     const [autopilotGoal, setAutopilotGoal] = useState("");
@@ -173,7 +208,9 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
     }, [segments, activeTab, searchQuery]);
 
   const totalMembers = segments.reduce((s, seg) => s + seg.memberCount, 0);
-  const avgRevenuePerMember = Math.round(segments.reduce((s, seg) => s + seg.avgRevenue, 0) / segments.length);
+  const avgRevenuePerMember = segments.length > 0
+    ? Math.round(segments.reduce((s, seg) => s + seg.avgRevenue, 0) / segments.length)
+    : 0;
 
   const handleLaunchCampaign = (seg: any) => {
     setAutopilotGoal(`Focus on "${seg.name}" segment — ${seg.useCase}`);
@@ -310,7 +347,7 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                     animate="show"
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
                 >
-                    {filteredSegments.map((seg) => (
+                    {filteredSegments.length > 0 ? filteredSegments.map((seg) => (
                         <motion.div
                             variants={item}
                             key={seg.id}
@@ -361,7 +398,11 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
                                 </button>
                             </div>
                         </motion.div>
-                    ))}
+                    )) : (
+                        <div className="col-span-full py-16 text-center text-[#8792a2] bg-white border border-[#e3e8ef] rounded-[28px] font-medium shadow-sm">
+                            No segments created yet.
+                        </div>
+                    )}
                 </motion.div>
             </div>
         </div>

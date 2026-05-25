@@ -92,7 +92,7 @@ export function EngagementChart({ platform = "All Platforms" }: { platform?: str
           <h3 className="text-lg font-bold text-[#1a1f36] tracking-tight">
             {platform === "All Platforms" ? "Global Performance" : `${platform} Metrics`}
           </h3>
-          <p className="text-[10px] font-bold text-[#8792a2] mt-1 uppercase tracking-[0.2em]">Audience Flux & Interaction Matrix</p>
+          <p className="text-[10px] font-bold text-[#8792a2] mt-1 uppercase tracking-[0.2em]">Audience Flux & Interaction Matrix (Demo Data)</p>
         </div>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 group cursor-pointer">

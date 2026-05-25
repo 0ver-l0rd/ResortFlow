@@ -76,7 +76,7 @@ export function PlatformSpecMetrics({ platform }: PlatformSpecMetricsProps) {
           <h3 className="text-sm font-bold text-[#1a1f36] uppercase tracking-wider">{platform} Details</h3>
         </div>
         <div className="px-2 py-1 bg-[#f6f9fc] rounded text-[10px] font-bold text-[#8792a2] uppercase tracking-widest border border-[#e3e8ef]">
-          Granular Metrics
+          Example Metrics (Demo)
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

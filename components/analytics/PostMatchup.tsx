@@ -71,7 +71,7 @@ export function PostMatchup({ platform }: PostMatchupProps) {
             >
               <TrendingUp className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-bold text-[#1a1f36]">High Performer</span>
+            <span className="text-sm font-bold text-[#1a1f36]">High Performer (Demo)</span>
           </div>
           <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: theme.primary }}>{data.best.engagement} Engagement</span>
         </div>
@@ -108,7 +108,7 @@ export function PostMatchup({ platform }: PostMatchupProps) {
             <div className="w-7 h-7 rounded-lg bg-[#8792a2] flex items-center justify-center">
               <TrendingDown className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="text-sm font-bold text-[#3c4257]">Lowest Engagement</span>
+            <span className="text-sm font-bold text-[#3c4257]">Lowest Engagement (Demo)</span>
           </div>
           <span className="text-[10px] font-bold text-[#8792a2] uppercase tracking-wider">{data.worst.engagement} Engagement</span>
         </div>
