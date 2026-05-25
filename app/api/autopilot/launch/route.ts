@@ -2,13 +2,17 @@ import { NextResponse } from "next/server";
 import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { campaigns, campaignPosts, posts as postsTable, postPlatformResults } from "@/db/schema";
-import { createZernioPost, getZernioAccountId } from "@/lib/zernio";
+import { createZernioPost, getUserZernioApiKey, getUserZernioAccountId } from "@/lib/zernio";
 import { generateAndStoreImage, getOptimizedDimensions } from "@/lib/pollinations";
 
 export async function POST(req: Request) {
   try {
     const user = await getDbUser();
     if (!user) return new NextResponse("Unauthorized", { status: 401 });
+    const userZernioApiKey = await getUserZernioApiKey(user.id);
+    if (!userZernioApiKey) {
+      return new NextResponse("Save your personal Zernio API key in Connections before launching autopilot.", { status: 400 });
+    }
 
     const { goal, plan } = await req.json();
 
@@ -26,7 +30,7 @@ export async function POST(req: Request) {
       for (const post of plan.posts) {
         
         // RESTRICTION: Only post on accounts that are actually connected
-        const accountId = getZernioAccountId(post.platform);
+        const accountId = await getUserZernioAccountId(user.id, post.platform);
         if (!accountId) {
           console.log(`[Autopilot] Skipping ${post.platform} because it is not connected.`);
           continue; // Move to the next post
@@ -87,7 +91,7 @@ export async function POST(req: Request) {
             zernioConfig.timezone = "Asia/Dubai";
           }
 
-          const zernioPost = await createZernioPost(zernioConfig);
+          const zernioPost = await createZernioPost(zernioConfig, userZernioApiKey);
 
           await db.insert(postPlatformResults).values({
             postId: newPost.id,

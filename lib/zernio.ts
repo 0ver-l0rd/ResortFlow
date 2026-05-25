@@ -4,6 +4,12 @@
  * Docs: https://docs.zernio.com
  */
 
+import { and, eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { agentPreferences, socialAccounts } from "@/db/schema";
+import { decrypt } from "@/lib/encryption";
+
 const ZERNIO_BASE_URL = "https://zernio.com/api/v1";
 
 function getApiKey(): string {
@@ -12,24 +18,33 @@ function getApiKey(): string {
   return key;
 }
 
-// ── Account ID mapping ───────────────────────────────────────────────────────
+export async function getUserZernioApiKey(userId: string): Promise<string | null> {
+  const pref = await db.query.agentPreferences.findFirst({
+    where: and(
+      eq(agentPreferences.userId, userId),
+      eq(agentPreferences.key, "zernio_api_key")
+    ),
+  });
+
+  if (!pref?.value) {
+    return null;
+  }
+
+  return decrypt(pref.value).trim();
+}
 
 /**
  * Maps a platform name (used in the app UI) to the Zernio account ID
- * stored in .env. Returns null if the platform isn't connected on Zernio.
+ * stored in the database. Returns null if the platform isn't connected.
  */
-export function getZernioAccountId(platform: string): string | null {
-  const map: Record<string, string | undefined> = {
-    twitter: process.env.ZERNIO_TWITTER_ACCOUNT_ID,
-    instagram: process.env.ZERNIO_INSTAGRAM_ACCOUNT_ID,
-    // Add more as you connect them on Zernio dashboard
-    // linkedin: process.env.ZERNIO_LINKEDIN_ACCOUNT_ID,
-    // facebook: process.env.ZERNIO_FACEBOOK_ACCOUNT_ID,
-    tiktok: process.env.ZERNIO_TIKTOK_ACCOUNT_ID,
-    // youtube:  process.env.ZERNIO_YOUTUBE_ACCOUNT_ID,
-    // pinterest: process.env.ZERNIO_PINTEREST_ACCOUNT_ID,
-  };
-  return map[platform.toLowerCase()] ?? null;
+export async function getUserZernioAccountId(userId: string, platform: string): Promise<string | null> {
+  const record = await db.query.socialAccounts.findFirst({
+    where: and(
+      eq(socialAccounts.userId, userId),
+      eq(socialAccounts.platform, platform.toLowerCase())
+    ),
+  });
+  return record?.platformUserId ?? null;
 }
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -83,13 +98,14 @@ export interface ZernioPresignResult {
 
 async function zernioFetch<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  apiKey?: string
 ): Promise<T> {
   const url = `${ZERNIO_BASE_URL}${path}`;
   const res = await fetch(url, {
     ...options,
     headers: {
-      Authorization: `Bearer ${getApiKey()}`,
+      Authorization: `Bearer ${apiKey || getApiKey()}`,
       "Content-Type": "application/json",
       ...options.headers,
     },
@@ -115,7 +131,8 @@ async function zernioFetch<T>(
  * Create (and optionally publish / schedule) a post via Zernio.
  */
 export async function createZernioPost(
-  opts: ZernioCreatePostOptions
+  opts: ZernioCreatePostOptions,
+  apiKey?: string
 ): Promise<ZernioPost> {
   const payload: Record<string, any> = {
     content: opts.content,
@@ -136,7 +153,7 @@ export async function createZernioPost(
   const result = await zernioFetch<{ post: ZernioPost }>("/posts", {
     method: "POST",
     body: JSON.stringify(payload),
-  });
+  }, apiKey);
 
   return result.post;
 }
@@ -149,6 +166,16 @@ export async function listZernioAccounts(): Promise<ZernioAccount[]> {
   return result.accounts;
 }
 
+export async function listUserZernioAccounts(userId: string): Promise<ZernioAccount[]> {
+  const apiKey = await getUserZernioApiKey(userId);
+  if (!apiKey) {
+    return [];
+  }
+
+  const result = await zernioFetch<{ accounts: ZernioAccount[] }>("/accounts", {}, apiKey);
+  return result.accounts;
+}
+
 /**
  * List posts from Zernio.
  */
@@ -157,17 +184,28 @@ export async function listZernioPosts(): Promise<ZernioPost[]> {
   return result.posts;
 }
 
+export async function listUserZernioPosts(userId: string): Promise<ZernioPost[]> {
+  const apiKey = await getUserZernioApiKey(userId);
+  if (!apiKey) {
+    return [];
+  }
+
+  const result = await zernioFetch<{ posts: ZernioPost[] }>("/posts", {}, apiKey);
+  return result.posts;
+}
+
 /**
  * Get a presigned upload URL from Zernio for media uploads.
  */
 export async function getZernioPresignedUrl(
   fileName: string,
-  fileType: string
+  fileType: string,
+  apiKey?: string
 ): Promise<ZernioPresignResult> {
   const result = await zernioFetch<ZernioPresignResult>("/media/presign", {
     method: "POST",
     body: JSON.stringify({ fileName, fileType }),
-  });
+  }, apiKey);
   return result;
 }
 
@@ -220,9 +258,10 @@ export interface ZernioPostAnalytics {
 export async function uploadMediaToZernio(
   fileName: string,
   fileType: string,
-  fileBuffer: Buffer
+  fileBuffer: Buffer,
+  apiKey?: string
 ): Promise<string> {
-  const { uploadUrl, publicUrl } = await getZernioPresignedUrl(fileName, fileType);
+  const { uploadUrl, publicUrl } = await getZernioPresignedUrl(fileName, fileType, apiKey);
   await uploadToZernioPresigned(uploadUrl, fileBuffer, fileType);
   return publicUrl;
 }
@@ -233,7 +272,8 @@ export async function uploadMediaToZernio(
 export async function getZernioAccountAnalytics(
   accountId: string,
   startDate?: string,
-  endDate?: string
+  endDate?: string,
+  apiKey?: string
 ): Promise<ZernioAccountAnalytics> {
   let query = "";
   const params: string[] = [];
@@ -243,7 +283,9 @@ export async function getZernioAccountAnalytics(
     query = `?${params.join("&")}`;
   }
   const result = await zernioFetch<{ analytics: ZernioAccountAnalytics }>(
-    `/analytics/account/${accountId}${query}`
+    `/analytics/account/${accountId}${query}`,
+    {},
+    apiKey
   );
   return result.analytics;
 }
@@ -252,10 +294,13 @@ export async function getZernioAccountAnalytics(
  * Get analytics for a specific published post via Zernio.
  */
 export async function getZernioPostAnalytics(
-  postId: string
+  postId: string,
+  apiKey?: string
 ): Promise<ZernioPostAnalytics> {
   const result = await zernioFetch<{ analytics: ZernioPostAnalytics }>(
-    `/analytics/${postId}`
+    `/analytics/${postId}`,
+    {},
+    apiKey
   );
   return result.analytics;
 }

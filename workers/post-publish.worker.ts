@@ -5,7 +5,8 @@ import { posts, postPlatformResults } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import {
   createZernioPost,
-  getZernioAccountId,
+  getUserZernioApiKey,
+  getUserZernioAccountId,
   ZernioPlatformTarget,
   ZernioMediaItem,
 } from '../lib/zernio';
@@ -28,11 +29,16 @@ export const postPublishWorker = new Worker('post-publish', async (job: Job) => 
     }
 
     // 2. Build Zernio platform targets
+    const userZernioApiKey = await getUserZernioApiKey(post.userId);
+    if (!userZernioApiKey) {
+      throw new Error('User has not saved a personal Zernio API key.');
+    }
+
     const zernioPlatforms: ZernioPlatformTarget[] = [];
     const skippedPlatforms: string[] = [];
 
     for (const platform of post.platforms) {
-      const accountId = getZernioAccountId(platform);
+      const accountId = await getUserZernioAccountId(post.userId, platform);
       if (accountId) {
         zernioPlatforms.push({ platform, accountId });
       } else {
@@ -58,7 +64,7 @@ export const postPublishWorker = new Worker('post-publish', async (job: Job) => 
         platforms: zernioPlatforms,
         mediaItems: zernioMedia.length > 0 ? zernioMedia : undefined,
         publishNow: true,
-      });
+      }, userZernioApiKey);
 
       console.log(`✅ Zernio post published: ${zernioPost._id}`);
 

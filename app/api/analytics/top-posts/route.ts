@@ -3,7 +3,7 @@ import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { posts, postPlatformResults } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
-import { getZernioPostAnalytics } from "@/lib/zernio";
+import { getUserZernioApiKey, getZernioPostAnalytics } from "@/lib/zernio";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +11,7 @@ export async function GET() {
   try {
     const user = await getDbUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userZernioApiKey = await getUserZernioApiKey(user.id);
 
     // Fetch the 5 most recently published posts with their platform results
     const results = await db
@@ -60,7 +61,7 @@ export async function GET() {
       // If we have a real Zernio platform post ID, fetch actual analytics
       if (post.platformPostId && !post.isSimulated) {
         try {
-          const metrics = await getZernioPostAnalytics(post.platformPostId);
+          const metrics = await getZernioPostAnalytics(post.platformPostId, userZernioApiKey || undefined);
           if (metrics) {
             likes = metrics.likes !== undefined ? String(metrics.likes) : "0";
             comments = metrics.comments !== undefined ? String(metrics.comments) : "0";

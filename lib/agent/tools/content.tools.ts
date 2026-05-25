@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { posts, postPlatformResults } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
-import { createZernioPost, getZernioAccountId, ZernioPlatformTarget, ZernioMediaItem } from "@/lib/zernio";
+import { createZernioPost, getUserZernioApiKey, getUserZernioAccountId, ZernioPlatformTarget, ZernioMediaItem } from "@/lib/zernio";
 
 export async function composePosts(params: any, userId: string) {
   try {
@@ -19,11 +19,16 @@ export async function composePosts(params: any, userId: string) {
     }).returning();
 
     if (status === "published" || status === "scheduled") {
+      const userZernioApiKey = await getUserZernioApiKey(userId);
+      if (!userZernioApiKey) {
+        throw new Error("Save your personal Zernio API key in Connections before publishing.");
+      }
+
       const zernioPlatforms: ZernioPlatformTarget[] = [];
       const skippedPlatforms: string[] = [];
 
       for (const p of platforms) {
-        const accountId = getZernioAccountId(p);
+        const accountId = await getUserZernioAccountId(userId, p);
         if (accountId) {
           zernioPlatforms.push({ platform: p, accountId });
         } else {
@@ -44,7 +49,7 @@ export async function composePosts(params: any, userId: string) {
           publishNow,
           scheduledFor: status === "scheduled" && scheduledAt ? scheduledAt : undefined,
           timezone: "Asia/Dubai",
-        });
+        }, userZernioApiKey);
 
         for (const p of zernioPlatforms) {
           await db.insert(postPlatformResults).values({

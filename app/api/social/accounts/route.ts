@@ -11,9 +11,11 @@ export async function GET() {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  let syncResult: { skippedAccounts?: Array<{ platform: string; reason: string }> } | null = null;
+
   // 1. Automatically run synchronization with Zernio on-demand
   try {
-    await syncPlatformHistoryForUser(user.id);
+    syncResult = await syncPlatformHistoryForUser(user.id);
   } catch (err: any) {
     console.error("Auto sync connected accounts failed:", err.message);
   }
@@ -35,5 +37,10 @@ export async function GET() {
     source: "local" as const,
   }));
 
-  return NextResponse.json(safeAccounts);
+  return NextResponse.json({
+    accounts: safeAccounts,
+    sync: {
+      skippedAccounts: syncResult?.skippedAccounts || [],
+    },
+  });
 }

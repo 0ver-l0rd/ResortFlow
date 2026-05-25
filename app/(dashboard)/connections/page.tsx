@@ -3,8 +3,19 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { SocialCard, PlatformConfig, SocialAccount } from "@/components/dashboard/social-card";
-import { Loader2, Info, Link2, ExternalLink, Zap } from "lucide-react";
+import {
+  SocialCard,
+  PlatformConfig,
+  SocialAccount,
+} from "@/components/dashboard/social-card";
+import {
+  Loader2,
+  Info,
+  Link2,
+  ExternalLink,
+  Zap,
+  KeyRound,
+} from "lucide-react";
 
 // Brand icons from react-icons
 import { FaXTwitter } from "react-icons/fa6";
@@ -98,6 +109,8 @@ function ConnectionsContent() {
   const searchParams = useSearchParams();
   const [accounts, setAccounts] = useState<SocialAccount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [apiKeyInput, setApiKeyInput] = useState("");
+  const [isSavingApiKey, setIsSavingApiKey] = useState(false);
 
   useEffect(() => {
     fetchAccounts();
@@ -112,7 +125,20 @@ function ConnectionsContent() {
     try {
       const res = await fetch("/api/social/accounts");
       if (!res.ok) throw new Error(res.statusText);
-      setAccounts(await res.json());
+      const payload = await res.json();
+      setAccounts(payload.accounts || []);
+
+      const skippedAccounts = payload.sync?.skippedAccounts || [];
+      if (
+        skippedAccounts.some(
+          (entry: { reason: string }) =>
+            entry.reason === "already_linked_to_another_user",
+        )
+      ) {
+        toast.error(
+          "Some Zernio accounts were skipped because they are already linked to another user.",
+        );
+      }
     } catch {
       toast.error("Could not load connected accounts.");
     } finally {
@@ -120,14 +146,49 @@ function ConnectionsContent() {
     }
   };
 
-  const handleConnect = (platformId: string) => {
+  const handleConnect = () => {
     // Social account connection is managed centrally on Zernio dashboard
     window.open("https://zernio.com/dashboard/connections", "_blank");
-    toast.info("Connect your account on the Zernio dashboard, then refresh this page to sync.");
+    toast.info(
+      "Connect your account on your own Zernio dashboard, then refresh this page to sync.",
+    );
+  };
+
+  const handleSaveApiKey = async () => {
+    if (!apiKeyInput.trim()) {
+      toast.error("Enter your personal Zernio API key first.");
+      return;
+    }
+
+    setIsSavingApiKey(true);
+    try {
+      const res = await fetch("/api/agent/preferences", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          key: "zernio_api_key",
+          value: apiKeyInput.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to save API key");
+      }
+
+      toast.success("Personal Zernio API key saved.");
+      setApiKeyInput("");
+      await fetchAccounts();
+    } catch {
+      toast.error("Could not save your Zernio API key.");
+    } finally {
+      setIsSavingApiKey(false);
+    }
   };
 
   const handleDisconnect = async (accountId: string) => {
-    const res = await fetch(`/api/social/accounts/${accountId}`, { method: "DELETE" });
+    const res = await fetch(`/api/social/accounts/${accountId}`, {
+      method: "DELETE",
+    });
     if (res.ok || res.status === 204) {
       setAccounts((prev) => prev.filter((a) => a.id !== accountId));
       toast.success("Account disconnected.");
@@ -149,7 +210,6 @@ function ConnectionsContent() {
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-1 space-y-8">
-
       {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -172,8 +232,12 @@ function ConnectionsContent() {
         {/* Stats badge */}
         <div className="flex items-center gap-3 self-start sm:self-auto shrink-0">
           <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-[#e3e8ef] shadow-[0_1px_3px_rgba(60,66,87,0.06)]">
-            <span className="text-sm font-semibold text-[#1a1f36]">{connectedCount}</span>
-            <span className="text-sm text-[#8792a2]">/ {PLATFORMS.length} connected</span>
+            <span className="text-sm font-semibold text-[#1a1f36]">
+              {connectedCount}
+            </span>
+            <span className="text-sm text-[#8792a2]">
+              / {PLATFORMS.length} connected
+            </span>
             {connectedCount > 0 && (
               <span className="w-1.5 h-1.5 rounded-full bg-[#09825d] shrink-0 ml-1" />
             )}
@@ -191,11 +255,49 @@ function ConnectionsContent() {
       </div>
 
       {/* ── Platform Grid ── */}
+      <div className="rounded-xl border border-[#e3e8ef] bg-white overflow-hidden">
+        <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[#f0f3f7] bg-[#f6f9fc]">
+          <KeyRound className="w-3.5 h-3.5 text-[#8792a2]" />
+          <p className="text-xs font-semibold text-[#697386] uppercase tracking-wide">
+            Personal Zernio Workspace
+          </p>
+        </div>
+        <div className="px-5 py-4 space-y-3">
+          <p className="text-sm text-[#697386] leading-relaxed">
+            Each app user should use their own Zernio account and API key. Save
+            your personal Zernio API key here, then connect social accounts from
+            your own Zernio workspace.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="password"
+              value={apiKeyInput}
+              onChange={(event) => setApiKeyInput(event.target.value)}
+              placeholder="Paste your personal Zernio API key"
+              className="flex-1 rounded-lg border border-[#d7deea] bg-white px-3 py-2 text-sm text-[#1a1f36] outline-none focus:border-[#2d6a4f] focus:ring-2 focus:ring-[#2d6a4f]/10"
+            />
+            <button
+              onClick={handleSaveApiKey}
+              disabled={isSavingApiKey}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#245a42] disabled:opacity-50"
+            >
+              {isSavingApiKey ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <KeyRound className="w-4 h-4" />
+              )}
+              Save API Key
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {PLATFORMS.map((platform) => {
           const account = accounts.find(
-            (a) => a.platform === platform.id || 
-                   (platform.id === "twitter" && a.platform === "twitter")
+            (a) =>
+              a.platform === platform.id ||
+              (platform.id === "twitter" && a.platform === "twitter"),
           );
           return (
             <SocialCard
@@ -215,10 +317,12 @@ function ConnectionsContent() {
           <Info className="w-4 h-4 text-[#8792a2]" />
         </div>
         <div className="space-y-1.5">
-          <p className="text-sm font-semibold text-[#3c4257]">Powered by Zernio</p>
+          <p className="text-sm font-semibold text-[#3c4257]">
+            Powered by Zernio
+          </p>
           <ul className="text-sm text-[#697386] space-y-1 leading-relaxed">
             <li>
-              All social accounts are connected and managed through the{" "}
+              All social accounts are connected and managed through your own{" "}
               <a
                 href="https://zernio.com/dashboard"
                 target="_blank"
@@ -227,21 +331,34 @@ function ConnectionsContent() {
               >
                 Zernio Dashboard
               </a>
-              . Zernio handles OAuth, token refresh, and platform-specific requirements.
+              . Zernio handles OAuth, token refresh, and platform-specific
+              requirements inside that personal workspace.
             </li>
             <li>
-              <span className="font-medium text-[#3c4257]">Currently connected:</span>{" "}
+              <span className="font-medium text-[#3c4257]">
+                Currently connected:
+              </span>{" "}
               {accounts.length > 0
-                ? accounts.map((a) => `${a.platform === "twitter" ? "Twitter/X" : a.platform.charAt(0).toUpperCase() + a.platform.slice(1)} (@${a.username || "connected"})`).join(", ")
+                ? accounts
+                    .map(
+                      (a) =>
+                        `${a.platform === "twitter" ? "Twitter/X" : a.platform.charAt(0).toUpperCase() + a.platform.slice(1)} (@${a.username || "connected"})`,
+                    )
+                    .join(", ")
                 : "No accounts connected yet."}
             </li>
             <li>
               To add more platforms (LinkedIn, TikTok, YouTube, etc.), click{" "}
-              <span className="font-medium text-[#3c4257]">"Manage on Zernio"</span>{" "}
-              above and connect them from the Zernio dashboard.
+              <span className="font-medium text-[#3c4257]">
+                "Manage on Zernio"
+              </span>{" "}
+              above and connect them from your own Zernio dashboard.
             </li>
             <li>
-              After connecting a new account on Zernio, <span className="font-medium text-[#3c4257]">refresh this page</span>{" "}
+              After connecting a new account on Zernio,{" "}
+              <span className="font-medium text-[#3c4257]">
+                refresh this page
+              </span>{" "}
               to see it appear here automatically.
             </li>
           </ul>
@@ -258,9 +375,12 @@ function ConnectionsContent() {
         </div>
         <div className="px-5 py-4 flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold text-[#1a1f36]">Zernio Unified API</p>
+            <p className="text-sm font-semibold text-[#1a1f36]">
+              Zernio Unified API
+            </p>
             <p className="text-xs text-[#8792a2] mt-0.5">
-              Posts are published directly via Zernio's API — no per-platform OAuth required.
+              Posts are published directly via your saved Zernio API key — no
+              per-platform OAuth required.
             </p>
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ecfdf5] border border-[#a7f3d0]">

@@ -10,7 +10,7 @@ import {
   audienceSegments
 } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
-import { getZernioAccountAnalytics, getZernioAccountId } from "@/lib/zernio";
+import { getUserZernioApiKey, getZernioAccountAnalytics } from "@/lib/zernio";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +28,7 @@ export async function GET(request: Request) {
     const userAccounts = await db.query.socialAccounts.findMany({
       where: eq(socialAccounts.userId, user.id)
     });
+    const userZernioApiKey = await getUserZernioApiKey(user.id);
 
     let zernioReach = 0;
     let zernioFollowers = 0;
@@ -43,13 +44,16 @@ export async function GET(request: Request) {
       }
 
       // Safeguard: Only fetch configured whitelisted account ID matching environment variables
-      const configuredId = getZernioAccountId(acc.platform);
-      if (!configuredId || configuredId !== acc.platformUserId) {
+      // No env mapping needed – accounts are already user‑scoped
+// const accountId = await getUserZernioAccountId(user.id, post.platform);
+// Use the DB‑stored platformUserId directly
+
+      if (!acc.platformUserId) { // safeguard, should never happen
         continue;
       }
 
       try {
-        const analytics = await getZernioAccountAnalytics(configuredId);
+        const analytics = await getZernioAccountAnalytics(acc.platformUserId, undefined, undefined, userZernioApiKey || undefined);
         if (analytics) {
           zernioFollowers += Number(analytics.followers || analytics.follower_count || 0);
           zernioReach += Number(analytics.reach || 0);
@@ -60,7 +64,7 @@ export async function GET(request: Request) {
           hasRealZernioData = true;
         }
       } catch (err: any) {
-        console.warn(`[Zernio Stats API] Failed to fetch analytics for account ${configuredId}:`, err.message);
+        console.warn(`[Zernio Stats API] Failed to fetch analytics for account ${acc.platformUserId}:`, err.message);
       }
     }
 

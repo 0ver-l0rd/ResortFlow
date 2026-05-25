@@ -3,7 +3,7 @@ import { postPlatformResults } from "@/db/schema";
 import { inngest } from "./client";
 import { db } from "@/db";
 import { posts } from "@/db/schema";
-import { createZernioPost, getZernioAccountId } from "@/lib/zernio";
+import { createZernioPost, getUserZernioApiKey, getUserZernioAccountId } from "@/lib/zernio";
 
 export const publishPost = inngest.createFunction(
   {
@@ -12,7 +12,8 @@ export const publishPost = inngest.createFunction(
     triggers: [{ event: "post/created" }]
   },
   async ({ event, step }) => {
-    const { postId, scheduledAt } = event.data;
+    const payload = event.data as { postId: string; scheduledAt?: string | null };
+    const { postId, scheduledAt } = payload;
 
     // 1. Sleep until scheduled time if in the future
     if (scheduledAt) {
@@ -30,11 +31,16 @@ export const publishPost = inngest.createFunction(
 
       if (!post) throw new Error(`Post ${postId} not found`);
 
+      const userZernioApiKey = await getUserZernioApiKey(post.userId);
+      if (!userZernioApiKey) {
+        throw new Error("User has not saved a personal Zernio API key.");
+      }
+
       const zernioPlatforms = [];
       const skippedPlatforms = [];
 
       for (const platformName of post.platforms) {
-        const accountId = getZernioAccountId(platformName);
+        const accountId = await getUserZernioAccountId(post.userId, platformName);
         if (accountId) {
           zernioPlatforms.push({ platform: platformName, accountId });
         } else {
@@ -56,7 +62,7 @@ export const publishPost = inngest.createFunction(
             platforms: zernioPlatforms,
             mediaItems: zernioMedia.length > 0 ? zernioMedia : undefined,
             publishNow: true,
-          });
+          }, userZernioApiKey);
 
           for (const p of zernioPlatforms) {
             publishResults.push({

@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { posts, postPlatformResults, users } from "@/db/schema";
+import { posts, postPlatformResults } from "@/db/schema";
 import { getDbUser } from "@/lib/auth";
 import { eq, desc, and, gte, lte, or } from "drizzle-orm";
 import {
   createZernioPost,
-  getZernioAccountId,
+  getUserZernioApiKey,
+  getUserZernioAccountId,
   ZernioPlatformTarget,
   ZernioMediaItem,
 } from "@/lib/zernio";
@@ -97,12 +98,17 @@ export async function POST(request: Request) {
     // ── Publish via Zernio ──────────────────────────────────────────────────
     if (status === "published" || status === "scheduled") {
       try {
+        const userZernioApiKey = await getUserZernioApiKey(dbUser.id);
+        if (!userZernioApiKey) {
+          throw new Error("Save your personal Zernio API key in Connections before publishing.");
+        }
+
         // Map app platform names → Zernio account IDs
         const zernioPlatforms: ZernioPlatformTarget[] = [];
         const skippedPlatforms: string[] = [];
 
         for (const p of platforms) {
-          const accountId = getZernioAccountId(p);
+          const accountId = await getUserZernioAccountId(dbUser.id, p);
           if (accountId) {
             zernioPlatforms.push({ platform: p, accountId });
           } else {
@@ -128,7 +134,7 @@ export async function POST(request: Request) {
             publishNow: status === "published",
             scheduledFor: status === "scheduled" && scheduledAt ? scheduledAt : undefined,
             timezone: "Asia/Dubai", // GMT+4 matching user's locale
-          });
+          }, userZernioApiKey);
 
           console.log(`✅ Zernio post created: ${zernioPost._id}`);
 

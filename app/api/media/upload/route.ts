@@ -3,8 +3,7 @@ import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { mediaAssets } from "@/db/schema";
 import { imagekit } from "@/lib/imagekit/client";
-import { eq } from "drizzle-orm";
-import { uploadMediaToZernio } from "@/lib/zernio";
+import { getUserZernioApiKey, uploadMediaToZernio } from "@/lib/zernio";
 
 export async function POST(request: Request) {
   try {
@@ -12,6 +11,7 @@ export async function POST(request: Request) {
     if (!user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+    const userZernioApiKey = await getUserZernioApiKey(user.id);
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
@@ -54,12 +54,15 @@ export async function POST(request: Request) {
     // ── Upload to Zernio (for social posting) ─────────────────────────────
     let zernioPublicUrl = "";
     try {
-      zernioPublicUrl = await uploadMediaToZernio(
-        file.name,
-        file.type,
-        buffer
-      );
-      console.log("✅ Zernio media uploaded:", zernioPublicUrl);
+      if (userZernioApiKey) {
+        zernioPublicUrl = await uploadMediaToZernio(
+          file.name,
+          file.type,
+          buffer,
+          userZernioApiKey
+        );
+        console.log("✅ Zernio media uploaded:", zernioPublicUrl);
+      }
     } catch (zErr: any) {
       console.warn("Zernio media upload failed (non-fatal):", zErr.message);
     }

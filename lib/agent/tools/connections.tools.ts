@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { socialAccounts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-import { listZernioAccounts } from "@/lib/zernio";
+import { listUserZernioAccounts } from "@/lib/zernio";
 
 export async function getConnectedAccounts(params: any, userId: string) {
   try {
@@ -12,7 +12,7 @@ export async function getConnectedAccounts(params: any, userId: string) {
     // 2. Fetch LIVE Zernio connected profiles
     let zernioAccounts: any[] = [];
     try {
-      zernioAccounts = await listZernioAccounts();
+      zernioAccounts = await listUserZernioAccounts(userId);
     } catch (err: any) {
       console.warn("Agent Zernio fetch failed:", err);
       // If Zernio fails and we have no local accounts, surface the error so AI knows why

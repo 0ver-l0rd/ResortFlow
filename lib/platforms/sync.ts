@@ -1,63 +1,69 @@
-import { listZernioAccounts, listZernioPosts, getZernioAccountId } from "../zernio";
+import { listUserZernioAccounts, listUserZernioPosts } from "../zernio";
 import { db } from "@/db";
 import { socialAccounts, posts, postPlatformResults } from "@/db/schema";
 import { encrypt } from "@/lib/encryption";
 import { and, eq } from "drizzle-orm";
 
+const KNOWN_PLATFORMS = ["twitter", "instagram", "linkedin", "facebook", "tiktok", "youtube", "pinterest", "discord", "slack"];
+
 /**
- * Syncs whitelisted Zernio social accounts and their published post history
+ * Syncs known Zernio social accounts and their published post history
  * into the local database under the logged-in user's namespace.
  */
 export async function syncPlatformHistoryForUser(userId: string, platform?: string) {
   // 1. Fetch connected accounts from the unified Zernio developer key
   let zernioAccounts = [];
   try {
-    zernioAccounts = await listZernioAccounts();
+    zernioAccounts = await listUserZernioAccounts(userId);
   } catch (err: any) {
     console.error("Failed to fetch Zernio accounts:", err.message);
     return { success: false, error: "Failed to fetch accounts from Zernio" };
   }
 
-  // Filter Zernio accounts to only include whitelisted platforms.
-  // If an environment variable maps a platform to a specific Zernio account ID,
-  // enforce that exact match. Otherwise (no env var), accept the account.
-  const whitelistedAccounts = zernioAccounts.filter(za => {
-    const configuredId = getZernioAccountId(za.platform);
-    if (configuredId) {
-      // Enforce exact match when config exists
-      const isWhitelisted = configuredId === za._id;
-      if (platform) {
-        return isWhitelisted && za.platform.toLowerCase() === platform.toLowerCase();
-      }
-      return isWhitelisted;
-    }
-    // No env var mapping – accept the account as long as the platform is known
-    const knownPlatforms = ["twitter","instagram","linkedin","facebook","tiktok","youtube","pinterest","discord","slack"];
-    const isKnown = knownPlatforms.includes(za.platform.toLowerCase());
+  const whitelistedAccounts = zernioAccounts.filter((za: any) => {
+    const normalizedPlatform = za.platform.toLowerCase();
+    const isKnown = KNOWN_PLATFORMS.includes(normalizedPlatform);
     if (platform) {
-      return isKnown && za.platform.toLowerCase() === platform.toLowerCase();
+      return isKnown && normalizedPlatform === platform.toLowerCase();
     }
     return isKnown;
   });
 
   const syncedAccounts = [];
+  const skippedAccounts: Array<{ platform: string; reason: string }> = [];
+  const claimedPlatformUserIds = new Set<string>();
 
   for (const account of whitelistedAccounts) {
     try {
+      const normalizedPlatform = account.platform.toLowerCase();
+      const platformUserId = account.platformUserId || account._id;
+
+      const existingByPlatformUserId = await db.query.socialAccounts.findFirst({
+        where: eq(socialAccounts.platformUserId, platformUserId),
+      });
+
+      if (existingByPlatformUserId && existingByPlatformUserId.userId !== userId) {
+        skippedAccounts.push({
+          platform: normalizedPlatform,
+          reason: "already_linked_to_another_user",
+        });
+        continue;
+      }
+
       // Check if we already have this account locally for this user
       const existing = await db.query.socialAccounts.findFirst({
         where: and(
           eq(socialAccounts.userId, userId),
-          eq(socialAccounts.platform, account.platform.toLowerCase()),
-          eq(socialAccounts.platformUserId, account.platformUserId || account._id)
+          eq(socialAccounts.platform, normalizedPlatform),
+          eq(socialAccounts.platformUserId, platformUserId)
         )
       });
 
       const accountData = {
         userId,
-        platform: account.platform.toLowerCase(),
+        platform: normalizedPlatform,
         accessToken: encrypt("zernio"), // Dummy token for schema compliance
-        platformUserId: account.platformUserId || account._id,
+        platformUserId,
         username: account.username || account.displayName || account.platform,
         avatarUrl: account.avatarUrl || null,
       };
@@ -70,7 +76,8 @@ export async function syncPlatformHistoryForUser(userId: string, platform?: stri
         await db.insert(socialAccounts).values(accountData);
       }
       
-      syncedAccounts.push(account.platform.toLowerCase());
+      syncedAccounts.push(normalizedPlatform);
+      claimedPlatformUserIds.add(platformUserId);
     } catch (dbErr) {
       console.error(`Failed to store social account ${account.platform} in database:`, dbErr);
     }
@@ -79,7 +86,7 @@ export async function syncPlatformHistoryForUser(userId: string, platform?: stri
   // 3. Fetch published posts from Zernio
   let zernioPosts = [];
   try {
-    zernioPosts = await listZernioPosts();
+    zernioPosts = await listUserZernioPosts(userId);
   } catch (err: any) {
     console.error("Failed to fetch Zernio posts:", err.message);
     return { success: true, message: "Sync accounts complete, but failed to sync posts history." };
@@ -88,12 +95,20 @@ export async function syncPlatformHistoryForUser(userId: string, platform?: stri
   let syncedPostsCount = 0;
 
   for (const zPost of zernioPosts) {
-    // Determine which platforms in the post are whitelisted in ResortFlow config
+    // Determine which platforms in the post map to known app platforms
     const postPlatforms = zPost.platforms || [];
     const validPlatforms = postPlatforms.filter((p: any) => {
       const pName = typeof p === "string" ? p : p.platform;
-      return getZernioAccountId(pName) !== null;
+      return KNOWN_PLATFORMS.includes(pName.toLowerCase());
     });
+
+    const postAccountIds = postPlatforms
+      .map((p: any) => (typeof p === "string" ? undefined : p.accountId || p.platformUserId || p._id))
+      .filter(Boolean);
+
+    if (postAccountIds.length > 0 && !postAccountIds.some((accountId: string) => claimedPlatformUserIds.has(accountId))) {
+      continue;
+    }
 
     if (validPlatforms.length === 0) continue;
 
@@ -147,5 +162,5 @@ export async function syncPlatformHistoryForUser(userId: string, platform?: stri
     }
   }
 
-  return { success: true, syncedAccounts, syncedPostsCount };
+  return { success: true, syncedAccounts, skippedAccounts, syncedPostsCount };
 }
