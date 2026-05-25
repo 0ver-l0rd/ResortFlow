@@ -459,7 +459,7 @@ function PlatformPreview({ platform, content, media, accounts = [] }: { platform
           </div>
           <Bookmark className="w-[24px] h-[24px] text-black hover:text-slate-500 cursor-pointer" />
         </div>
-        <div className="font-semibold text-[14px] leading-none mb-2 text-black">1,337 likes</div>
+        <div className="font-semibold text-[14px] leading-none mb-2 text-black">0 likes (Preview)</div>
         <div className="text-[14px] text-black">
           <span className="font-semibold mr-1.5">{currentAccount?.username || "your_handle"}</span>
           <span className="whitespace-pre-wrap">{content || noContent}</span>

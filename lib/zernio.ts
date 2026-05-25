@@ -191,6 +191,29 @@ export async function uploadToZernioPresigned(
   }
 }
 
+export interface ZernioAccountAnalytics {
+  platform: string;
+  followers?: number;
+  follower_count?: number;
+  impressions?: number;
+  reach?: number;
+  clicks?: number;
+  likes?: number;
+  comments?: number;
+  shares?: number;
+  engagementRate?: number;
+  [key: string]: any;
+}
+
+export interface ZernioPostAnalytics {
+  impressions?: number;
+  likes?: number;
+  clicks?: number;
+  shares?: number;
+  comments?: number;
+  [key: string]: any;
+}
+
 /**
  * Convenience: presign + upload in one call. Returns the public URL.
  */
@@ -202,4 +225,37 @@ export async function uploadMediaToZernio(
   const { uploadUrl, publicUrl } = await getZernioPresignedUrl(fileName, fileType);
   await uploadToZernioPresigned(uploadUrl, fileBuffer, fileType);
   return publicUrl;
+}
+
+/**
+ * Get analytics for a specific connected account via Zernio.
+ */
+export async function getZernioAccountAnalytics(
+  accountId: string,
+  startDate?: string,
+  endDate?: string
+): Promise<ZernioAccountAnalytics> {
+  let query = "";
+  const params: string[] = [];
+  if (startDate) params.push(`startDate=${startDate}`);
+  if (endDate) params.push(`endDate=${endDate}`);
+  if (params.length > 0) {
+    query = `?${params.join("&")}`;
+  }
+  const result = await zernioFetch<{ analytics: ZernioAccountAnalytics }>(
+    `/analytics/account/${accountId}${query}`
+  );
+  return result.analytics;
+}
+
+/**
+ * Get analytics for a specific published post via Zernio.
+ */
+export async function getZernioPostAnalytics(
+  postId: string
+): Promise<ZernioPostAnalytics> {
+  const result = await zernioFetch<{ analytics: ZernioPostAnalytics }>(
+    `/analytics/${postId}`
+  );
+  return result.analytics;
 }

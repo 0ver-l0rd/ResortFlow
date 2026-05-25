@@ -74,7 +74,7 @@ export default function AnalyticsPage() {
     {
       ...STATS_METADATA[1],
       value: realStats?.engagement || "0.0%",
-      change: "+0.5%", 
+      change: realStats?.raw?.source === "zernio" ? "Live" : "Db-derived", 
       trend: "up" as const,
     },
     {
@@ -127,7 +127,7 @@ export default function AnalyticsPage() {
         
         {/* ── Page Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pt-8">
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-left">
             <div className="flex items-center gap-2">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8792a2]">
                 Intelligence
@@ -137,9 +137,21 @@ export default function AnalyticsPage() {
                 {currentTheme.name}
               </p>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-[#1a1f36]">
-              Growth Insights
-            </h1>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-3xl font-bold tracking-tight text-[#1a1f36]">
+                Growth Insights
+              </h1>
+              {realStats?.raw?.source && (
+                <span className={cn(
+                  "text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border shadow-sm transition-all duration-300",
+                  realStats.raw.source === "zernio" 
+                    ? "bg-green-50 text-green-700 border-green-200" 
+                    : "bg-amber-50 text-amber-700 border-amber-200"
+                )}>
+                  {realStats.raw.source === "zernio" ? "Zernio Live" : "Local DB Fallback"}
+                </span>
+              )}
+            </div>
             <p className="text-sm text-[#8792a2] max-w-md">
               Harness AI-driven patterns to scale your digital footprint across {selectedPlatform === "All Platforms" ? "all channels" : selectedPlatform}.
             </p>

@@ -221,15 +221,46 @@ export function SegmentsClient({ initialSegments }: { initialSegments: any[] }) 
     if (!customPrompt.trim()) return;
     setIsBuilding(true);
     const buildToast = toast.loading("AI is engineering audience pattern...");
-    await new Promise((r) => setTimeout(r, 2000));
-    setIsBuilding(false);
-    setIsCreatingCustom(false);
-    setCustomPrompt("");
-    toast.dismiss(buildToast);
-    toast.success("Segment engineered successfully", {
-      description: "1,240 contacts identified.",
-      icon: <Sparkles className="w-4 h-4 text-[#2d6a4f]" />
-    });
+    try {
+      const res = await fetch("/api/segments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: customPrompt, type: "custom" }),
+      });
+      if (!res.ok) throw new Error("Failed to create segment");
+      const newSeg = await res.json();
+      
+      const newMapped = {
+        id: newSeg.id,
+        name: newSeg.name,
+        type: newSeg.type,
+        icon: Target,
+        description: "Custom segment engineered from prompt.",
+        memberCount: newSeg.memberCount || 0,
+        trend: "—",
+        trendUp: true,
+        avgRevenue: newSeg.avgRevenue || 0,
+        bestContent: "N/A",
+        color: "#2d6a4f",
+        bg: "#fcfdfe",
+        borderColor: "#e3e8ef",
+        useCase: `${newSeg.name} target campaign`,
+        engagementScore: 50,
+      };
+
+      setSegments(prev => [newMapped, ...prev]);
+      setIsCreatingCustom(false);
+      setCustomPrompt("");
+      toast.success("Segment engineered successfully", {
+        description: `${newSeg.memberCount} contacts identified.`,
+        icon: <Sparkles className="w-4 h-4 text-[#2d6a4f]" />
+      });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create segment");
+    } finally {
+      setIsBuilding(false);
+      toast.dismiss(buildToast);
+    }
   };
 
   return (

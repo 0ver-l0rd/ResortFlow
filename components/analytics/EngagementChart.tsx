@@ -68,6 +68,9 @@ const platformData: Record<string, typeof data> = {
   ],
 };
 
+import { useQuery } from "@tanstack/react-query";
+import { AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { PLATFORM_THEMES } from "@/lib/analytics-themes";
 
 const chartConfig = {
@@ -82,17 +85,90 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function EngagementChart({ platform = "All Platforms" }: { platform?: string }) {
-  const currentData = platform === "All Platforms" ? data : (platformData[platform] || data);
   const theme = PLATFORM_THEMES[platform] || PLATFORM_THEMES["All Platforms"];
+
+  // 1. Fetch connected accounts
+  const { data: accounts = [], isLoading: isAccountsLoading } = useQuery({
+    queryKey: ["social-accounts"],
+    queryFn: async () => {
+      const response = await fetch("/api/social/accounts");
+      if (!response.ok) throw new Error("Failed to fetch accounts");
+      return response.json() as Promise<{ platform: string }[]>;
+    },
+  });
+
+  // 2. Fetch top posts
+  const { data: posts = [], isLoading: isPostsLoading } = useQuery({
+    queryKey: ["analytics-top-posts"],
+    queryFn: async () => {
+      const response = await fetch("/api/analytics/top-posts");
+      if (!response.ok) throw new Error("Failed to fetch top posts");
+      return response.json() as Promise<any[]>;
+    },
+  });
+
+  // Check if platform is connected
+  const normalizedPlatform = platform.toLowerCase().split("/")[0].trim();
+  const isConnected = platform === "All Platforms" || accounts.some(
+    (a) => a.platform.toLowerCase().split("/")[0].trim() === normalizedPlatform
+  );
+
+  // Filter posts for this platform
+  const platformPosts = platform === "All Platforms" 
+    ? posts 
+    : posts.filter(p => p.platform.toLowerCase().split("/")[0].trim() === normalizedPlatform);
+
+  if (isAccountsLoading || isPostsLoading) {
+    return (
+      <div className="bg-white rounded-[2rem] border border-[#e2e8f0] h-[340px] flex items-center justify-center text-sm font-semibold text-[#8792a2]">
+        Loading tracking matrix…
+      </div>
+    );
+  }
+
+  if (!isConnected) {
+    return (
+      <div className="bg-white rounded-[2rem] border border-[#e2e8f0] shadow-sm h-[340px] flex flex-col items-center justify-center p-8 gap-4 text-center">
+        <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center">
+          <AlertCircle className="w-6 h-6 text-amber-600" />
+        </div>
+        <div className="space-y-1">
+          <h4 className="text-md font-bold text-[#1a1f36]">{platform} is not connected</h4>
+          <p className="text-xs text-[#8792a2] max-w-sm leading-relaxed">
+            Link your {platform} profile in the connections dashboard to start tracking real-time engagement and audience flows.
+          </p>
+        </div>
+        <a 
+          href="/connections" 
+          className="mt-2 text-xs font-bold text-white bg-[#2d6a4f] hover:bg-[#1b4332] px-5 py-2.5 rounded-xl transition-all shadow-sm"
+        >
+          Manage Connections
+        </a>
+      </div>
+    );
+  }
+
+  const currentData = platform === "All Platforms" ? data : (platformData[platform] || data);
+  const showDemoNotice = platformPosts.length === 0;
 
   return (
     <div className="bg-white rounded-[2rem] border border-[#e2e8f0] shadow-[0_1px_1px_rgba(0,0,0,0.05),0_12px_60px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-700">
+      {showDemoNotice && (
+        <div className="bg-amber-50/80 border-b border-amber-100 px-8 py-2.5 text-left flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
+          <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">
+            No published posts found on this channel. Showing demo trends visualization.
+          </span>
+        </div>
+      )}
       <div className="flex items-center justify-between px-8 py-7 border-b border-[#f1f4f9] bg-gradient-to-r from-white to-[#f8fafc]">
-        <div>
+        <div className="text-left">
           <h3 className="text-lg font-bold text-[#1a1f36] tracking-tight">
             {platform === "All Platforms" ? "Global Performance" : `${platform} Metrics`}
           </h3>
-          <p className="text-[10px] font-bold text-[#8792a2] mt-1 uppercase tracking-[0.2em]">Audience Flux & Interaction Matrix (Demo Data)</p>
+          <p className="text-[10px] font-bold text-[#8792a2] mt-1 uppercase tracking-[0.2em]">
+            {showDemoNotice ? "Audience Flux & Interaction Matrix (Demo Visualization)" : "Audience Flux & Interaction Matrix (Live)"}
+          </p>
         </div>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 group cursor-pointer">
@@ -105,7 +181,12 @@ export function EngagementChart({ platform = "All Platforms" }: { platform?: str
           </div>
         </div>
       </div>
-      <div className="px-6 py-8 h-[340px]">
+      <div className="px-6 py-8 h-[340px] relative">
+        {showDemoNotice && (
+          <div className="absolute top-4 right-6 z-10 px-2.5 py-1 bg-amber-100/60 text-amber-800 border border-amber-200/50 rounded-lg text-[9px] font-bold uppercase tracking-wider">
+            Demo Mode
+          </div>
+        )}
         <ChartContainer config={chartConfig} className="h-full w-full">
           <AreaChart data={currentData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>

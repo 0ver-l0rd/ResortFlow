@@ -3,6 +3,7 @@ import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { posts, postPlatformResults } from "@/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
+import { getZernioPostAnalytics } from "@/lib/zernio";
 
 export const dynamic = "force-dynamic";
 
@@ -47,22 +48,48 @@ export async function GET() {
       }
     });
 
-    const formattedPosts = Array.from(postMap.values()).map((post: any) => {
-      return {
+    const postsList = Array.from(postMap.values());
+    const formattedPosts = [];
+
+    for (const post of postsList) {
+      let likes = "N/A";
+      let comments = "N/A";
+      let shares = "N/A";
+      let engagement = "N/A";
+
+      // If we have a real Zernio platform post ID, fetch actual analytics
+      if (post.platformPostId && !post.isSimulated) {
+        try {
+          const metrics = await getZernioPostAnalytics(post.platformPostId);
+          if (metrics) {
+            likes = metrics.likes !== undefined ? String(metrics.likes) : "0";
+            comments = metrics.comments !== undefined ? String(metrics.comments) : "0";
+            shares = metrics.shares !== undefined ? String(metrics.shares) : "0";
+
+            const impressions = metrics.impressions || 1;
+            const actions = (metrics.likes || 0) + (metrics.comments || 0) + (metrics.shares || 0);
+            engagement = `${((actions / impressions) * 100).toFixed(1)}%`;
+          }
+        } catch (err: any) {
+          console.warn(`[Zernio Top Posts API] Failed to fetch analytics for post ${post.platformPostId}:`, err.message);
+        }
+      }
+
+      formattedPosts.push({
         id: post.id,
         content: post.content,
         platform: post.platform.charAt(0).toUpperCase() + post.platform.slice(1),
         isSimulated: post.isSimulated,
-        likes: "N/A",
-        comments: "N/A",
-        shares: "N/A",
+        likes,
+        comments,
+        shares,
         date: post.publishedAt 
           ? new Date(post.publishedAt).toLocaleDateString() 
           : "Recently",
-        engagement: "N/A",
+        engagement,
         mediaUrls: post.mediaUrls,
-      };
-    });
+      });
+    }
 
     return NextResponse.json(formattedPosts.slice(0, 5));
   } catch (error) {

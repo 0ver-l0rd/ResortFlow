@@ -10,6 +10,7 @@ import {
   audienceSegments
 } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
+import { getZernioAccountAnalytics, getZernioAccountId } from "@/lib/zernio";
 
 export const dynamic = "force-dynamic";
 
@@ -21,22 +22,61 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const platform = searchParams.get("platform") || "All Platforms";
 
-    // 1. Total Reach (Contacts + Segment Members)
+    // 1. Fetch user's local social accounts
+    const userAccounts = await db.query.socialAccounts.findMany({
+      where: eq(socialAccounts.userId, user.id)
+    });
+
+    let zernioReach = 0;
+    let zernioFollowers = 0;
+    let zernioLikes = 0;
+    let zernioComments = 0;
+    let zernioShares = 0;
+    let zernioImpressions = 0;
+    let hasRealZernioData = false;
+
+    for (const acc of userAccounts) {
+      if (platform !== "All Platforms" && acc.platform.toLowerCase() !== platform.toLowerCase()) {
+        continue;
+      }
+
+      // Safeguard: Only fetch configured whitelisted account ID matching environment variables
+      const configuredId = getZernioAccountId(acc.platform);
+      if (!configuredId || configuredId !== acc.platformUserId) {
+        continue;
+      }
+
+      try {
+        const analytics = await getZernioAccountAnalytics(configuredId);
+        if (analytics) {
+          zernioFollowers += Number(analytics.followers || analytics.follower_count || 0);
+          zernioReach += Number(analytics.reach || 0);
+          zernioLikes += Number(analytics.likes || 0);
+          zernioComments += Number(analytics.comments || 0);
+          zernioShares += Number(analytics.shares || 0);
+          zernioImpressions += Number(analytics.impressions || 0);
+          hasRealZernioData = true;
+        }
+      } catch (err: any) {
+        console.warn(`[Zernio Stats API] Failed to fetch analytics for account ${configuredId}:`, err.message);
+      }
+    }
+
+    // 2. Database Fallback: Total Reach (Contacts + Segment Members)
     const contactsCount = await db
       .select({ count: sql<number>`count(*)` })
       .from(contacts)
       .where(eq(contacts.userId, user.id));
     
-    // In a real app, we'd filter segment members by platform if needed
     const segmentMembersCount = await db
       .select({ count: sql<number>`count(distinct platform_user_id)` })
       .from(segmentMembers)
       .innerJoin(audienceSegments, eq(segmentMembers.segmentId, audienceSegments.id))
       .where(eq(audienceSegments.userId, user.id));
 
-    const totalReach = (contactsCount[0]?.count || 0) + (segmentMembersCount[0]?.count || 0);
+    const dbReach = (contactsCount[0]?.count || 0) + (segmentMembersCount[0]?.count || 0);
 
-    // 2. Avg Engagement (Scale 0-100 to 0-10%)
+    // 3. Database Fallback: Avg Engagement (Scale 0-100 to 0-10%)
     const avgEngagementRes = await db
       .select({ avg: sql<number>`avg(engagement_score)` })
       .from(segmentMembers)
@@ -47,17 +87,17 @@ export async function GET(request: Request) {
           : and(eq(audienceSegments.userId, user.id), eq(segmentMembers.platform, platform.toLowerCase()))
       );
     
-    const avgEngagement = avgEngagementRes[0]?.avg ? (avgEngagementRes[0].avg / 10).toFixed(2) : "0.00";
+    const dbEngagement = avgEngagementRes[0]?.avg ? (avgEngagementRes[0].avg / 10).toFixed(2) : "0.00";
 
-    // 3. Total Followers (Sum of member counts)
+    // 4. Database Fallback: Total Followers (Sum of member counts)
     const followersRes = await db
       .select({ sum: sql<number>`sum(member_count)` })
       .from(audienceSegments)
       .where(eq(audienceSegments.userId, user.id));
     
-    const totalFollowers = followersRes[0]?.sum || 0;
+    const dbFollowers = followersRes[0]?.sum || 0;
 
-    // 4. Growth Rate (Based on success vs total post attempts)
+    // 5. Growth Rate (Based on success vs total post attempts)
     const postResults = await db
       .select({ 
         status: postPlatformResults.status,
@@ -76,16 +116,34 @@ export async function GET(request: Request) {
     const totalPosts = postResults.reduce((acc, r) => acc + r.count, 0);
     const growthRate = totalPosts > 0 ? ((successful / totalPosts) * 10).toFixed(1) : "0.0";
 
+    // Merge Zernio Metrics & Database metrics
+    let reach = dbReach;
+    let followers = dbFollowers;
+    let engagement = `${dbEngagement}%`;
+
+    if (hasRealZernioData) {
+      if (zernioReach > 0) reach = zernioReach;
+      if (zernioFollowers > 0) followers = zernioFollowers;
+
+      const totalActions = zernioLikes + zernioComments + zernioShares;
+      if (totalActions > 0 && zernioImpressions > 0) {
+        engagement = `${((totalActions / zernioImpressions) * 100).toFixed(2)}%`;
+      } else if (totalActions > 0 && zernioFollowers > 0) {
+        engagement = `${((totalActions / zernioFollowers) * 100).toFixed(2)}%`;
+      }
+    }
+
     return NextResponse.json({
-      reach: totalReach,
-      engagement: `${avgEngagement}%`,
-      followers: totalFollowers,
+      reach,
+      engagement,
+      followers,
       growth: `${growthRate}%`,
       raw: {
         successful,
         totalPosts,
         contacts: contactsCount[0]?.count || 0,
-        segments: segmentMembersCount[0]?.count || 0
+        segments: segmentMembersCount[0]?.count || 0,
+        source: hasRealZernioData ? "zernio" : "local_db"
       }
     });
   } catch (error) {

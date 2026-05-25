@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { 
   Play, 
   MessageCircle, 
@@ -18,6 +19,21 @@ interface PlatformSpecMetricsProps {
 }
 
 export function PlatformSpecMetrics({ platform }: PlatformSpecMetricsProps) {
+  // 1. Fetch connected accounts
+  const { data: accounts = [], isLoading } = useQuery({
+    queryKey: ["social-accounts"],
+    queryFn: async () => {
+      const response = await fetch("/api/social/accounts");
+      if (!response.ok) throw new Error("Failed to fetch accounts");
+      return response.json() as Promise<{ platform: string }[]>;
+    },
+  });
+
+  const normalizedPlatform = platform.toLowerCase().split("/")[0].trim();
+  const isConnected = accounts.some(
+    (a) => a.platform.toLowerCase().split("/")[0].trim() === normalizedPlatform
+  );
+
   // Mock platform-specific data
   const metricsMap: Record<string, any[]> = {
     "Instagram": [
@@ -63,6 +79,8 @@ export function PlatformSpecMetrics({ platform }: PlatformSpecMetricsProps) {
       { label: "Engaged Audience", value: "8.4k", change: "+5%", trend: "up", icon: UserPlus, color: "#BD081C", note: "mostly female 25-34" },
     ],
   };
+
+  if (isLoading || !isConnected) return null;
 
   const currentMetrics = metricsMap[platform] || [];
 

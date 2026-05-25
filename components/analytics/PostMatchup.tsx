@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { TrendingUp, TrendingDown, Heart, MessageSquare, Share2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { AlertCircle, TrendingUp, TrendingDown, Heart, MessageSquare, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PLATFORM_THEMES } from "@/lib/analytics-themes";
 
@@ -50,8 +51,111 @@ const matchupData: Record<string, { best: PostData; worst: PostData }> = {
 };
 
 export function PostMatchup({ platform }: PostMatchupProps) {
-  const data = matchupData[platform] || matchupData["Instagram"];
   const theme = PLATFORM_THEMES[platform] || PLATFORM_THEMES["All Platforms"];
+
+  // 1. Fetch connected accounts
+  const { data: accounts = [], isLoading: isAccountsLoading } = useQuery({
+    queryKey: ["social-accounts"],
+    queryFn: async () => {
+      const response = await fetch("/api/social/accounts");
+      if (!response.ok) throw new Error("Failed to fetch accounts");
+      return response.json() as Promise<{ platform: string }[]>;
+    },
+  });
+
+  // 2. Fetch top posts
+  const { data: posts = [], isLoading: isPostsLoading } = useQuery({
+    queryKey: ["analytics-top-posts"],
+    queryFn: async () => {
+      const response = await fetch("/api/analytics/top-posts");
+      if (!response.ok) throw new Error("Failed to fetch top posts");
+      return response.json() as Promise<any[]>;
+    },
+  });
+
+  const normalizedPlatform = platform.toLowerCase().split("/")[0].trim();
+  const isConnected = accounts.some(
+    (a) => a.platform.toLowerCase().split("/")[0].trim() === normalizedPlatform
+  );
+
+  if (isAccountsLoading || isPostsLoading) {
+    return (
+      <div className="bg-white p-8 rounded-2xl border border-[#e3e8ef] text-center text-sm font-semibold text-[#8792a2]">
+        Analyzing channel matchups…
+      </div>
+    );
+  }
+
+  if (!isConnected) {
+    return (
+      <div className="bg-white p-8 rounded-2xl border border-[#e3e8ef] shadow-sm text-center flex flex-col items-center justify-center p-8 gap-4">
+        <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center">
+          <AlertCircle className="w-5 h-5 text-amber-600" />
+        </div>
+        <div className="space-y-1">
+          <h4 className="text-sm font-bold text-[#1a1f36]">{platform} Matchup Unavailable</h4>
+          <p className="text-xs text-[#8792a2]">
+            Connect your {platform} account to view post matchups.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Filter posts by platform
+  const platformPosts = posts.filter(
+    p => p.platform.toLowerCase().split("/")[0].trim() === normalizedPlatform
+  );
+
+  // If fewer than 2 posts, matchup is unavailable
+  if (platformPosts.length < 2) {
+    return (
+      <div className="bg-white p-10 rounded-2xl border border-[#e3e8ef] shadow-sm text-center flex flex-col items-center justify-center gap-4">
+        <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-[#e3e8ef] flex items-center justify-center">
+          <AlertCircle className="w-5 h-5 text-[#8792a2]" />
+        </div>
+        <div className="space-y-1">
+          <h4 className="text-sm font-bold text-[#1a1f36]">Performance Matchup Unavailable</h4>
+          <p className="text-xs text-[#8792a2] max-w-sm leading-relaxed">
+            We need at least two published posts on {platform} to compute comparison metrics. Keep composing and scheduling!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Parse engagement rate helper
+  const parseEngagement = (eng: string) => {
+    if (!eng || eng === "N/A") return -1;
+    return parseFloat(eng.replace("%", ""));
+  };
+
+  // Sort by engagement
+  const sortedPosts = [...platformPosts].sort(
+    (a, b) => parseEngagement(b.engagement) - parseEngagement(a.engagement)
+  );
+
+  const bestPost = sortedPosts[0];
+  const worstPost = sortedPosts[sortedPosts.length - 1];
+
+  const bestPostData: PostData = {
+    content: bestPost.content,
+    likes: bestPost.likes,
+    comments: bestPost.comments,
+    shares: bestPost.shares || "0",
+    engagement: bestPost.engagement,
+    date: bestPost.date,
+  };
+
+  const worstPostData: PostData = {
+    content: worstPost.content,
+    likes: worstPost.likes,
+    comments: worstPost.comments,
+    shares: worstPost.shares || "0",
+    engagement: worstPost.engagement,
+    date: worstPost.date,
+  };
+
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -71,30 +175,30 @@ export function PostMatchup({ platform }: PostMatchupProps) {
             >
               <TrendingUp className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-bold text-[#1a1f36]">High Performer (Demo)</span>
+            <span className="text-sm font-bold text-[#1a1f36]">High Performer (Live)</span>
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: theme.primary }}>{data.best.engagement} Engagement</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: theme.primary }}>{bestPostData.engagement} Engagement</span>
         </div>
         <div className="p-5 flex-1 flex flex-col gap-4">
-          <div className="p-4 rounded-xl bg-[#f6f9fc] border border-[#e3e8ef]/50 group-hover:bg-white transition-colors">
+          <div className="p-4 rounded-xl bg-[#f6f9fc] border border-[#e3e8ef]/50 group-hover:bg-white transition-colors text-left">
              <p className="text-sm text-[#3c4257] font-medium leading-relaxed">
-               "{data.best.content}"
+               "{bestPostData.content}"
              </p>
           </div>
           <div className="flex items-center justify-between mt-auto">
-             <span className="text-xs text-[#8792a2]">{data.best.date}</span>
+             <span className="text-xs text-[#8792a2]">{bestPostData.date}</span>
              <div className="flex items-center gap-4 text-[#3c4257]">
                <div className="flex items-center gap-1">
                  <Heart className="w-3.5 h-3.5 text-red-500" />
-                 <span className="text-xs font-bold">{data.best.likes}</span>
+                 <span className="text-xs font-bold">{bestPostData.likes}</span>
                </div>
                <div className="flex items-center gap-1">
                  <MessageSquare className="w-3.5 h-3.5 text-[#2d6a4f]" />
-                 <span className="text-xs font-bold">{data.best.comments}</span>
+                 <span className="text-xs font-bold">{bestPostData.comments}</span>
                </div>
                <div className="flex items-center gap-1">
                  <Share2 className="w-3.5 h-3.5 text-[#09825d]" />
-                 <span className="text-xs font-bold">{data.best.shares}</span>
+                 <span className="text-xs font-bold">{bestPostData.shares}</span>
                </div>
              </div>
           </div>
@@ -108,30 +212,30 @@ export function PostMatchup({ platform }: PostMatchupProps) {
             <div className="w-7 h-7 rounded-lg bg-[#8792a2] flex items-center justify-center">
               <TrendingDown className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="text-sm font-bold text-[#3c4257]">Lowest Engagement (Demo)</span>
+            <span className="text-sm font-bold text-[#3c4257]">Lowest Engagement (Live)</span>
           </div>
-          <span className="text-[10px] font-bold text-[#8792a2] uppercase tracking-wider">{data.worst.engagement} Engagement</span>
+          <span className="text-[10px] font-bold text-[#8792a2] uppercase tracking-wider">{worstPostData.engagement} Engagement</span>
         </div>
         <div className="p-5 flex-1 flex flex-col gap-4">
-          <div className="p-4 rounded-xl bg-[#f6f9fc] border border-[#e3e8ef]/50">
+          <div className="p-4 rounded-xl bg-[#f6f9fc] border border-[#e3e8ef]/50 text-left">
              <p className="text-sm text-[#8792a2] leading-relaxed">
-               "{data.worst.content}"
+               "{worstPostData.content}"
              </p>
           </div>
           <div className="flex items-center justify-between mt-auto">
-             <span className="text-xs text-[#8792a2]">{data.worst.date}</span>
+             <span className="text-xs text-[#8792a2]">{worstPostData.date}</span>
              <div className="flex items-center gap-4 text-[#8792a2]">
                <div className="flex items-center gap-1">
                  <Heart className="w-3.5 h-3.5" />
-                 <span className="text-xs font-medium">{data.worst.likes}</span>
+                 <span className="text-xs font-medium">{worstPostData.likes}</span>
                </div>
                <div className="flex items-center gap-1">
                  <MessageSquare className="w-3.5 h-3.5" />
-                 <span className="text-xs font-medium">{data.worst.comments}</span>
+                 <span className="text-xs font-medium">{worstPostData.comments}</span>
                </div>
                <div className="flex items-center gap-1">
                  <Share2 className="w-3.5 h-3.5" />
-                 <span className="text-xs font-medium">{data.worst.shares}</span>
+                 <span className="text-xs font-medium">{worstPostData.shares}</span>
                </div>
              </div>
           </div>
