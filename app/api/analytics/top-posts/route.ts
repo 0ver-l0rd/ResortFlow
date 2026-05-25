@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { posts, postPlatformResults } from "@/db/schema";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { getZernioPostAnalytics } from "@/lib/zernio";
 
 export const dynamic = "force-dynamic";

@@ -2,13 +2,9 @@
 
 import React from "react";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
   Area,
   AreaChart,
 } from "recharts";
@@ -19,67 +15,51 @@ import {
   ChartConfig,
 } from "@/components/ui/chart";
 
-const data = [
-  { date: "Mar 28", engagement: 4500, reach: 12000 },
-  { date: "Mar 29", engagement: 5200, reach: 15000 },
-  { date: "Mar 30", engagement: 4800, reach: 14000 },
-  { date: "Mar 31", engagement: 6100, reach: 18000 },
-  { date: "Apr 01", engagement: 5900, reach: 17500 },
-  { date: "Apr 02", engagement: 7200, reach: 21000 },
-  { date: "Apr 03", engagement: 6800, reach: 20000 },
-];
+type ActivityPost = {
+  status: string;
+  mediaUrls?: string[] | null;
+  createdAt?: string | null;
+  publishedAt?: string | null;
+  scheduledAt?: string | null;
+};
 
-const platformData: Record<string, typeof data> = {
-  "Instagram": [
-    { date: "Mar 28", engagement: 1200, reach: 4000 },
-    { date: "Mar 29", engagement: 1500, reach: 4500 },
-    { date: "Mar 30", engagement: 1100, reach: 4200 },
-    { date: "Mar 31", engagement: 1800, reach: 5000 },
-    { date: "Apr 01", engagement: 1600, reach: 4800 },
-    { date: "Apr 02", engagement: 2100, reach: 6000 },
-    { date: "Apr 03", engagement: 1900, reach: 5500 },
-  ],
-  "Twitter / X": [
-    { date: "Mar 28", engagement: 800, reach: 3000 },
-    { date: "Mar 29", engagement: 950, reach: 3200 },
-    { date: "Mar 30", engagement: 700, reach: 2800 },
-    { date: "Mar 31", engagement: 1100, reach: 3500 },
-    { date: "Apr 01", engagement: 1050, reach: 3400 },
-    { date: "Apr 02", engagement: 1400, reach: 4200 },
-    { date: "Apr 03", engagement: 1300, reach: 4000 },
-  ],
-  "LinkedIn": [
-    { date: "Mar 28", engagement: 400, reach: 1500 },
-    { date: "Mar 29", engagement: 550, reach: 1700 },
-    { date: "Mar 30", engagement: 300, reach: 1400 },
-    { date: "Mar 31", engagement: 610, reach: 2000 },
-    { date: "Apr 01", engagement: 590, reach: 1900 },
-    { date: "Apr 02", engagement: 720, reach: 2200 },
-    { date: "Apr 03", engagement: 680, reach: 2100 },
-  ],
-  "YouTube": [
-    { date: "Mar 28", engagement: 2100, reach: 6000 },
-    { date: "Mar 29", engagement: 2200, reach: 6500 },
-    { date: "Mar 30", engagement: 2800, reach: 7000 },
-    { date: "Mar 31", engagement: 3100, reach: 8500 },
-    { date: "Apr 01", engagement: 2900, reach: 8000 },
-    { date: "Apr 02", engagement: 3200, reach: 9000 },
-    { date: "Apr 03", engagement: 3000, reach: 8800 },
-  ],
+const buildActivityData = (posts: ActivityPost[]) => {
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - (6 - index));
+    return {
+      key: date.toISOString().slice(0, 10),
+      date: date.toLocaleDateString(undefined, { month: "short", day: "2-digit" }),
+      published: 0,
+      media: 0,
+    };
+  });
+
+  const lookup = new Map(days.map((day) => [day.key, day]));
+  posts.forEach((post) => {
+    const stamp = post.publishedAt || post.createdAt || post.scheduledAt;
+    if (!stamp) return;
+    const row = lookup.get(new Date(stamp).toISOString().slice(0, 10));
+    if (!row) return;
+    if (post.status === "published") row.published += 1;
+    if (post.mediaUrls?.length) row.media += 1;
+  });
+
+  return days.map(({ key, ...rest }) => rest);
 };
 
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { PLATFORM_THEMES } from "@/lib/analytics-themes";
 
 const chartConfig = {
-  engagement: {
-    label: "Engagement",
+  published: {
+    label: "Published Posts",
     color: "#2d6a4f",
   },
-  reach: {
-    label: "Reach",
+  media: {
+    label: "Media Posts",
     color: "#09825d",
   },
 } satisfies ChartConfig;
@@ -97,26 +77,25 @@ export function EngagementChart({ platform = "All Platforms" }: { platform?: str
     },
   });
 
-  // 2. Fetch top posts
+  const normalizedPlatform = platform.toLowerCase().split("/")[0].trim();
+
+  // 2. Fetch posts for truthful activity history
   const { data: posts = [], isLoading: isPostsLoading } = useQuery({
-    queryKey: ["analytics-top-posts"],
+    queryKey: ["analytics-post-activity", normalizedPlatform],
     queryFn: async () => {
-      const response = await fetch("/api/analytics/top-posts");
-      if (!response.ok) throw new Error("Failed to fetch top posts");
-      return response.json() as Promise<any[]>;
+      const search = platform === "All Platforms" ? "" : `?platform=${encodeURIComponent(normalizedPlatform)}`;
+      const response = await fetch(`/api/posts${search}`);
+      if (!response.ok) throw new Error("Failed to fetch posts");
+      return response.json() as Promise<ActivityPost[]>;
     },
   });
 
   // Check if platform is connected
-  const normalizedPlatform = platform.toLowerCase().split("/")[0].trim();
   const isConnected = platform === "All Platforms" || accounts.some(
     (a) => a.platform.toLowerCase().split("/")[0].trim() === normalizedPlatform
   );
 
-  // Filter posts for this platform
-  const platformPosts = platform === "All Platforms" 
-    ? posts 
-    : posts.filter(p => p.platform.toLowerCase().split("/")[0].trim() === normalizedPlatform);
+  const platformPosts = posts;
 
   if (isAccountsLoading || isPostsLoading) {
     return (
@@ -148,8 +127,8 @@ export function EngagementChart({ platform = "All Platforms" }: { platform?: str
     );
   }
 
-  const currentData = platform === "All Platforms" ? data : (platformData[platform] || data);
-  const showDemoNotice = platformPosts.length === 0;
+  const currentData = React.useMemo(() => buildActivityData(platformPosts), [platformPosts]);
+  const showDemoNotice = currentData.every((point) => point.published === 0 && point.media === 0);
 
   return (
     <div className="bg-white rounded-[2rem] border border-[#e2e8f0] shadow-[0_1px_1px_rgba(0,0,0,0.05),0_12px_60px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-700">
@@ -157,44 +136,44 @@ export function EngagementChart({ platform = "All Platforms" }: { platform?: str
         <div className="bg-amber-50/80 border-b border-amber-100 px-8 py-2.5 text-left flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
           <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">
-            No published posts found on this channel. Showing demo trends visualization.
+            No recent post history found for this channel. Showing the last 7 days of real activity only.
           </span>
         </div>
       )}
       <div className="flex items-center justify-between px-8 py-7 border-b border-[#f1f4f9] bg-gradient-to-r from-white to-[#f8fafc]">
         <div className="text-left">
           <h3 className="text-lg font-bold text-[#1a1f36] tracking-tight">
-            {platform === "All Platforms" ? "Global Performance" : `${platform} Metrics`}
+            {platform === "All Platforms" ? "Publishing Activity" : `${platform} Activity`}
           </h3>
           <p className="text-[10px] font-bold text-[#8792a2] mt-1 uppercase tracking-[0.2em]">
-            {showDemoNotice ? "Audience Flux & Interaction Matrix (Demo Visualization)" : "Audience Flux & Interaction Matrix (Live)"}
+            {showDemoNotice ? "Last 7 Days · No activity yet" : "Last 7 Days · Real post history"}
           </p>
         </div>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 group cursor-pointer">
             <div className="w-2.5 h-2.5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: theme.primary }} />
-            <span className="text-[10px] font-bold text-[#3c4257]/60 uppercase tracking-widest group-hover:text-[#1a1f36] transition-colors">Engagement</span>
+            <span className="text-[10px] font-bold text-[#3c4257]/60 uppercase tracking-widest group-hover:text-[#1a1f36] transition-colors">Published</span>
           </div>
           <div className="flex items-center gap-2 group cursor-pointer">
             <div className="w-2.5 h-2.5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: theme.secondary || "#09825d" }} />
-            <span className="text-[10px] font-bold text-[#3c4257]/60 uppercase tracking-widest group-hover:text-[#1a1f36] transition-colors">Reach</span>
+            <span className="text-[10px] font-bold text-[#3c4257]/60 uppercase tracking-widest group-hover:text-[#1a1f36] transition-colors">Media Posts</span>
           </div>
         </div>
       </div>
       <div className="px-6 py-8 h-[340px] relative">
         {showDemoNotice && (
           <div className="absolute top-4 right-6 z-10 px-2.5 py-1 bg-amber-100/60 text-amber-800 border border-amber-200/50 rounded-lg text-[9px] font-bold uppercase tracking-wider">
-            Demo Mode
+            No Activity Yet
           </div>
         )}
         <ChartContainer config={chartConfig} className="h-full w-full">
           <AreaChart data={currentData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
-              <linearGradient id="colorEngagement" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorPublished" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={theme.primary} stopOpacity={0.1} />
                 <stop offset="95%" stopColor={theme.primary} stopOpacity={0} />
               </linearGradient>
-              <linearGradient id="colorReach" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorMedia" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={theme.secondary} stopOpacity={0.05} />
                 <stop offset="95%" stopColor={theme.secondary} stopOpacity={0} />
               </linearGradient>
@@ -216,20 +195,20 @@ export function EngagementChart({ platform = "All Platforms" }: { platform?: str
             <ChartTooltip content={<ChartTooltipContent />} />
             <Area
               type="monotone"
-              dataKey="reach"
+              dataKey="media"
               stroke={theme.secondary}
               strokeWidth={2}
               fillOpacity={1}
-              fill="url(#colorReach)"
+              fill="url(#colorMedia)"
               stackId="1"
             />
             <Area
               type="monotone"
-              dataKey="engagement"
+              dataKey="published"
               stroke={theme.primary}
               strokeWidth={2}
               fillOpacity={1}
-              fill="url(#colorEngagement)"
+              fill="url(#colorPublished)"
               stackId="2"
             />
           </AreaChart>

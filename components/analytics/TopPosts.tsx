@@ -52,6 +52,8 @@ export function TopPosts() {
     }
   });
 
+  const hasSimulatedPosts = posts.some((p: any) => p.isSimulated || p.error === "SIMULATED_SUCCESS");
+
   const filteredPosts = posts.filter((p: any) => {
     const isSim = p.isSimulated || p.error === "SIMULATED_SUCCESS";
     return showSimulated ? true : !isSim;
@@ -112,19 +114,23 @@ export function TopPosts() {
           <p className="text-[10px] font-bold text-[#8792a2] uppercase tracking-[0.2em] mt-1">Live Engagement Matrix</p>
         </div>
         <div className="flex items-center gap-4">
-           <button 
-             onClick={() => setShowSimulated(!showSimulated)}
-             className={cn(
-               "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-[10px] font-bold uppercase tracking-wider",
-               showSimulated 
-                 ? "bg-amber-50 border-amber-200 text-amber-700 shadow-sm" 
-                 : "bg-[#f8fafc] border-[#e2e8f0] text-[#8792a2]"
-             )}
-           >
-             <Zap className={cn("w-3 h-3", showSimulated ? "text-amber-500 fill-amber-500" : "text-slate-400")} />
-             {showSimulated ? "Demo Mode: On" : "Show Simulations"}
-           </button>
-           <div className="w-px h-6 bg-slate-100" />
+           {hasSimulatedPosts && (
+            <>
+              <button 
+                onClick={() => setShowSimulated(!showSimulated)}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-[10px] font-bold uppercase tracking-wider",
+                  showSimulated 
+                    ? "bg-amber-50 border-amber-200 text-amber-700 shadow-sm" 
+                    : "bg-[#f8fafc] border-[#e2e8f0] text-[#8792a2]"
+                )}
+              >
+                <Zap className={cn("w-3 h-3", showSimulated ? "text-amber-500 fill-amber-500" : "text-slate-400")} />
+                {showSimulated ? "Showing Simulated" : "Hide Simulated"}
+              </button>
+              <div className="w-px h-6 bg-slate-100" />
+            </>
+          )}
            <button 
              onClick={() => syncMutation.mutate()}
              disabled={syncMutation.isPending}

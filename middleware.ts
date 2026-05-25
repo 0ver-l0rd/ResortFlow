@@ -1,6 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// Define matchers for paths that require authentication
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/compose(.*)",
@@ -14,12 +13,14 @@ const isProtectedRoute = createRouteMatcher([
   "/contacts(.*)",
   "/analytics(.*)",
   "/agent(.*)",
-  // Protect all API routes except public webhooks and Inngest
-  "/api/(?!webhooks|inngest)(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) {
+  const { pathname } = req.nextUrl;
+  const isPublicApiRoute = pathname.startsWith("/api/webhooks") || pathname.startsWith("/api/inngest");
+  const isProtectedApiRoute = pathname.startsWith("/api/") && !isPublicApiRoute;
+
+  if (isProtectedRoute(req) || isProtectedApiRoute) {
     await auth.protect();
   }
 });

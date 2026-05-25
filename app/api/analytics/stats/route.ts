@@ -21,6 +21,8 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const platform = searchParams.get("platform") || "All Platforms";
+    const isAllPlatforms = platform === "All Platforms";
+    const normalizedPlatform = platform.toLowerCase().split("/")[0].trim();
 
     // 1. Fetch user's local social accounts
     const userAccounts = await db.query.socialAccounts.findMany({
@@ -36,7 +38,7 @@ export async function GET(request: Request) {
     let hasRealZernioData = false;
 
     for (const acc of userAccounts) {
-      if (platform !== "All Platforms" && acc.platform.toLowerCase() !== platform.toLowerCase()) {
+      if (!isAllPlatforms && acc.platform.toLowerCase() !== normalizedPlatform) {
         continue;
       }
 
@@ -82,9 +84,9 @@ export async function GET(request: Request) {
       .from(segmentMembers)
       .innerJoin(audienceSegments, eq(segmentMembers.segmentId, audienceSegments.id))
       .where(
-        platform === "All Platforms" 
+        isAllPlatforms
           ? eq(audienceSegments.userId, user.id)
-          : and(eq(audienceSegments.userId, user.id), eq(segmentMembers.platform, platform.toLowerCase()))
+          : and(eq(audienceSegments.userId, user.id), eq(segmentMembers.platform, normalizedPlatform))
       );
     
     const dbEngagement = avgEngagementRes[0]?.avg ? (avgEngagementRes[0].avg / 10).toFixed(2) : "0.00";
@@ -106,9 +108,9 @@ export async function GET(request: Request) {
       .from(postPlatformResults)
       .innerJoin(posts, eq(postPlatformResults.postId, posts.id))
       .where(
-        platform === "All Platforms"
+        isAllPlatforms
           ? eq(posts.userId, user.id)
-          : and(eq(posts.userId, user.id), eq(postPlatformResults.platform, platform.toLowerCase()))
+          : and(eq(posts.userId, user.id), eq(postPlatformResults.platform, normalizedPlatform))
       )
       .groupBy(postPlatformResults.status);
 
