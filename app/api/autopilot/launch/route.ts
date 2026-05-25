@@ -40,12 +40,18 @@ export async function POST(req: Request) {
         if (post.imagePrompt) {
             console.log(`[Autopilot] Generating visual for ${post.platform}...`);
             const dims = getOptimizedDimensions(post.platform);
-            const imageUrl = await generateAndStoreImage(post.imagePrompt, {
+            const imageResult = await generateAndStoreImage(post.imagePrompt, {
                 width: dims.width,
                 height: dims.height,
-                enhance: true
+                enhance: true,
+                allowFallback: true
             });
-            mediaUrls = [imageUrl];
+            if (imageResult.url) {
+                mediaUrls = [imageResult.url];
+                console.log(`[Autopilot] Image result for ${post.platform}: ${imageResult.status} (${imageResult.url})`);
+            } else {
+                console.warn(`[Autopilot] Image generation failed for ${post.platform}: ${imageResult.error}`);
+            }
         }
 
         // 1. Save local post draft

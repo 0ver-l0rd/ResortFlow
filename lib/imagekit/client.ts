@@ -13,10 +13,32 @@ if (!publicKey || !privateKey || !urlEndpoint) {
   console.warn("ImageKit environment variables are missing. Some media functionality may be restricted.");
 }
 
-export const imagekit = new ImageKit({
-  publicKey: publicKey || "",
-  privateKey: privateKey || "",
-  urlEndpoint: urlEndpoint || "",
+let _imagekit: ImageKit | null = null;
+
+function getImageKitInstance(): ImageKit {
+  if (!_imagekit) {
+    const pk = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || "dummy_public_key";
+    const sk = process.env.IMAGEKIT_PRIVATE_KEY || "dummy_private_key";
+    const url = process.env.IMAGEKIT_URL_ENDPOINT || process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || "https://ik.imagekit.io/dummy";
+
+    _imagekit = new ImageKit({
+      publicKey: pk,
+      privateKey: sk,
+      urlEndpoint: url,
+    });
+  }
+  return _imagekit;
+}
+
+export const imagekit = new Proxy({} as ImageKit, {
+  get(target, prop) {
+    const instance = getImageKitInstance();
+    const value = (instance as any)[prop];
+    if (typeof value === "function") {
+      return value.bind(instance);
+    }
+    return value;
+  }
 });
 
 /**

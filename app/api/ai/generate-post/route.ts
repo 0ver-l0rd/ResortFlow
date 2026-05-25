@@ -64,19 +64,30 @@ IMAGE_PROMPT: [Your descriptive image prompt]
 
     // Generate the image
     let generatedImageUrl = null;
+    let imageGenStatus: "success" | "fallback" | "failed" | "skipped" = "skipped";
+    let imageGenError = undefined;
+
     if (imagePrompt) {
         const dims = getOptimizedDimensions(targetPlatform);
-        generatedImageUrl = await generateAndStoreImage(imagePrompt, {
+        const imageResult = await generateAndStoreImage(imagePrompt, {
             width: dims.width,
             height: dims.height,
-            enhance: true
+            enhance: true,
+            allowFallback: true
         });
+        generatedImageUrl = imageResult.url;
+        imageGenStatus = imageResult.status;
+        imageGenError = imageResult.error;
     }
 
     return NextResponse.json({ 
         content: postContent,
         imagePrompt: imagePrompt,
-        generatedImageUrl: generatedImageUrl
+        generatedImageUrl: generatedImageUrl,
+        imageGeneration: {
+            status: imageGenStatus,
+            error: imageGenError
+        }
     });
   } catch (error) {
     console.error("AI Generate Post Error:", error);
