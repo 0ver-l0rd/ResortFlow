@@ -1,23 +1,18 @@
 import { NextResponse } from "next/server";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
-import { users, autoReplyRules } from "@/db/schema";
+import { autoReplyRules } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const authId = getDemoUserId();
-
-    const userRecord = await db.query.users.findFirst({
-      where: eq(users.authId, authId),
-    });
-
-    if (!userRecord) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const user = await getDbUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const rules = await db.query.autoReplyRules.findMany({
-      where: eq(autoReplyRules.userId, userRecord.id),
+      where: eq(autoReplyRules.userId, user.id),
       orderBy: [desc(autoReplyRules.createdAt)],
       with: {
         logs: {
@@ -44,14 +39,9 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const authId = getDemoUserId();
-
-    const userRecord = await db.query.users.findFirst({
-      where: eq(users.authId, authId),
-    });
-
-    if (!userRecord) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const user = await getDbUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
@@ -62,7 +52,7 @@ export async function POST(req: Request) {
     }
 
     const newRules = await db.insert(autoReplyRules).values({
-      userId: userRecord.id,
+      userId: user.id,
       name,
       platform,
       triggerType,

@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { generateTextSafe } from "@/lib/ai";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { generateAndStoreImage, getOptimizedDimensions } from "@/lib/pollinations";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const userId = getDemoUserId();
+    const user = await getDbUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { topic, platforms, tone, primaryPlatform } = await request.json();
 

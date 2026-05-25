@@ -1,17 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { mediaAssets } from "@/db/schema";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { eq, desc } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const userId = getDemoUserId();
-
-    const dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.authId, userId),
-    });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const assets = await db
       .select()
@@ -28,12 +24,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const userId = getDemoUserId();
-
-    const dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.authId, userId),
-    });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { imageKitFileId, url, type, size } = await request.json();
 

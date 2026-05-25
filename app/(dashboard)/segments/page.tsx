@@ -1,16 +1,15 @@
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { users, audienceSegments } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { SegmentsClient } from "./SegmentsClient";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function SegmentsPage() {
-  const authId = getDemoUserId();
-
-  const [user] = await db.select().from(users).limit(1);
-  if (!user) return <div>No user found</div>;
+  const user = await getDbUser();
+  if (!user) redirect("/sign-in");
 
   const segments = await db
     .select()

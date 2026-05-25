@@ -1,19 +1,17 @@
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { getPlatform } from "@/lib/platforms/factory";
 import { db } from "@/db";
 import { socialAccounts, posts, postPlatformResults } from "@/db/schema";
-import { getUserByAuthId } from "@/lib/db/queries/users";
 import { decrypt } from "@/lib/encryption";
 import { and, eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const authId = getDemoUserId();
+  const user = await getDbUser();
+  if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
   try {
     const { platform } = await request.json();
-    const user = await getUserByAuthId(authId);
-    if (!user) return new NextResponse("User not found", { status: 404 });
 
     // Fetch account details
     const accounts = await db.query.socialAccounts.findMany({

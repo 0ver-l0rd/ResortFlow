@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
-import { campaigns, campaignPosts, users } from "@/db/schema";
+import { campaigns, campaignPosts } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function GET(
@@ -9,12 +9,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const authId = getDemoUserId();
-
-    const user = await db.query.users.findFirst({
-      where: eq(users.authId, authId)
-    });
-    if (!user) return new NextResponse("User not found", { status: 404 });
+    const user = await getDbUser();
+    if (!user) return new NextResponse("Unauthorized", { status: 401 });
     const resolvedParams = await params;
 
     const campaign = await db.query.campaigns.findFirst({

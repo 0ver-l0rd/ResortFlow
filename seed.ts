@@ -1,21 +1,14 @@
 import { db } from "./db";
 import { users } from "./db/schema";
-import { getDemoUserId } from "./lib/demo-auth";
 
 async function main() {
-  console.log("Seeding Demo User...");
-  const authId = getDemoUserId();
+  console.log("Checking for existing users...");
   
   const existing = await db.query.users.findFirst();
   if (!existing) {
-    await db.insert(users).values({
-      authId,
-      email: "demo@resortflow.com",
-      plan: "pro",
-    });
-    console.log("User seeded!");
+    console.log("No users found. Users will be created automatically when they sign in via Clerk.");
   } else {
-    console.log("User already exists.");
+    console.log(`Found existing user: ${existing.email}`);
   }
 }
 

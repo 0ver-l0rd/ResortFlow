@@ -1,16 +1,13 @@
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { agentPreferences } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import { getUserByAuthId } from "@/lib/db/queries/users";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const authId = getDemoUserId();
-
-    const user = await getUserByAuthId(authId);
-    if (!user) return new NextResponse("User not found", { status: 404 });
+    const user = await getDbUser();
+    if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
     const prefs = await db.select().from(agentPreferences).where(eq(agentPreferences.userId, user.id));
     const prefMap = prefs.reduce((acc: any, p) => {
@@ -26,10 +23,8 @@ export async function GET() {
 
 export async function PATCH(req: Request) {
   try {
-    const authId = getDemoUserId();
-
-    const user = await getUserByAuthId(authId);
-    if (!user) return new NextResponse("User not found", { status: 404 });
+    const user = await getDbUser();
+    if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
     const body = await req.json(); // Expected: { key: string, value: string } or Record<string, string>
     

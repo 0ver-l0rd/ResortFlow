@@ -1,8 +1,7 @@
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { getPlatform } from "@/lib/platforms/factory";
 import { db } from "@/db";
 import { socialAccounts } from "@/db/schema";
-import { getUserByAuthId } from "@/lib/db/queries/users";
 import { encrypt } from "@/lib/encryption";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -11,8 +10,6 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ platform: string }> }
 ) {
-  const authId = getDemoUserId();
-
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");
@@ -27,9 +24,9 @@ export async function GET(
   }
 
   try {
-    const user = await getUserByAuthId(authId);
+    const user = await getDbUser();
     if (!user) {
-      return new NextResponse("User not found in DB", { status: 404 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const platformInstance = getPlatform(platform);

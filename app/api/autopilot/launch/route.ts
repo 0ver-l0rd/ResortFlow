@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { campaigns, campaignPosts, posts as postsTable, postPlatformResults } from "@/db/schema";
 import { createZernioPost, getZernioAccountId } from "@/lib/zernio";
@@ -7,8 +7,8 @@ import { generateAndStoreImage, getOptimizedDimensions } from "@/lib/pollination
 
 export async function POST(req: Request) {
   try {
-    const user = await db.query.users.findFirst();
-    if (!user) return new NextResponse("User not found", { status: 404 });
+    const user = await getDbUser();
+    if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
     const { goal, plan } = await req.json();
 

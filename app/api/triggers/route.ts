@@ -1,18 +1,13 @@
 import { db } from "@/db";
 import { triggers } from "@/db/schema";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const authId = getDemoUserId();
-
-  const user = await db.query.users.findFirst({
-    where: (users, { eq }) => eq(users.authId, authId),
-  });
-
-  if (!user) return new NextResponse("User not found", { status: 404 });
+    const user = await getDbUser();
+    if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
     const data = await db.query.triggers.findMany({
       where: eq(triggers.userId, user.id),
@@ -26,13 +21,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const authId = getDemoUserId();
-
-  const user = await db.query.users.findFirst({
-    where: (users, { eq }) => eq(users.authId, authId),
-  });
-
-  if (!user) return new NextResponse("User not found", { status: 404 });
+  const user = await getDbUser();
+  if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
   const body = await req.json();
   const { type, name, condition, action } = body;

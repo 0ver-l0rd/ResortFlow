@@ -1,4 +1,4 @@
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { getPlatform } from "@/lib/platforms/factory";
 import { NextResponse } from "next/server";
 
@@ -6,7 +6,8 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ platform: string }> }
 ) {
-  const authId = getDemoUserId();
+  const user = await getDbUser();
+  if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
   const { platform } = await params;
   

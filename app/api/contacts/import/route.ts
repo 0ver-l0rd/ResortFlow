@@ -1,16 +1,12 @@
 import { db } from "@/db";
 import { contacts } from "@/db/schema";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const authId = getDemoUserId();
-
-    const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.authId, authId),
-    });
-    if (!user) return new NextResponse("User not found", { status: 404 });
+    const user = await getDbUser();
+    if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
     const body = await req.json();
     const { csvContent } = body;

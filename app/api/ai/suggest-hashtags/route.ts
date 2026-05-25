@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { generateText } from "@/lib/openai";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const userId = getDemoUserId();
+    const user = await getDbUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { content, platforms } = await request.json();
 

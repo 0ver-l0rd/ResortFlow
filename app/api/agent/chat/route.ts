@@ -1,11 +1,10 @@
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { openai } from "@/lib/openai";
 import { buildSystemPrompt } from "@/lib/agent/system-prompt";
 import { executeAgentTool, openAIToolDeclarations } from "@/lib/agent/tool-registry";
 import { db } from "@/db";
 import { agentConversations } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { getUserByAuthId } from "@/lib/db/queries/users";
+import { eq, and } from "drizzle-orm";
 import { ChatCompletionMessageParam } from "openai/resources/index";
 
 export const dynamic = "force-dynamic";
@@ -18,10 +17,8 @@ function deriveTitle(message: string): string {
 }
 
 export async function POST(req: Request) {
-  const authId = getDemoUserId();
-
-  const user = await getUserByAuthId(authId);
-  if (!user) return new Response("User not found", { status: 404 });
+  const user = await getDbUser();
+  if (!user) return new Response("Unauthorized", { status: 401 });
 
   const { message, conversationId } = await req.json();
   if (!message) return new Response("Message required", { status: 400 });
@@ -29,7 +26,10 @@ export async function POST(req: Request) {
   let conversation;
   if (conversationId) {
     conversation = await db.query.agentConversations.findFirst({
-      where: eq(agentConversations.id, conversationId),
+      where: and(
+        eq(agentConversations.id, conversationId),
+        eq(agentConversations.userId, user.id)
+      ),
     });
   }
 

@@ -1,25 +1,20 @@
 import { NextResponse } from "next/server";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
-import { users, autoReplyRules } from "@/db/schema";
+import { autoReplyRules } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const authId = getDemoUserId();
-
-    const userRecord = await db.query.users.findFirst({
-      where: eq(users.authId, authId),
-    });
-
-    if (!userRecord) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const user = await getDbUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Verify rule belongs to user
     const existingRule = await db.query.autoReplyRules.findFirst({
-      where: and(eq(autoReplyRules.id, id), eq(autoReplyRules.userId, userRecord.id)),
+      where: and(eq(autoReplyRules.id, id), eq(autoReplyRules.userId, user.id)),
     });
 
     if (!existingRule) {
@@ -32,7 +27,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       .set({
         ...body,
         // Ensure userId isn't overwritten
-        userId: userRecord.id,
+        userId: user.id,
       })
       .where(eq(autoReplyRules.id, id))
       .returning();
@@ -50,19 +45,14 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const authId = getDemoUserId();
-
-    const userRecord = await db.query.users.findFirst({
-      where: eq(users.authId, authId),
-    });
-
-    if (!userRecord) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const user = await getDbUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Since we check userRecord.id, it's safe to just delete with 'and' condition
     const deletedRules = await db.delete(autoReplyRules)
-      .where(and(eq(autoReplyRules.id, id), eq(autoReplyRules.userId, userRecord.id)))
+      .where(and(eq(autoReplyRules.id, id), eq(autoReplyRules.userId, user.id)))
       .returning();
 
     if (!deletedRules.length) {

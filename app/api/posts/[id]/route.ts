@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { posts } from "@/db/schema";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { eq, and } from "drizzle-orm";
 
 export async function PATCH(
@@ -9,15 +9,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = getDemoUserId();
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
-
-    const dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.authId, userId),
-    });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
     const body = await request.json();
     const { content, mediaUrls, platforms, scheduledAt, status } = body;
 
@@ -48,14 +43,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = getDemoUserId();
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
-
-    const dbUser = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.authId, userId),
-    });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     await db
       .delete(posts)

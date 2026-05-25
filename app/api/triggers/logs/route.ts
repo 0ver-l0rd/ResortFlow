@@ -1,17 +1,13 @@
 import { db } from "@/db";
 import { triggerLogs, triggers } from "@/db/schema";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { eq, and, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const authId = getDemoUserId();
-
-    const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.authId, authId),
-    });
-    if (!user) return new NextResponse("User not found", { status: 404 });
+    const user = await getDbUser();
+    if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
     const data = await db.select({
       id: triggerLogs.id,

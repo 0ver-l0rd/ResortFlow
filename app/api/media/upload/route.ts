@@ -1,19 +1,16 @@
 import { NextResponse } from "next/server";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
-import { mediaAssets, users } from "@/db/schema";
+import { mediaAssets } from "@/db/schema";
 import { imagekit } from "@/lib/imagekit/client";
 import { eq } from "drizzle-orm";
 import { uploadMediaToZernio } from "@/lib/zernio";
 
 export async function POST(request: Request) {
   try {
-    const userId = getDemoUserId();
-
-    const user = await db.query.users.findFirst();
-
+    const user = await getDbUser();
     if (!user) {
-      return new NextResponse("User not found", { status: 404 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const formData = await request.formData();

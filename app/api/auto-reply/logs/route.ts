@@ -1,19 +1,14 @@
 import { NextResponse } from "next/server";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
-import { users, autoReplyLogs, autoReplyRules } from "@/db/schema";
+import { autoReplyLogs, autoReplyRules } from "@/db/schema";
 import { eq, desc, count } from "drizzle-orm";
 
 export async function GET(req: Request) {
   try {
-    const authId = getDemoUserId();
-
-    const userRecord = await db.query.users.findFirst({
-      where: eq(users.authId, authId),
-    });
-
-    if (!userRecord) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const user = await getDbUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(req.url);
@@ -37,7 +32,7 @@ export async function GET(req: Request) {
       })
       .from(autoReplyLogs)
       .innerJoin(autoReplyRules, eq(autoReplyLogs.ruleId, autoReplyRules.id))
-      .where(eq(autoReplyRules.userId, userRecord.id));
+      .where(eq(autoReplyRules.userId, user.id));
 
     const logs = await baseQuery
       .orderBy(desc(autoReplyLogs.repliedAt))
@@ -49,7 +44,7 @@ export async function GET(req: Request) {
       .select({ value: count() })
       .from(autoReplyLogs)
       .innerJoin(autoReplyRules, eq(autoReplyLogs.ruleId, autoReplyRules.id))
-      .where(eq(autoReplyRules.userId, userRecord.id));
+      .where(eq(autoReplyRules.userId, user.id));
       
     const totalCount = countResult[0].value;
 

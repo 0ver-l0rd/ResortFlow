@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { db } from "@/db";
 import { 
   socialAccounts, 
@@ -9,17 +9,14 @@ import {
   segmentMembers,
   audienceSegments
 } from "@/db/schema";
-import { getUserByAuthId } from "@/lib/db/queries/users";
 import { eq, and, sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    const userId = getDemoUserId();
-
-    const user = await getUserByAuthId(userId);
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const user = await getDbUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { searchParams } = new URL(request.url);
     const platform = searchParams.get("platform") || "All Platforms";

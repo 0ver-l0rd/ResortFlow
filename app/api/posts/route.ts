@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { posts, postPlatformResults, users } from "@/db/schema";
-import { getDemoUserId } from "@/lib/demo-auth";
+import { getDbUser } from "@/lib/auth";
 import { eq, desc, and, gte, lte, or } from "drizzle-orm";
 import {
   createZernioPost,
@@ -12,12 +12,10 @@ import {
 
 export async function GET(request: Request) {
   try {
-    const userId = getDemoUserId();
-
-    let dbUser = await db.query.users.findFirst();
+    const dbUser = await getDbUser();
     
     if (!dbUser) {
-      return NextResponse.json({ error: "No users found in DB. Run seeds." }, { status: 500 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -68,12 +66,10 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const userId = getDemoUserId();
-
-    let dbUser = await db.query.users.findFirst();
+    const dbUser = await getDbUser();
 
     if (!dbUser) {
-      return NextResponse.json({ error: "No users found in database" }, { status: 404 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { content, mediaUrls, platforms, scheduledAt, status, isAiGenerated, aiPrompt } = await request.json();
