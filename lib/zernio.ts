@@ -25,7 +25,7 @@ export function getZernioAccountId(platform: string): string | null {
     // Add more as you connect them on Zernio dashboard
     // linkedin: process.env.ZERNIO_LINKEDIN_ACCOUNT_ID,
     // facebook: process.env.ZERNIO_FACEBOOK_ACCOUNT_ID,
-    // tiktok:   process.env.ZERNIO_TIKTOK_ACCOUNT_ID,
+    tiktok: process.env.ZERNIO_TIKTOK_ACCOUNT_ID,
     // youtube:  process.env.ZERNIO_YOUTUBE_ACCOUNT_ID,
     // pinterest: process.env.ZERNIO_PINTEREST_ACCOUNT_ID,
   };

@@ -18,17 +18,26 @@ export async function syncPlatformHistoryForUser(userId: string, platform?: stri
     return { success: false, error: "Failed to fetch accounts from Zernio" };
   }
 
-  // 2. Filter Zernio accounts to only include whitelisted and active environment accounts
+  // Filter Zernio accounts to only include whitelisted platforms.
+  // If an environment variable maps a platform to a specific Zernio account ID,
+  // enforce that exact match. Otherwise (no env var), accept the account.
   const whitelistedAccounts = zernioAccounts.filter(za => {
     const configuredId = getZernioAccountId(za.platform);
-    
-    // Ensure we only sync configured accounts matching our environment variables
-    const isWhitelisted = configuredId && configuredId === za._id;
-    
-    if (platform) {
-      return isWhitelisted && za.platform.toLowerCase() === platform.toLowerCase();
+    if (configuredId) {
+      // Enforce exact match when config exists
+      const isWhitelisted = configuredId === za._id;
+      if (platform) {
+        return isWhitelisted && za.platform.toLowerCase() === platform.toLowerCase();
+      }
+      return isWhitelisted;
     }
-    return isWhitelisted;
+    // No env var mapping – accept the account as long as the platform is known
+    const knownPlatforms = ["twitter","instagram","linkedin","facebook","tiktok","youtube","pinterest","discord","slack"];
+    const isKnown = knownPlatforms.includes(za.platform.toLowerCase());
+    if (platform) {
+      return isKnown && za.platform.toLowerCase() === platform.toLowerCase();
+    }
+    return isKnown;
   });
 
   const syncedAccounts = [];
