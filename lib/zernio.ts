@@ -12,12 +12,6 @@ import { decrypt } from "@/lib/encryption";
 
 const ZERNIO_BASE_URL = "https://zernio.com/api/v1";
 
-function getApiKey(): string {
-  const key = process.env.ZERNIO_API_KEY;
-  if (!key) throw new Error("ZERNIO_API_KEY is not set");
-  return key;
-}
-
 export async function getUserZernioApiKey(userId: string): Promise<string | null> {
   const pref = await db.query.agentPreferences.findFirst({
     where: and(
@@ -72,9 +66,9 @@ export interface ZernioPost {
   _id: string;
   content: string;
   status: string;
-  platforms: any[];
+  platforms: Array<Record<string, unknown> | string>;
   createdAt: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ZernioAccount {
@@ -85,7 +79,7 @@ export interface ZernioAccount {
   avatarUrl?: string;
   status?: string;
   createdAt?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ZernioPresignResult {
@@ -102,22 +96,31 @@ async function zernioFetch<T>(
   apiKey?: string
 ): Promise<T> {
   const url = `${ZERNIO_BASE_URL}${path}`;
+  
+  if (!apiKey) {
+    throw new Error("Zernio API key is required. Please connect your Zernio account in settings.");
+  }
+
   const res = await fetch(url, {
     ...options,
     headers: {
-      Authorization: `Bearer ${apiKey || getApiKey()}`,
+      Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
       ...options.headers,
     },
   });
 
-  const body = await res.json().catch(() => ({}));
+  const body: Record<string, unknown> = await res.json().catch(() => ({}));
 
   if (!res.ok) {
+    const errorObject =
+      typeof body.error === "object" && body.error !== null
+        ? (body.error as Record<string, unknown>)
+        : null;
     const msg =
-      (body as any)?.error?.message ||
-      (body as any)?.message ||
-      (body as any)?.error ||
+      (typeof errorObject?.message === "string" ? errorObject.message : undefined) ||
+      (typeof body.message === "string" ? body.message : undefined) ||
+      (typeof body.error === "string" ? body.error : undefined) ||
       res.statusText;
     throw new Error(`Zernio API ${res.status}: ${msg}`);
   }
@@ -134,7 +137,7 @@ export async function createZernioPost(
   opts: ZernioCreatePostOptions,
   apiKey?: string
 ): Promise<ZernioPost> {
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     content: opts.content,
     platforms: opts.platforms,
   };
@@ -159,13 +162,8 @@ export async function createZernioPost(
 }
 
 /**
- * List all connected social accounts on Zernio.
+ * List all connected social accounts on Zernio for a user.
  */
-export async function listZernioAccounts(): Promise<ZernioAccount[]> {
-  const result = await zernioFetch<{ accounts: ZernioAccount[] }>("/accounts");
-  return result.accounts;
-}
-
 export async function listUserZernioAccounts(userId: string): Promise<ZernioAccount[]> {
   const apiKey = await getUserZernioApiKey(userId);
   if (!apiKey) {
@@ -177,13 +175,8 @@ export async function listUserZernioAccounts(userId: string): Promise<ZernioAcco
 }
 
 /**
- * List posts from Zernio.
+ * List posts from Zernio for a user.
  */
-export async function listZernioPosts(): Promise<ZernioPost[]> {
-  const result = await zernioFetch<{ posts: ZernioPost[] }>("/posts");
-  return result.posts;
-}
-
 export async function listUserZernioPosts(userId: string): Promise<ZernioPost[]> {
   const apiKey = await getUserZernioApiKey(userId);
   if (!apiKey) {
@@ -240,7 +233,7 @@ export interface ZernioAccountAnalytics {
   comments?: number;
   shares?: number;
   engagementRate?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ZernioPostAnalytics {
@@ -249,7 +242,7 @@ export interface ZernioPostAnalytics {
   clicks?: number;
   shares?: number;
   comments?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -290,9 +283,41 @@ export async function getZernioAccountAnalytics(
   return result.analytics;
 }
 
-/**
- * Get analytics for a specific published post via Zernio.
- */
+export interface ZernioProfile {
+  _id: string;
+  name: string;
+}
+
+export async function getZernioProfiles(apiKey: string): Promise<ZernioProfile[]> {
+  const result = await zernioFetch<{ profiles: ZernioProfile[] }>("/profiles", {}, apiKey);
+  return result.profiles;
+}
+
+export async function createZernioProfile(name: string, apiKey: string): Promise<ZernioProfile> {
+  const result = await zernioFetch<{ profile: ZernioProfile }>("/profiles", {
+    method: "POST",
+    body: JSON.stringify({ name }),
+  }, apiKey);
+  return result.profile;
+}
+
+export async function getZernioConnectUrl(
+  platform: string,
+  redirectUrl: string,
+  apiKey: string,
+  profileId?: string
+): Promise<string> {
+  let url = `/connect/${platform}?redirect_url=${encodeURIComponent(redirectUrl)}`;
+  if (profileId) {
+    url += `&profileId=${profileId}`;
+  }
+  const result = await zernioFetch<{ authUrl: string }>(
+    url,
+    { method: "GET" },
+    apiKey
+  );
+  return result.authUrl;
+}
 export async function getZernioPostAnalytics(
   postId: string,
   apiKey?: string

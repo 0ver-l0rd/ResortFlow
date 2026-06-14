@@ -38,8 +38,8 @@ export async function GET() {
       .limit(10); // Fetch more to allow for multi-platform filtering
 
     // Grouping results by post
-    const postMap = new Map();
-    results.forEach((row: any) => {
+    const postMap = new Map<string, (typeof results)[number] & { platform: string; isSimulated: boolean }>();
+    results.forEach((row) => {
       if (!postMap.has(row.id)) {
         postMap.set(row.id, {
           ...row,
@@ -59,9 +59,9 @@ export async function GET() {
       let engagement = "N/A";
 
       // If we have a real Zernio platform post ID, fetch actual analytics
-      if (post.platformPostId && !post.isSimulated) {
+      if (userZernioApiKey && post.platformPostId && !post.isSimulated) {
         try {
-          const metrics = await getZernioPostAnalytics(post.platformPostId, userZernioApiKey || undefined);
+          const metrics = await getZernioPostAnalytics(post.platformPostId, userZernioApiKey);
           if (metrics) {
             likes = metrics.likes !== undefined ? String(metrics.likes) : "0";
             comments = metrics.comments !== undefined ? String(metrics.comments) : "0";
@@ -71,8 +71,9 @@ export async function GET() {
             const actions = (metrics.likes || 0) + (metrics.comments || 0) + (metrics.shares || 0);
             engagement = `${((actions / impressions) * 100).toFixed(1)}%`;
           }
-        } catch (err: any) {
-          console.warn(`[Zernio Top Posts API] Failed to fetch analytics for post ${post.platformPostId}:`, err.message);
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : "Unknown error";
+          console.warn(`[Zernio Top Posts API] Failed to fetch analytics for post ${post.platformPostId}:`, message);
         }
       }
 

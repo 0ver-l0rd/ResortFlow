@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -108,9 +108,11 @@ const PLATFORMS: PlatformConfig[] = [
 function ConnectionsContent() {
   const searchParams = useSearchParams();
   const [accounts, setAccounts] = useState<SocialAccount[]>([]);
+  const [hasPersonalZernioApiKey, setHasPersonalZernioApiKey] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [apiKeyInput, setApiKeyInput] = useState("");
   const [isSavingApiKey, setIsSavingApiKey] = useState(false);
+  const shownSkippedToastRef = useRef(false);
 
   useEffect(() => {
     fetchAccounts();
@@ -118,6 +120,12 @@ function ConnectionsContent() {
     const error = searchParams.get("error");
     if (success) toast.success("Account connected successfully!");
     if (error) toast.error(`Connection failed: ${decodeURIComponent(error)}`);
+
+    const handleFocus = () => {
+      fetchAccounts();
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -127,17 +135,20 @@ function ConnectionsContent() {
       if (!res.ok) throw new Error(res.statusText);
       const payload = await res.json();
       setAccounts(payload.accounts || []);
+      setHasPersonalZernioApiKey(Boolean(payload.hasPersonalZernioApiKey));
 
       const skippedAccounts = payload.sync?.skippedAccounts || [];
       if (
         skippedAccounts.some(
           (entry: { reason: string }) =>
             entry.reason === "already_linked_to_another_user",
-        )
+        ) &&
+        !shownSkippedToastRef.current
       ) {
         toast.error(
           "Some Zernio accounts were skipped because they are already linked to another user.",
         );
+        shownSkippedToastRef.current = true;
       }
     } catch {
       toast.error("Could not load connected accounts.");
@@ -146,12 +157,18 @@ function ConnectionsContent() {
     }
   };
 
-  const handleConnect = () => {
-    // Social account connection is managed centrally on Zernio dashboard
-    window.open("https://zernio.com/dashboard/connections", "_blank");
-    toast.info(
-      "Connect your account on your own Zernio dashboard, then refresh this page to sync.",
-    );
+  const getZernioDashboardUrl = (path: string = "") => {
+    return `https://zernio.com/dashboard${path}`;
+  };
+
+  const handleConnect = (platformId: string) => {
+    if (!hasPersonalZernioApiKey) {
+      toast.error(
+        "Save your personal Zernio API key before connecting accounts.",
+      );
+      return;
+    }
+    window.location.href = `/api/social/connect?platform=${platformId}`;
   };
 
   const handleSaveApiKey = async () => {
@@ -177,9 +194,34 @@ function ConnectionsContent() {
 
       toast.success("Personal Zernio API key saved.");
       setApiKeyInput("");
+      setHasPersonalZernioApiKey(true);
       await fetchAccounts();
     } catch {
       toast.error("Could not save your Zernio API key.");
+    } finally {
+      setIsSavingApiKey(false);
+    }
+  };
+
+  const handleRemoveApiKey = async () => {
+    setIsSavingApiKey(true);
+    try {
+      const res = await fetch("/api/agent/preferences", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: "zernio_api_key" }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to remove API key");
+      }
+
+      setHasPersonalZernioApiKey(false);
+      setAccounts([]);
+      setApiKeyInput("");
+      toast.success("Personal Zernio API key removed.");
+    } catch {
+      toast.error("Could not remove your Zernio API key.");
     } finally {
       setIsSavingApiKey(false);
     }
@@ -219,7 +261,7 @@ function ConnectionsContent() {
           <p className="text-sm text-[#8792a2] mt-1">
             Manage your social media integrations — powered by{" "}
             <a
-              href="https://zernio.com/dashboard"
+              href={getZernioDashboardUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-[#2d6a4f] hover:underline inline-flex items-center gap-1"
@@ -243,10 +285,14 @@ function ConnectionsContent() {
             )}
           </div>
           <a
-            href="https://zernio.com/dashboard/connections"
+            href={getZernioDashboardUrl("/connections")}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#245a42] transition-all shadow-[0_1px_3px_rgba(45,106,79,0.3)] active:scale-[0.98]"
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-white text-sm font-semibold transition-all shadow-[0_1px_3px_rgba(45,106,79,0.3)] active:scale-[0.98] ${
+              hasPersonalZernioApiKey
+                ? "bg-[#2d6a4f] hover:bg-[#245a42]"
+                : "bg-[#9aa5b1] pointer-events-none"
+            }`}
           >
             <Zap className="w-3.5 h-3.5" />
             Manage on Zernio
@@ -268,6 +314,17 @@ function ConnectionsContent() {
             your personal Zernio API key here, then connect social accounts from
             your own Zernio workspace.
           </p>
+          {!hasPersonalZernioApiKey && (
+            <p className="text-xs font-medium text-[#9a3412]">
+              Save your personal Zernio API key first. Until then, this user
+              cannot sync, connect, publish, or load Zernio analytics.
+            </p>
+          )}
+          {hasPersonalZernioApiKey && (
+            <p className="text-xs font-medium text-[#065f46]">
+              Personal Zernio API key saved for this user.
+            </p>
+          )}
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="password"
@@ -288,6 +345,15 @@ function ConnectionsContent() {
               )}
               Save API Key
             </button>
+            {hasPersonalZernioApiKey && (
+              <button
+                onClick={handleRemoveApiKey}
+                disabled={isSavingApiKey}
+                className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-[#d7deea] bg-white text-sm font-semibold text-[#3c4257] hover:bg-[#f8fafc] disabled:opacity-50"
+              >
+                Remove API Key
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -324,7 +390,7 @@ function ConnectionsContent() {
             <li>
               All social accounts are connected and managed through your own{" "}
               <a
-                href="https://zernio.com/dashboard"
+                href={getZernioDashboardUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium text-[#2d6a4f] hover:underline"
@@ -350,14 +416,14 @@ function ConnectionsContent() {
             <li>
               To add more platforms (LinkedIn, TikTok, YouTube, etc.), click{" "}
               <span className="font-medium text-[#3c4257]">
-                "Manage on Zernio"
+                &quot;Manage on Zernio&quot;
               </span>{" "}
               above and connect them from your own Zernio dashboard.
             </li>
             <li>
               After connecting a new account on Zernio,{" "}
               <span className="font-medium text-[#3c4257]">
-                refresh this page
+                return to this page
               </span>{" "}
               to see it appear here automatically.
             </li>

@@ -38,33 +38,36 @@ export async function GET(request: Request) {
     let zernioImpressions = 0;
     let hasRealZernioData = false;
 
-    for (const acc of userAccounts) {
-      if (!isAllPlatforms && acc.platform.toLowerCase() !== normalizedPlatform) {
-        continue;
-      }
-
-      // Safeguard: Only fetch configured whitelisted account ID matching environment variables
-      // No env mapping needed – accounts are already user‑scoped
-// const accountId = await getUserZernioAccountId(user.id, post.platform);
-// Use the DB‑stored platformUserId directly
-
-      if (!acc.platformUserId) { // safeguard, should never happen
-        continue;
-      }
-
-      try {
-        const analytics = await getZernioAccountAnalytics(acc.platformUserId, undefined, undefined, userZernioApiKey || undefined);
-        if (analytics) {
-          zernioFollowers += Number(analytics.followers || analytics.follower_count || 0);
-          zernioReach += Number(analytics.reach || 0);
-          zernioLikes += Number(analytics.likes || 0);
-          zernioComments += Number(analytics.comments || 0);
-          zernioShares += Number(analytics.shares || 0);
-          zernioImpressions += Number(analytics.impressions || 0);
-          hasRealZernioData = true;
+    if (userZernioApiKey) {
+      for (const acc of userAccounts) {
+        if (!isAllPlatforms && acc.platform.toLowerCase() !== normalizedPlatform) {
+          continue;
         }
-      } catch (err: any) {
-        console.warn(`[Zernio Stats API] Failed to fetch analytics for account ${acc.platformUserId}:`, err.message);
+
+        if (!acc.platformUserId) {
+          continue;
+        }
+
+        try {
+          const analytics = await getZernioAccountAnalytics(
+            acc.platformUserId,
+            undefined,
+            undefined,
+            userZernioApiKey
+          );
+          if (analytics) {
+            zernioFollowers += Number(analytics.followers || analytics.follower_count || 0);
+            zernioReach += Number(analytics.reach || 0);
+            zernioLikes += Number(analytics.likes || 0);
+            zernioComments += Number(analytics.comments || 0);
+            zernioShares += Number(analytics.shares || 0);
+            zernioImpressions += Number(analytics.impressions || 0);
+            hasRealZernioData = true;
+          }
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : "Unknown error";
+          console.warn(`[Zernio Stats API] Failed to fetch analytics for account ${acc.platformUserId}:`, message);
+        }
       }
     }
 

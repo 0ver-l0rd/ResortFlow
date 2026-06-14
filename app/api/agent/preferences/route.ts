@@ -25,14 +25,15 @@ export async function GET() {
     if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
     const prefs = await db.select().from(agentPreferences).where(eq(agentPreferences.userId, user.id));
-    const prefMap = prefs.reduce((acc: any, p) => {
+    const prefMap = prefs.reduce<Record<string, string>>((acc, p) => {
       acc[p.key] = deserializePreferenceValue(p.key, p.value);
       return acc;
     }, {});
 
     return NextResponse.json(prefMap);
-  } catch (error: any) {
-    return new NextResponse(error.message, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal Server Error";
+    return new NextResponse(message, { status: 500 });
   }
 }
 
@@ -60,7 +61,29 @@ export async function PATCH(req: Request) {
     }
 
     return new NextResponse(JSON.stringify({ success: true }), { status: 200 });
-  } catch (error: any) {
-    return new NextResponse(error.message, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal Server Error";
+    return new NextResponse(message, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const user = await getDbUser();
+    if (!user) return new NextResponse("Unauthorized", { status: 401 });
+
+    const { key } = await req.json();
+    if (!key || typeof key !== "string") {
+      return new NextResponse("Preference key is required", { status: 400 });
+    }
+
+    await db.delete(agentPreferences).where(
+      and(eq(agentPreferences.userId, user.id), eq(agentPreferences.key, key))
+    );
+
+    return NextResponse.json({ success: true });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal Server Error";
+    return new NextResponse(message, { status: 500 });
   }
 }

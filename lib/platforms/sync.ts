@@ -2,7 +2,7 @@ import { listUserZernioAccounts, listUserZernioPosts } from "../zernio";
 import { db } from "@/db";
 import { socialAccounts, posts, postPlatformResults } from "@/db/schema";
 import { encrypt } from "@/lib/encryption";
-import { and, eq } from "drizzle-orm";
+import { and, eq, notInArray } from "drizzle-orm";
 
 const KNOWN_PLATFORMS = ["twitter", "instagram", "linkedin", "facebook", "tiktok", "youtube", "pinterest", "discord", "slack"];
 
@@ -81,6 +81,27 @@ export async function syncPlatformHistoryForUser(userId: string, platform?: stri
     } catch (dbErr) {
       console.error(`Failed to store social account ${account.platform} in database:`, dbErr);
     }
+  }
+
+  // 2. Remove local accounts that are no longer present on Zernio
+  try {
+    const activePlatformUserIds = Array.from(claimedPlatformUserIds);
+    if (activePlatformUserIds.length > 0) {
+      const deleteCondition = platform 
+        ? and(eq(socialAccounts.userId, userId), eq(socialAccounts.platform, platform.toLowerCase()), notInArray(socialAccounts.platformUserId, activePlatformUserIds))
+        : and(eq(socialAccounts.userId, userId), notInArray(socialAccounts.platformUserId, activePlatformUserIds));
+      
+      await db.delete(socialAccounts).where(deleteCondition);
+    } else {
+      // If no accounts are returned from Zernio, delete all local accounts (optionally filtered by platform)
+      const deleteCondition = platform
+        ? and(eq(socialAccounts.userId, userId), eq(socialAccounts.platform, platform.toLowerCase()))
+        : eq(socialAccounts.userId, userId);
+      
+      await db.delete(socialAccounts).where(deleteCondition);
+    }
+  } catch (deleteErr) {
+    console.error("Failed to clean up stale social accounts:", deleteErr);
   }
 
   // 3. Fetch published posts from Zernio

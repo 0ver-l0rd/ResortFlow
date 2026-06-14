@@ -4,6 +4,7 @@ import { socialAccounts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { syncPlatformHistoryForUser } from "@/lib/platforms/sync";
+import { getUserZernioApiKey } from "@/lib/zernio";
 
 export async function GET() {
   const user = await getDbUser();
@@ -11,13 +12,23 @@ export async function GET() {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  const apiKey = await getUserZernioApiKey(user.id);
   let syncResult: { skippedAccounts?: Array<{ platform: string; reason: string }> } | null = null;
+
+  if (!apiKey) {
+    return NextResponse.json({
+      accounts: [],
+      hasPersonalZernioApiKey: false,
+      sync: { skippedAccounts: [] },
+    });
+  }
 
   // 1. Automatically run synchronization with Zernio on-demand
   try {
     syncResult = await syncPlatformHistoryForUser(user.id);
-  } catch (err: any) {
-    console.error("Auto sync connected accounts failed:", err.message);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("Auto sync connected accounts failed:", message);
   }
 
   // 2. Fetch whitelisted connected accounts synced to this user locally
@@ -39,6 +50,7 @@ export async function GET() {
 
   return NextResponse.json({
     accounts: safeAccounts,
+    hasPersonalZernioApiKey: Boolean(apiKey),
     sync: {
       skippedAccounts: syncResult?.skippedAccounts || [],
     },
