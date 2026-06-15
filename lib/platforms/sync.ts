@@ -36,7 +36,7 @@ export async function syncPlatformHistoryForUser(userId: string, platform?: stri
   for (const account of whitelistedAccounts) {
     try {
       const normalizedPlatform = account.platform.toLowerCase();
-      const platformUserId = account.platformUserId || account._id;
+      const platformUserId = String(account._id || account.id || account.platformUserId || "");
 
       const existingByPlatformUserId = await db.query.socialAccounts.findFirst({
         where: eq(socialAccounts.platformUserId, platformUserId),
@@ -163,14 +163,14 @@ export async function syncPlatformHistoryForUser(userId: string, platform?: stri
         const existingResult = await db.query.postPlatformResults.findFirst({
           where: and(
             eq(postPlatformResults.postId, localPostId!),
-            eq(postPlatformResults.platform, pName.toLowerCase())
+            eq(postPlatformResults.platform, String(pName).toLowerCase())
           )
         });
 
         if (!existingResult) {
           await db.insert(postPlatformResults).values({
             postId: localPostId!,
-            platform: pName.toLowerCase(),
+            platform: String(pName).toLowerCase(),
             platformPostId: zPost._id,
             status: "success",
             createdAt: zPost.createdAt ? new Date(zPost.createdAt) : new Date()

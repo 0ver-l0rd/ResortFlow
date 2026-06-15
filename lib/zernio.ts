@@ -46,6 +46,7 @@ export async function getUserZernioAccountId(userId: string, platform: string): 
 export interface ZernioPlatformTarget {
   platform: string;
   accountId: string;
+  platformSpecificData?: Record<string, unknown>;
 }
 
 export interface ZernioMediaItem {
@@ -122,6 +123,7 @@ async function zernioFetch<T>(
       (typeof body.message === "string" ? body.message : undefined) ||
       (typeof body.error === "string" ? body.error : undefined) ||
       res.statusText;
+    console.error("Zernio API full error response:", JSON.stringify(body, null, 2));
     throw new Error(`Zernio API ${res.status}: ${msg}`);
   }
 
@@ -197,7 +199,7 @@ export async function getZernioPresignedUrl(
 ): Promise<ZernioPresignResult> {
   const result = await zernioFetch<ZernioPresignResult>("/media/presign", {
     method: "POST",
-    body: JSON.stringify({ fileName, fileType }),
+    body: JSON.stringify({ filename: fileName, contentType: fileType }),
   }, apiKey);
   return result;
 }

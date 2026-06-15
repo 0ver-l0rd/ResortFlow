@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { autoReplyRules, socialAccounts } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import { autoReplyQueue } from "@/lib/queue";
+import { getAutoReplyQueue } from "@/lib/queue";
 
 // Helper to determine if comment matches keyword rules
 function matchesKeywords(commentText: string, keywords: string[] | null): boolean {
@@ -70,6 +70,7 @@ export async function POST(req: Request) {
     // 4. Enqueue auto-reply job
     console.log(`Matched rule ${matchedRule.id} for comment ${commentId}. Enqueuing job...`);
     
+    const autoReplyQueue = getAutoReplyQueue();
     await autoReplyQueue.add('auto-reply', {
       ruleId: matchedRule.id,
       commentId,

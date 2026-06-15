@@ -15,7 +15,7 @@ const isProtectedRoute = createRouteMatcher([
   "/agent(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+export const proxy = clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
   const isPublicApiRoute = pathname.startsWith("/api/webhooks") || pathname.startsWith("/api/inngest");
   const isProtectedApiRoute = pathname.startsWith("/api/") && !isPublicApiRoute;
